@@ -20,6 +20,10 @@ val localProps = Properties().apply {
 fun prop(key: String): String = localProps.getProperty(key) ?: ""
 
 android {
+    kotlinOptions {
+        freeCompilerArgs += listOf("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
+    }
+
     namespace = "rw.smartgarage.reception"
     compileSdk = 35
 
