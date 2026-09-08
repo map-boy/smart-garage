@@ -1,0 +1,9 @@
+# Copy to local.properties (which is gitignored) before building the app.
+# CI writes the same file from the FIREBASE_* repository secrets.
+firebase.projectId=
+firebase.appId=
+firebase.apiKey=
+firebase.messagingSenderId=
+firebase.storageBucket=
+
+# Android Studio adds sdk.dir here automatically; CI gets it from ANDROID_HOME.

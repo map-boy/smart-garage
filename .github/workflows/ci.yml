@@ -1,0 +1,99 @@
+name: CI
+
+# Every push and every pull request builds all five surfaces. A commit that
+# breaks one of them should be visible here, not discovered on release day.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: build ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [website, reception, garage, garage-boss-dashboard]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+
+      - name: Install
+        working-directory: ${{ matrix.app }}
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        working-directory: ${{ matrix.app }}
+        run: npm run lint
+
+      - name: Build
+        working-directory: ${{ matrix.app }}
+        # The apps that read Firebase from import.meta.env still have to build
+        # without it: the bundle is public, so real keys belong in the hosting
+        # provider's environment, never in this workflow.
+        run: npm run build
+
+      - name: Report bundle size
+        working-directory: ${{ matrix.app }}
+        run: |
+          echo "### ${{ matrix.app }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          du -sh dist >> "$GITHUB_STEP_SUMMARY"
+          find dist -name '*.js' -o -name '*.css' | xargs ls -lh | awk '{print $5, $9}' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+  android:
+    name: build reception-android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Compile debug APK
+        working-directory: reception-android
+        # No Firebase values needed to compile: they are BuildConfig strings
+        # that default to empty, so a missing secret cannot break CI.
+        run: ./gradlew --no-daemon assembleDebug
+
+  electron:
+    name: package desktop installer
+    # Windows minutes bill at 2x on a private repo, so the full installer is
+    # only packaged where it matters: main, and on demand. Tags go through
+    # release-desktop.yml instead.
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build renderer
+        working-directory: garage
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+
+      - name: Package installer
+        working-directory: garage/desktop
+        run: |
+          npm ci --no-audit --no-fund
+          npx electron-builder --win --publish=never
