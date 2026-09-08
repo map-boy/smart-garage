@@ -1,0 +1,159 @@
+{
+  "entities": {
+    "GarageSettings": {
+      "title": "GarageSettings",
+      "description": "Document itself holds settings at garages/{garageId}",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "garageName": { "type": "string" },
+        "address": { "type": "string" },
+        "phone": { "type": "string" },
+        "currency": { "type": "string" },
+        "taxRate": { "type": "number" },
+        "cameraStreamUrl": { "type": "string" },
+        "cameraLabel": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "garageName", "currency"]
+    },
+    "Client": {
+      "title": "Client",
+      "description": "Client profile registered in the garage system",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "vehicleIds": { "type": "array" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    },
+    "Vehicle": {
+      "title": "Vehicle",
+      "description": "Vehicle record belonging to a client",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "plate": { "type": "string" },
+        "make": { "type": "string" },
+        "model": { "type": "string" },
+        "year": { "type": "number" },
+        "color": { "type": "string" },
+        "clientId": { "type": "string" },
+        "mileage": { "type": "number" },
+        "fuelType": { "type": "string", "enum": ["Petrol", "Diesel", "Electric", "Hybrid"] }
+      },
+      "required": ["id", "plate", "make", "model", "clientId"]
+    },
+    "JobCard": {
+      "title": "JobCard",
+      "description": "Repair or maintenance job tracking card",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "vehicleId": { "type": "string" },
+        "technicianName": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["Pending", "In Progress", "Waiting Parts", "Completed"] },
+        "partsUsed": { "type": "array" },
+        "laborCost": { "type": "number" },
+        "startedAt": { "type": "string" },
+        "completedAt": { "type": "string" }
+      },
+      "required": ["id", "vehicleId", "status", "startedAt"]
+    },
+    "Part": {
+      "title": "Part",
+      "description": "Stock item / spare part inventory",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "partNumber": { "type": "string" },
+        "quantity": { "type": "number" },
+        "reorderLevel": { "type": "number" },
+        "unitCost": { "type": "number" },
+        "supplier": { "type": "string" }
+      },
+      "required": ["id", "name", "quantity", "reorderLevel", "unitCost"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Billing record generated for a completed job",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "jobId": { "type": "string" },
+        "clientId": { "type": "string" },
+        "lineItems": { "type": "array" },
+        "laborCost": { "type": "number" },
+        "taxRate": { "type": "number" },
+        "status": { "type": "string", "enum": ["Paid", "Unpaid"] },
+        "issuedAt": { "type": "string" }
+      },
+      "required": ["id", "jobId", "clientId", "status", "issuedAt"]
+    },
+    "ServiceReminder": {
+      "title": "ServiceReminder",
+      "description": "Schedule of upcoming vehicle maintenance checks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "vehicleId": { "type": "string" },
+        "type": { "type": "string", "enum": ["Oil Change", "Full Service", "Tyre Rotation", "Custom"] },
+        "dueDate": { "type": "string" },
+        "notes": { "type": "string" },
+        "isDone": { "type": "boolean" }
+      },
+      "required": ["id", "vehicleId", "type", "dueDate", "isDone"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account registration and authorization parameters",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string" },
+        "garageId": { "type": "string" },
+        "displayName": { "type": "string" }
+      },
+      "required": ["role", "garageId", "displayName"]
+    }
+  },
+  "firestore": {
+    "users/{uid}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User identity and role settings mapping to a garage"
+    },
+    "garages/{garageId}": {
+      "schema": { "$ref": "#/entities/GarageSettings" },
+      "description": "Garage general configuration and metadata"
+    },
+    "garages/{garageId}/clients": {
+      "schema": { "$ref": "#/entities/Client" },
+      "description": "Clients registered with the garage"
+    },
+    "garages/{garageId}/vehicles": {
+      "schema": { "$ref": "#/entities/Vehicle" },
+      "description": "Vehicles serviced under the garage"
+    },
+    "garages/{garageId}/jobs": {
+      "schema": { "$ref": "#/entities/JobCard" },
+      "description": "Repair jobs performed in the garage workshop"
+    },
+    "garages/{garageId}/stock": {
+      "schema": { "$ref": "#/entities/Part" },
+      "description": "Warehouse and spare part stock tracking records"
+    },
+    "garages/{garageId}/invoices": {
+      "schema": { "$ref": "#/entities/Invoice" },
+      "description": "Billing and receipts raised for repair jobs"
+    },
+    "garages/{garageId}/reminders": {
+      "schema": { "$ref": "#/entities/ServiceReminder" },
+      "description": "Client vehicle proactive service schedules"
+    }
+  }
+}

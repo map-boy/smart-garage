@@ -1,0 +1,6 @@
+{
+  "name": "Garage Boss Dashboard",
+  "description": "A read-only companion dashboard for garage management, featuring real-time telemetry, revenue reports, pipeline tracking, inventory status, and live CCTV stream viewing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

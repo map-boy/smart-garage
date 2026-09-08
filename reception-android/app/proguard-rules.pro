@@ -1,0 +1,3 @@
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepclassmembers class rw.smartgarage.reception.data.** { *; }
