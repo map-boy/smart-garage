@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   web:
+    timeout-minutes: 15
     name: build ${{ matrix.app }}
     runs-on: ubuntu-latest
     strategy:
@@ -54,6 +55,7 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
   android:
+    timeout-minutes: 30
     name: build reception-android
     runs-on: ubuntu-latest
     steps:
@@ -64,15 +66,19 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - uses: android-actions/setup-android@v3
+
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Compile debug APK
         working-directory: reception-android
         # No Firebase values needed to compile: they are BuildConfig strings
         # that default to empty, so a missing secret cannot break CI.
-        run: ./gradlew --no-daemon assembleDebug
+        # --stacktrace so a failure here is diagnosable from the log alone.
+        run: ./gradlew --no-daemon --stacktrace assembleDebug
 
   electron:
+    timeout-minutes: 30
     name: package desktop installer
     # Windows minutes bill at 2x on a private repo, so the full installer is
     # only packaged where it matters: main, and on demand. Tags go through

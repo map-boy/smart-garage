@@ -20,6 +20,7 @@ permissions:
 
 jobs:
   version:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     outputs:
       name: ${{ steps.v.outputs.name }}
@@ -45,6 +46,7 @@ jobs:
           echo "Releasing $V" >> "$GITHUB_STEP_SUMMARY"
 
   desktop:
+    timeout-minutes: 40
     name: Windows installer
     needs: version
     runs-on: windows-latest
@@ -81,6 +83,7 @@ jobs:
             garage/desktop/releases/latest.yml
 
   android:
+    timeout-minutes: 40
     name: Reception APK
     needs: version
     runs-on: ubuntu-latest
@@ -91,6 +94,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+
+      - uses: android-actions/setup-android@v3
 
       - uses: gradle/actions/setup-gradle@v4
 
@@ -135,7 +140,7 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          ./gradlew --no-daemon assembleRelease \
+          ./gradlew --no-daemon --stacktrace assembleRelease \
             -PversionName=${{ needs.version.outputs.name }} \
             -PversionCode=${{ needs.version.outputs.code }}
 
@@ -155,6 +160,7 @@ jobs:
           if-no-files-found: error
 
   publish:
+    timeout-minutes: 10
     name: Publish release
     needs: [version, desktop, android]
     runs-on: ubuntu-latest

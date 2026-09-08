@@ -28,6 +28,7 @@ concurrency:
 
 jobs:
   changes:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     outputs:
       apps: ${{ steps.set.outputs.apps }}
@@ -55,6 +56,7 @@ jobs:
           fi
 
   deploy:
+    timeout-minutes: 20
     needs: changes
     if: needs.changes.outputs.apps != '[]' && needs.changes.outputs.apps != ''
     runs-on: ubuntu-latest
