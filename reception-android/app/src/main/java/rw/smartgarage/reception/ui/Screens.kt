@@ -1,6 +1,7 @@
 package rw.smartgarage.reception.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,8 +11,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DirectionsCar
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,56 +23,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import rw.smartgarage.reception.data.Arrival
 import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 private val REASONS = listOf("Service", "Repair", "Car wash", "Diagnostics", "Bodywork", "Collection", "Other")
-
-@Composable
-fun SignInScreen(state: UiState, onSignIn: (String, String) -> Unit) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    Column(
-        Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text("Garage", fontSize = 28.sp, fontWeight = FontWeight.Black, color = Ink)
-        Text("Reception", fontSize = 28.sp, fontWeight = FontWeight.Black, color = Amber)
-        Spacer(Modifier.height(6.dp))
-        Text("Log every vehicle that comes through the gate.",
-            color = Muted, fontSize = 13.sp, textAlign = TextAlign.Center)
-        Spacer(Modifier.height(28.dp))
-
-        OutlinedTextField(email, { email = it }, label = { Text("Email") },
-            singleLine = true, modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next))
-        Spacer(Modifier.height(12.dp))
-        OutlinedTextField(password, { password = it }, label = { Text("Password") },
-            singleLine = true, visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done))
-
-        state.error?.let {
-            Spacer(Modifier.height(12.dp))
-            Text(it, color = Bad, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-        }
-
-        Spacer(Modifier.height(22.dp))
-        Button(
-            onClick = { onSignIn(email, password) },
-            enabled = !state.busy,
-            shape = RoundedCornerShape(14.dp),
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-        ) { Text(if (state.busy) "Signing in..." else "Sign in", fontWeight = FontWeight.Black) }
-    }
-}
 
 @Composable
 fun CheckInScreen(state: UiState, onCheckIn: (Arrival) -> Unit, onDone: () -> Unit) {
@@ -183,35 +147,121 @@ private fun FlowRowChips(options: List<String>, selected: String, onPick: (Strin
 }
 
 @Composable
-fun ArrivalsScreen(state: UiState) {
+fun ArrivalsScreen(state: UiState, onClick: (Arrival) -> Unit) {
     if (state.arrivals.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("No vehicles logged yet today.", color = Muted, fontSize = 14.sp)
         }
         return
     }
-    val fmt = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
     LazyColumn(
         Modifier.fillMaxSize().padding(horizontal = 18.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         contentPadding = PaddingValues(vertical = 18.dp),
     ) {
         items(state.arrivals, key = { it.id }) { a ->
-            Card(colors = CardDefaults.cardColors(containerColor = Navy2), shape = RoundedCornerShape(14.dp)) {
-                Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text(a.plate, fontWeight = FontWeight.Black, fontSize = 17.sp, color = Ink)
-                        val when_ = a.arrivedAt?.toDate()?.let { fmt.format(it) }
-                            ?: if (a.pending) "sending..." else ""
-                        Text(
-                            listOfNotNull(a.make?.ifBlank { null }, a.colour?.ifBlank { null },
-                                a.reason.ifBlank { null }, when_.ifBlank { null }).joinToString("  \u00b7  "),
-                            color = Muted, fontSize = 12.sp,
-                        )
-                    }
-                    AssistChip(onClick = {}, label = { Text(a.status.label, fontSize = 10.sp) })
+            ArrivalRow(a) { onClick(a) }
+        }
+    }
+}
+
+@Composable
+fun ArchiveScreen(state: UiState, onShiftDay: (Int) -> Unit, onClick: (Arrival) -> Unit) {
+    val dayFmt = remember { SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault()) }
+    val canGoForward = remember(state.archiveDayStart) { !isTodayOrLater(state.archiveDayStart) }
+
+    Column(Modifier.fillMaxSize()) {
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            IconButton(onClick = { onShiftDay(-1) }) { Icon(Icons.Default.ChevronLeft, "Previous day") }
+            Text(dayFmt.format(Date(state.archiveDayStart)), fontWeight = FontWeight.Black, fontSize = 15.sp)
+            IconButton(onClick = { onShiftDay(1) }, enabled = canGoForward) { Icon(Icons.Default.ChevronRight, "Next day") }
+        }
+        when {
+            state.archiveLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            state.archiveArrivals.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("No vehicles logged that day.", color = Muted, fontSize = 14.sp)
+            }
+            else -> LazyColumn(
+                Modifier.fillMaxSize().padding(horizontal = 18.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                contentPadding = PaddingValues(bottom = 18.dp),
+            ) {
+                items(state.archiveArrivals, key = { it.id }) { a ->
+                    ArrivalRow(a) { onClick(a) }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun ArrivalRow(a: Arrival, onClick: () -> Unit) {
+    val fmt = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
+    Card(
+        colors = CardDefaults.cardColors(containerColor = Navy2),
+        shape = RoundedCornerShape(14.dp),
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+    ) {
+        Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(a.plate, fontWeight = FontWeight.Black, fontSize = 17.sp, color = Ink)
+                val when_ = a.arrivedAt?.toDate()?.let { fmt.format(it) }
+                    ?: if (a.pending) "sending..." else ""
+                Text(
+                    listOfNotNull(a.make?.ifBlank { null }, a.colour?.ifBlank { null },
+                        a.reason.ifBlank { null }, when_.ifBlank { null }).joinToString("  \u00b7  "),
+                    color = Muted, fontSize = 12.sp,
+                )
+            }
+            AssistChip(onClick = {}, label = { Text(a.status.label, fontSize = 10.sp) })
+        }
+    }
+}
+
+@Composable
+fun ArrivalDetailDialog(arrival: Arrival, onDismiss: () -> Unit) {
+    val fmt = remember { SimpleDateFormat("EEE, d MMM yyyy 'at' HH:mm", Locale.getDefault()) }
+    Dialog(onDismissRequest = onDismiss) {
+        Card(colors = CardDefaults.cardColors(containerColor = Navy2), shape = RoundedCornerShape(18.dp)) {
+            Column(Modifier.padding(20.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(arrival.plate, fontWeight = FontWeight.Black, fontSize = 22.sp, color = Ink,
+                        modifier = Modifier.weight(1f))
+                    IconButton(onClick = onDismiss) { Icon(Icons.Default.Close, "Close") }
+                }
+                AssistChip(onClick = {}, label = { Text(arrival.status.label, fontSize = 11.sp) })
+                Spacer(Modifier.height(14.dp))
+                DetailRow("Make / model", arrival.make)
+                DetailRow("Colour", arrival.colour)
+                DetailRow("Reason", arrival.reason.ifBlank { null })
+                DetailRow("Driver", arrival.driverName)
+                DetailRow("Phone", arrival.driverPhone)
+                DetailRow("Notes", arrival.notes)
+                DetailRow("Arrived", arrival.arrivedAt?.toDate()?.let { fmt.format(it) })
+                DetailRow("Logged by", arrival.loggedByName)
+            }
+        }
+    }
+}
+
+@Composable
+private fun DetailRow(label: String, value: String?) {
+    if (value.isNullOrBlank()) return
+    Column(Modifier.padding(bottom = 10.dp)) {
+        Text(label.uppercase(), color = Muted, fontSize = 10.sp, fontWeight = FontWeight.Black)
+        Text(value, color = Ink, fontSize = 14.sp)
+    }
+}
+
+private fun isTodayOrLater(dayStart: Long): Boolean {
+    val today = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
+    return dayStart >= today
 }

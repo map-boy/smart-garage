@@ -15,9 +15,12 @@ import { RemindersPage } from './pages/RemindersPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { CameraPage } from './pages/CameraPage';
+import { useClientNotifications } from './hooks/useClientNotifications';
+import { NotificationToasts } from './components/ui/NotificationToasts';
 
 function AppRoutes() {
   const { loading } = useAuth();
+  const { notifications, unreadCount, markAllRead, dismiss } = useClientNotifications();
   if (loading) {
     return (
       <div className="h-screen w-screen bg-[#050505] flex items-center justify-center">
@@ -29,7 +32,13 @@ function AppRoutes() {
     );
   }
   return (
-    <Shell>
+    <Shell
+      notifications={notifications}
+      unreadCount={unreadCount}
+      onOpenNotifications={markAllRead}
+      onDismissNotification={dismiss}
+    >
+      <NotificationToasts notifications={notifications} />
       <OfflineBanner />
       <Routes>
         <Route path="/" element={<DashboardPage />} />

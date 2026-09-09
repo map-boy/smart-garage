@@ -1,4 +1,4 @@
-import tailwindcss from '@tailwindcss/vite';
+﻿import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig, loadEnv} from 'vite';
@@ -9,6 +9,9 @@ export default defineConfig(({mode}) => {
     build: {
       chunkSizeWarningLimit: 2000,
     },
+    optimizeDeps: {
+      entries: ['index.html', 'src/**/*.{ts,tsx}'],
+    },
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
@@ -17,6 +20,7 @@ export default defineConfig(({mode}) => {
     },
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
+      fs: { deny: ['desktop/releases'] },
     },
   };
 });
