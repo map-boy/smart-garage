@@ -13,6 +13,26 @@ before the receptionist has put the phone down.
 | `website/` | The public marketing site, editable by the admin without touching code. | Vercel |
 | `shared/` | Types both the web surfaces agree on. | imported directly |
 
+## Quick links
+
+Everything live, in one place.
+
+| What | Link |
+| --- | --- |
+| Marketing site (public) | https://smart-garage-xi.vercel.app |
+| Boss dashboard | [Vercel project `garage-website`](https://vercel.com/map-boys-projects/garage-website) |
+| Desktop renderer on the web | [Vercel project `garage-management`](https://vercel.com/map-boys-projects/garage-management) |
+| Desktop installer + APK downloads | [Releases](https://github.com/map-boy/smart-garage/releases) |
+| Build and release runs | [Actions](https://github.com/map-boy/smart-garage/actions) |
+| Repository secrets | [Settings → Secrets → Actions](https://github.com/map-boy/smart-garage/settings/secrets/actions) |
+
+The two Vercel entries link to the project rather than a fixed address,
+because only the marketing site has a production URL pinned so far. Open the
+project and its current domain is at the top; paste it here once it settles.
+
+Every pull request also gets its own preview URL for each site, posted by the
+Vercel bot as a comment on the PR.
+
 ## Releasing the desktop app and the APK
 
 Push a tag. That is the whole procedure.
