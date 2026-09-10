@@ -7,8 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Checklist
+import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -60,14 +61,20 @@ class MainActivity : ComponentActivity() {
                                 NavigationBarItem(tab == 1, { tab = 1 },
                                     icon = { Icon(Icons.Default.Checklist, null) },
                                     label = { Text("Today") })
+                                NavigationBarItem(tab == 2, { tab = 2 },
+                                    icon = { Icon(Icons.Default.History, null) },
+                                    label = { Text("Archive") })
                             }
                         },
                     ) { pad ->
                         Box(Modifier.padding(pad)) {
-                            if (tab == 0) {
-                                CheckInScreen(state, vm::checkIn) { vm.clearConfirmation(); tab = 1 }
-                            } else {
-                                ArrivalsScreen(state)
+                            when (tab) {
+                                0 -> CheckInScreen(state, vm::checkIn) { vm.clearConfirmation(); tab = 1 }
+                                1 -> ArrivalsScreen(state, onClick = vm::selectArrival)
+                                else -> ArchiveScreen(state, onShiftDay = vm::shiftArchiveDay, onClick = vm::selectArrival)
+                            }
+                            state.selectedArrival?.let { a ->
+                                ArrivalDetailDialog(a) { vm.selectArrival(null) }
                             }
                         }
                     }

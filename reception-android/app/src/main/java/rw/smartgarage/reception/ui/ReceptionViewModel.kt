@@ -1,4 +1,4 @@
-package rw.smartgarage.reception.ui
+﻿package rw.smartgarage.reception.ui
 
 import android.app.Application
 import android.app.NotificationChannel
@@ -16,6 +16,8 @@ import rw.smartgarage.reception.data.Arrival
 import rw.smartgarage.reception.data.Profile
 import rw.smartgarage.reception.data.ReceptionRepository
 import rw.smartgarage.reception.data.normalisePlate
+import java.util.Calendar
+import java.util.Date
 
 data class UiState(
     val loading: Boolean = true,
@@ -24,9 +26,13 @@ data class UiState(
     val error: String? = null,
     val busy: Boolean = false,
     val lastCheckedIn: String? = null,
+    val selectedArrival: Arrival? = null,
+    val archiveDayStart: Long = startOfDay(System.currentTimeMillis()),
+    val archiveArrivals: List<Arrival> = emptyList(),
+    val archiveLoading: Boolean = false,
 )
 
-class ReceptionViewModel(
+class ReceptionViewModel @JvmOverloads constructor(
     application: Application,
     private val repo: ReceptionRepository = ReceptionRepository(),
 ) : AndroidViewModel(application) {
@@ -42,29 +48,20 @@ class ReceptionViewModel(
     }
 
     private fun restore() = viewModelScope.launch {
-        var uid = repo.currentUid()
-        if (uid == null) {
-            try {
-                repo.signIn(AUTO_EMAIL, AUTO_PASSWORD)
-                uid = repo.currentUid()
-            } catch (t: Throwable) {
-                _state.value = _state.value.copy(loading = false, error = friendly(t))
-                return@launch
-            }
-        }
-        if (uid == null) { _state.value = _state.value.copy(loading = false); return@launch }
-        val p = runCatching { repo.loadProfile(uid) }.getOrNull()
-        if (p == null) {
-            _state.value = _state.value.copy(loading = false, error = "No profile set up for this account yet.")
-            return@launch
-        }
-        _state.value = _state.value.copy(loading = false, profile = p)
-        watch(p.garageId)
+        // No login for reception staff: this app always writes to one fixed garage.
+        _state.value = _state.value.copy(loading = false, profile = RECEPTION_PROFILE)
+        watch(GARAGE_ID)
+        loadArchiveDay(_state.value.archiveDayStart)
     }
 
     companion object {
-        private const val AUTO_EMAIL = "smartgarage@gmail.com"
-        private const val AUTO_PASSWORD = "smartgarage"
+        private const val GARAGE_ID = "garage-aimable-001"
+        private val RECEPTION_PROFILE = Profile(
+            uid = "reception",
+            role = "reception",
+            garageId = GARAGE_ID,
+            displayName = "Reception",
+        )
         private const val CHANNEL_ID = "garage_checkins"
     }
 
@@ -82,7 +79,13 @@ class ReceptionViewModel(
         }
         _state.value = _state.value.copy(busy = true, error = null)
         val link = repo.findVehicle(p.garageId, arrival.plate)
-        repo.checkIn(p.garageId, p, arrival.copy(vehicleId = link?.first, clientId = link?.second))
+        val (vehicleId, clientId, isNewClient) = if (link != null) {
+            Triple(link.first, link.second, false)
+        } else {
+            val (newClientId, newVehicleId) = repo.createClientAndVehicle(p.garageId, arrival)
+            Triple(newVehicleId, newClientId, true)
+        }
+        repo.checkIn(p.garageId, p, arrival.copy(vehicleId = vehicleId, clientId = clientId), isNewClient)
         val plate = arrival.plate.uppercase().trim()
         _state.value = _state.value.copy(busy = false, lastCheckedIn = plate)
         notifyCheckIn(plate, arrival.driverName)
@@ -109,12 +112,37 @@ class ReceptionViewModel(
     fun clearConfirmation() { _state.value = _state.value.copy(lastCheckedIn = null) }
     fun clearError() { _state.value = _state.value.copy(error = null) }
 
-    private fun friendly(t: Throwable): String {
-        val m = t.message.orEmpty()
-        return when {
-            m.contains("network", true) -> "No internet connection. Connect once, then the app works offline."
-            m.contains("password", true) || m.contains("credential", true) -> "Sign-in failed. Contact the admin."
-            else -> m.ifBlank { "Could not connect." }
+    fun selectArrival(arrival: Arrival?) { _state.value = _state.value.copy(selectedArrival = arrival) }
+
+    /** Loads every arrival for the calendar day that [dayStart] falls in. */
+    fun loadArchiveDay(dayStart: Long) {
+        val p = _state.value.profile ?: return
+        _state.value = _state.value.copy(archiveDayStart = dayStart, archiveLoading = true, archiveArrivals = emptyList())
+        viewModelScope.launch {
+            val list = runCatching {
+                repo.arrivalsForDay(p.garageId, Date(dayStart), Date(endOfDay(dayStart)))
+            }.getOrElse { emptyList() }
+            _state.value = _state.value.copy(archiveArrivals = list, archiveLoading = false)
         }
     }
+
+    fun shiftArchiveDay(deltaDays: Int) {
+        val cal = Calendar.getInstance().apply {
+            timeInMillis = _state.value.archiveDayStart
+            add(Calendar.DAY_OF_MONTH, deltaDays)
+        }
+        val newStart = startOfDay(cal.timeInMillis)
+        if (newStart > startOfDay(System.currentTimeMillis())) return // no browsing into the future
+        loadArchiveDay(newStart)
+    }
 }
+
+private fun startOfDay(millis: Long): Long = Calendar.getInstance().apply {
+    timeInMillis = millis
+    set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+}.timeInMillis
+
+private fun endOfDay(dayStart: Long): Long = Calendar.getInstance().apply {
+    timeInMillis = dayStart
+    add(Calendar.DAY_OF_MONTH, 1)
+}.timeInMillis

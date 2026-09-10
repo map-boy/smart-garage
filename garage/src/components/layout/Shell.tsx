@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -17,6 +17,7 @@ import {
 import { motion } from 'motion/react';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../lib/utils';
+import type { ClientNotification } from '../../hooks/useClientNotifications';
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/' },
@@ -31,11 +32,26 @@ const menuItems = [
   { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
 ];
 
-export default function Shell({ children }: { children: React.ReactNode }) {
+interface ShellProps {
+  children: React.ReactNode;
+  notifications?: ClientNotification[];
+  unreadCount?: number;
+  onOpenNotifications?: () => void;
+  onDismissNotification?: (id: string) => void;
+}
+
+export default function Shell({
+  children,
+  notifications = [],
+  unreadCount = 0,
+  onOpenNotifications,
+  onDismissNotification,
+}: ShellProps) {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const [notifOpen, setNotifOpen] = React.useState(false);
 
   const isActive = (path: string) =>
     path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
@@ -119,6 +135,55 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-2 text-xl font-bold text-slate-900">
               <span>Main Console</span>
             </div>
+          </div>
+
+          <div className="relative">
+            <button
+              onClick={() => {
+                setNotifOpen((o) => !o);
+                if (!notifOpen) onOpenNotifications?.();
+              }}
+              className="relative w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-500 hover:bg-orange-50 transition-colors"
+            >
+              <Bell className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+
+            {notifOpen && (
+              <>
+                <div className="fixed inset-0 z-20" onClick={() => setNotifOpen(false)} />
+                <div className="absolute right-0 top-12 w-80 max-h-96 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30">
+                  <div className="px-4 py-3 border-b border-slate-100 font-semibold text-sm text-slate-900">
+                    Notifications
+                  </div>
+                  {notifications.length === 0 ? (
+                    <p className="px-4 py-6 text-center text-sm text-slate-400">No notifications yet.</p>
+                  ) : (
+                    notifications.map((n) => (
+                      <div
+                        key={n.id}
+                        className="flex items-start gap-3 px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-slate-50"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-slate-900 truncate">{n.title}</p>
+                          <p className="text-xs text-slate-500 truncate">{n.body}</p>
+                        </div>
+                        <button
+                          onClick={() => onDismissNotification?.(n.id)}
+                          className="text-slate-300 hover:text-slate-500"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </header>
 
