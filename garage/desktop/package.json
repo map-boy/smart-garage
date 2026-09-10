@@ -7,9 +7,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "concurrently \"npm run vite\" \"wait-on http://localhost:3000 && electron .\"",
-    "vite": "cd ../garage && npm run dev",
-    "build": "cd ../garage && npm run build && electron-builder",
-    "build:win": "cd ../garage && npm run build && cd ../garage-desktop && electron-builder --win",
+    "vite": "npm --prefix ../ run dev",
+    "build": "npm --prefix ../ run build && electron-builder --publish=never",
+    "build:win": "npm --prefix ../ run build && electron-builder --win --publish=never",
     "dist": "electron-builder --win --publish=never"
   },
   "build": {
@@ -48,8 +48,9 @@
     "publish": {
       "provider": "github",
       "owner": "map-boy",
-      "repo": "garage_management"
-    }
+      "repo": "smart-garage"
+    },
+    "artifactName": "${productName}-Setup-${version}.${ext}"
   },
   "devDependencies": {
     "concurrently": "^8.0.0",
@@ -63,4 +64,3 @@
     "electron-updater": "^6.0.0"
   }
 }
-

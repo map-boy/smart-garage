@@ -31,8 +31,10 @@ android {
         applicationId = "rw.smartgarage.reception"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        // CI stamps the tag onto the build: ./gradlew assembleRelease \
+        //   -PversionCode=12 -PversionName=1.2.0
+        versionCode = (findProperty("versionCode") as String?)?.toInt() ?: 1
+        versionName = (findProperty("versionName") as String?) ?: "1.0"
 
         buildConfigField("String", "FB_PROJECT_ID", "\"${prop("firebase.projectId")}\"")
         buildConfigField("String", "FB_APP_ID", "\"${prop("firebase.appId")}\"")
@@ -41,8 +43,27 @@ android {
         buildConfigField("String", "FB_STORAGE_BUCKET", "\"${prop("firebase.storageBucket")}\"")
     }
 
+    /*
+     * Release signing comes from the environment so the keystore never enters
+     * the repository. With no keystore configured the release build falls back
+     * to the debug key: the APK is still installable for testing, it simply
+     * cannot be published to Play or upgraded over a real release.
+     */
+    val keystorePath = System.getenv("ANDROID_KEYSTORE_PATH")
+    signingConfigs {
+        if (!keystorePath.isNullOrBlank() && file(keystorePath).exists()) {
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }

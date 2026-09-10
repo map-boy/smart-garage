@@ -1,0 +1,182 @@
+name: Release
+
+# One tag produces one GitHub release carrying both installables:
+#   git tag v1.2.0 && git push origin v1.2.0
+#
+# The desktop installer and the APK are built in parallel and published by a
+# single final job, so the release appears once, complete, rather than being
+# created twice by two workflows racing each other.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g. 1.2.0). Creates tag v<version>.'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.v.outputs.name }}
+      tag: ${{ steps.v.outputs.tag }}
+      code: ${{ steps.v.outputs.code }}
+    steps:
+      - id: v
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            V="${{ inputs.version }}"
+          else
+            V="${GITHUB_REF_NAME#v}"
+          fi
+          # Android needs a monotonically increasing integer: 1.2.0 -> 10200,
+          # so every later tag outranks every earlier one. A phone refuses to
+          # install an APK whose versionCode is lower than the one installed.
+          IFS=. read -r MA MI PA <<< "${V%%-*}"
+          {
+            echo "name=$V"
+            echo "tag=v$V"
+            echo "code=$(( ${MA:-0} * 10000 + ${MI:-0} * 100 + ${PA:-0} ))"
+          } >> "$GITHUB_OUTPUT"
+          echo "Releasing $V" >> "$GITHUB_STEP_SUMMARY"
+
+  desktop:
+    timeout-minutes: 40
+    name: Windows installer
+    needs: version
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+
+      - name: Build renderer
+        working-directory: garage
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+
+      - name: Package NSIS installer
+        working-directory: garage/desktop
+        run: |
+          npm ci --no-audit --no-fund
+          npx electron-builder --win --publish=never -c.extraMetadata.version=${{ needs.version.outputs.name }}
+
+      - name: Show output
+        shell: bash
+        run: ls -lh garage/desktop/releases
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop
+          if-no-files-found: error
+          path: |
+            garage/desktop/releases/*.exe
+            garage/desktop/releases/*.exe.blockmap
+            garage/desktop/releases/latest.yml
+
+  android:
+    timeout-minutes: 40
+    name: Reception APK
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v5
+
+      - name: Write Firebase config
+        working-directory: reception-android
+        env:
+          FB_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FB_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          FB_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FB_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          FB_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+        # local.properties is gitignored by design: the app reads its Firebase
+        # project from here rather than from a committed google-services.json.
+        run: |
+          {
+            echo "firebase.projectId=$FB_PROJECT_ID"
+            echo "firebase.appId=$FB_APP_ID"
+            echo "firebase.apiKey=$FB_API_KEY"
+            echo "firebase.messagingSenderId=$FB_SENDER_ID"
+            echo "firebase.storageBucket=$FB_STORAGE_BUCKET"
+          } > local.properties
+          if [ -z "$FB_PROJECT_ID" ]; then
+            echo "::warning::No FIREBASE_* secrets set - this APK builds but cannot reach Firestore."
+          fi
+
+      - name: Decode signing keystore
+        id: keystore
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        if: env.KEYSTORE != ''
+        run: |
+          echo "$KEYSTORE" | base64 -d > "$RUNNER_TEMP/release.jks"
+          echo "path=$RUNNER_TEMP/release.jks" >> "$GITHUB_OUTPUT"
+
+      - name: Build release APK
+        working-directory: reception-android
+        env:
+          # Empty when no keystore secret exists; the Gradle config then falls
+          # back to the debug key so the APK is still installable for testing.
+          ANDROID_KEYSTORE_PATH: ${{ steps.keystore.outputs.path }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          ./gradlew --no-daemon --stacktrace assembleRelease \
+            -PversionName=${{ needs.version.outputs.name }} \
+            -PversionCode=${{ needs.version.outputs.code }}
+
+      - name: Name the APK after the release
+        run: |
+          SRC=$(find reception-android/app/build/outputs/apk/release -name '*.apk' | head -1)
+          cp "$SRC" "smart-garage-reception-${{ needs.version.outputs.name }}.apk"
+          ls -lh smart-garage-reception-*.apk
+          if [ -z "${{ steps.keystore.outputs.path }}" ]; then
+            echo "::warning::Signed with the debug key. Installable, but a real release cannot upgrade over it."
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: smart-garage-reception-*.apk
+          if-no-files-found: error
+
+  publish:
+    timeout-minutes: 10
+    name: Publish release
+    needs: [version, desktop, android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - run: find artifacts -type f -exec ls -lh {} +
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.version.outputs.tag }}
+          name: Smart Garage ${{ needs.version.outputs.name }}
+          generate_release_notes: true
+          files: artifacts/**/*
+          body: |
+            **Admin desktop (Windows)** — download the `.exe`, run it, install.
+            **Reception (Android)** — download the `.apk` onto the phone and open it.
+
+            The websites deploy themselves from `main`; nothing to download here.
