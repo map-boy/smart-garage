@@ -31,15 +31,36 @@ You can also run it by hand from the **Actions** tab (*Release* → *Run
 workflow*) and type the version, which is useful for a rebuild without a new
 tag.
 
-## Deploying the three websites
+## Deploying the websites
 
-Merging to `main` deploys them. Only the app whose files changed is rebuilt, so
-a copy tweak on the marketing site does not redeploy the dashboard. Every pull
-request gets its own preview URL, printed in the run summary.
+Vercel's own GitHub integration handles this: it is connected to this
+repository and builds on every push, with a preview URL on each pull request.
+There is no deploy workflow in `.github/workflows` — adding one would mean two
+systems deploying the same folder on the same push.
 
 Each site is a separate Vercel project pointed at this repository with its
-**Root Directory** set to that folder (`website`, `reception`,
-`garage-boss-dashboard`).
+**Root Directory** set to that folder. Currently connected:
+
+| Vercel project | Root Directory | What it serves |
+| --- | --- | --- |
+| `garage-website` | `garage-boss-dashboard` | the owner's admin dashboard for the desktop app |
+| `garage-management` | `garage` | the desktop app's renderer, served on the web |
+
+The project names predate the folder layout; `garage-website` is the admin
+dashboard, not the marketing site. `website/` and `reception/` have no Vercel
+project yet — create one for each when they are ready to go live, with Root
+Directory set accordingly.
+
+Each folder carries a `vercel.json` holding only what the dashboard cannot
+express: the single-page rewrite that keeps deep links working, long cache
+headers for fingerprinted assets, and (for `reception`) a no-cache header on
+the service worker so a phone cannot pin itself to last week's build. Build and
+install commands are deliberately **not** set there, so the Vercel project's own
+settings stay in charge.
+
+Firebase values (`VITE_FIREBASE_*`) belong in each Vercel project's
+Environment Variables. They are compiled into the public bundle either way, so
+`firestore.rules` is what actually protects the data.
 
 ## Secrets to set
 
@@ -47,13 +68,11 @@ Each site is a separate Vercel project pointed at this repository with its
 magic — each one is named where it is used, and a missing one produces a
 warning in the run rather than a mysterious failure.
 
+Websites need nothing here — Vercel deploys them through its own GitHub
+connection, and their environment variables live in Vercel.
+
 | Secret | Needed for |
 | --- | --- |
-| `VERCEL_TOKEN` | all three site deploys |
-| `VERCEL_ORG_ID` | all three site deploys |
-| `VERCEL_PROJECT_ID_WEBSITE` | marketing site |
-| `VERCEL_PROJECT_ID_RECEPTION` | reception PWA |
-| `VERCEL_PROJECT_ID_BOSS` | boss dashboard |
 | `FIREBASE_PROJECT_ID` | Android build |
 | `FIREBASE_ANDROID_APP_ID` | Android build |
 | `FIREBASE_API_KEY` | Android build |
@@ -63,15 +82,6 @@ warning in the run rather than a mysterious failure.
 | `ANDROID_KEYSTORE_PASSWORD` | signing the APK properly |
 | `ANDROID_KEY_ALIAS` | signing the APK properly |
 | `ANDROID_KEY_PASSWORD` | signing the APK properly |
-
-`VERCEL_ORG_ID` and each `VERCEL_PROJECT_ID_*` are in that project's
-`.vercel/project.json` after running `vercel link`, or under Vercel *Project
-Settings → General*.
-
-The `VITE_FIREBASE_*` values the three sites need are **not** GitHub secrets —
-set them in each Vercel project's *Environment Variables*. They end up in the
-public JavaScript bundle either way; what protects the data is `firestore.rules`,
-not keeping those values quiet.
 
 ### Signing the APK
 
@@ -103,8 +113,9 @@ Studio.
 ## What CI checks
 
 Every push builds and typechecks all four web apps and compiles the Android
-app. The Windows installer is packaged on `main` and on demand only, because
-Windows runner minutes bill at double rate.
+app, so a commit that breaks one is visible before Vercel tries to deploy it.
+The Windows installer is packaged on `main` and on demand only, because Windows
+runner minutes bill at double rate.
 
 ## Known loose ends
 
