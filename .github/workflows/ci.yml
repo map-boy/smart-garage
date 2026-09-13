@@ -72,12 +72,17 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v5
 
-      - name: Compile debug APK
+      - name: Build release APK
         working-directory: ${{ matrix.app }}
-        # No Firebase values needed to compile: they are BuildConfig strings
-        # that default to empty, so a missing secret cannot break CI.
-        # --stacktrace so a failure here is diagnosable from the log alone.
-        run: ./gradlew --no-daemon --stacktrace assembleDebug
+        # assembleRelease, not assembleDebug, because the release build is what
+        # actually ships. Debug skips lintVitalRelease and R8 entirely, so a
+        # fatal lint error could reach a real release without CI ever seeing it
+        # - which is exactly how the first release of this repo failed.
+        #
+        # No Firebase values or keystore needed: the BuildConfig strings default
+        # to empty and release signing falls back to the debug key, so a missing
+        # secret cannot break CI.
+        run: ./gradlew --no-daemon --stacktrace assembleRelease
 
   electron:
     timeout-minutes: 30

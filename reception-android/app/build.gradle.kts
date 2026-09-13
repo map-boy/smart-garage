@@ -82,6 +82,17 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
     implementation("androidx.activity:activity-compose:1.9.2")
+    /*
+     * Not used directly - this app is pure Compose on a ComponentActivity.
+     *
+     * registerForActivityResult (for the notification permission) makes lint
+     * refuse a release build unless a Fragment of at least 1.3.0 is on the
+     * classpath, because older FragmentActivity versions never called
+     * super.onRequestPermissionsResult and used invalid request codes. The
+     * check cannot see that no FragmentActivity is involved here, and the
+     * honest fix is to satisfy it rather than silence it.
+     */
+    implementation("androidx.fragment:fragment-ktx:1.8.4")
 
     implementation(platform("androidx.compose:compose-bom:2024.09.03"))
     implementation("androidx.compose.ui:ui")
