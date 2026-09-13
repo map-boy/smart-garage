@@ -65,9 +65,15 @@ jobs:
 
       - name: Package NSIS installer
         working-directory: garage/desktop
+        # The version is written into package.json rather than passed as
+        # -c.extraMetadata.version. electron-builder's parser reads `-c` as the
+        # path to a config file, so the rest of that flag became a filename it
+        # then failed to open. Writing the field leaves the build command
+        # identical to the one CI already exercises on every push to main.
         run: |
+          node -e "const f='package.json',p=require('./'+f);p.version=process.argv[1];require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\n')" ${{ needs.version.outputs.name }}
           npm ci --no-audit --no-fund
-          npx electron-builder --win --publish=never -c.extraMetadata.version=${{ needs.version.outputs.name }}
+          npx electron-builder --win --publish=never
 
       - name: Show output
         shell: bash
