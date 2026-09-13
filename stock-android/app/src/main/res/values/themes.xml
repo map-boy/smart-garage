@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.GarageStock" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">#111827</item>
+        <item name="android:navigationBarColor">#1B2338</item>
+        <item name="android:windowBackground">#111827</item>
+    </style>
+</resources>
