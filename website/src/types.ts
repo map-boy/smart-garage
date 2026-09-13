@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Types shared by every app in this workspace.
  *
  * The reception phone app writes arrivals, the admin desktop reads and acts on
@@ -55,6 +55,24 @@ export const ARRIVAL_STATUS_LABEL: Record<ArrivalStatus, string> = {
   closed: 'Closed',
 };
 
+/**
+ * One thing the garage sells.
+ *
+ * fromPrice is deliberately not optional. A price that can be left out is a
+ * price that will be, and "call for a quote" is the single most common reason
+ * a visitor closes a garage site without contacting anyone.
+ */
+export interface ServiceItem {
+  title: string;
+  body: string;
+  imageUrl: string;
+  icon: string;
+  fromPrice: number;
+  currency: string;
+  /** The detail shown when someone taps through for more. */
+  detail?: string;
+}
+
 /** Website content the admin edits from a panel, never from code. */
 export interface SiteContent {
   brand: { name: string; tagline: string; logoUrl?: string };
@@ -62,8 +80,41 @@ export interface SiteContent {
   hero: { eyebrow: string; titleLead: string; titleAccent: string; titleTail: string; titleAccent2: string; body: string; ctaLabel: string; backgroundUrl: string; backgroundUrls?: string[] };
   highlights: { title: string; body: string }[];
   about: { eyebrow: string; title: string; body: string; satisfactionPct: number; badges: string[]; phone: string; imageUrl: string };
-  services: { eyebrow: string; titleLead: string; titleAccent: string; intro: string; items: { title: string; body: string; imageUrl: string; icon: string }[] };
+  services: { eyebrow: string; titleLead: string; titleAccent: string; intro: string; items: ServiceItem[] };
   contact: { headline: string; phone: string; email: string; address: string };
+
+  /**
+   * Everything below turns the page from a brochure into something a customer
+   * can act on. A visitor who has decided to come in should never have to hunt
+   * for a number, a price, or an opening time.
+   */
+
+  /** Digits only in the href; the label is what a human reads. */
+  whatsapp: string;
+  mapUrl: string;
+  /** Written the same way everywhere - search engines match on exact strings. */
+  serviceArea: string;
+  hours: { days: string; open: string }[];
+  faq: { q: string; a: string }[];
+  requestPanel: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    successTitle: string;
+    successBody: string;
+  };
+  seo: { title: string; description: string };
+
   updatedAt?: string;
+}
+
+/** What the visitor filled in on the request panel. */
+export interface EnquiryInput {
+  name: string;
+  phone: string;
+  email?: string;
+  vehicle?: string;
+  service?: string;
+  message: string;
 }
 

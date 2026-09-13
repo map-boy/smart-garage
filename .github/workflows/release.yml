@@ -84,9 +84,19 @@ jobs:
 
   android:
     timeout-minutes: 40
-    name: Reception APK
+    name: ${{ matrix.label }} APK
     needs: version
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: reception-android
+            label: Reception
+            artifact: smart-garage-reception
+          - app: stock-android
+            label: Stock
+            artifact: smart-garage-stock
     steps:
       - uses: actions/checkout@v5
 
@@ -98,7 +108,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
 
       - name: Write Firebase config
-        working-directory: reception-android
+        working-directory: ${{ matrix.app }}
         env:
           FB_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           FB_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
@@ -129,7 +139,7 @@ jobs:
           echo "path=$RUNNER_TEMP/release.jks" >> "$GITHUB_OUTPUT"
 
       - name: Build release APK
-        working-directory: reception-android
+        working-directory: ${{ matrix.app }}
         env:
           # Empty when no keystore secret exists; the Gradle config then falls
           # back to the debug key so the APK is still installable for testing.
@@ -144,17 +154,19 @@ jobs:
 
       - name: Name the APK after the release
         run: |
-          SRC=$(find reception-android/app/build/outputs/apk/release -name '*.apk' | head -1)
-          cp "$SRC" "smart-garage-reception-${{ needs.version.outputs.name }}.apk"
-          ls -lh smart-garage-reception-*.apk
+          SRC=$(find ${{ matrix.app }}/app/build/outputs/apk/release -name '*.apk' | head -1)
+          cp "$SRC" "${{ matrix.artifact }}-${{ needs.version.outputs.name }}.apk"
+          ls -lh ${{ matrix.artifact }}-*.apk
           if [ -z "${{ steps.keystore.outputs.path }}" ]; then
             echo "::warning::Signed with the debug key. Installable, but a real release cannot upgrade over it."
           fi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: android
-          path: smart-garage-reception-*.apk
+          # One artifact per app. download-artifact merges them back into the
+          # publish job's folder, so both APKs reach the same release.
+          name: android-${{ matrix.app }}
+          path: ${{ matrix.artifact }}-*.apk
           if-no-files-found: error
 
   publish:
@@ -177,6 +189,10 @@ jobs:
           files: artifacts/**/*
           body: |
             **Admin desktop (Windows)** — download the `.exe`, run it, install.
-            **Reception (Android)** — download the `.apk` onto the phone and open it.
+            **Reception (Android)** — `smart-garage-reception-*.apk` on the gate phone.
+            **Stock (Android)** — `smart-garage-stock-*.apk` on the store phone.
+
+            Both phones pair with a one-time code from the desktop app; there is
+            no password to hand out.
 
             The websites deploy themselves from `main`; nothing to download here.

@@ -1,68 +1,171 @@
 /**
- * Types shared by every app in this workspace.
+ * Types every surface agrees on.
  *
- * The reception phone app writes arrivals, the admin desktop reads and acts on
- * them, and the website only reads published content. Keeping the shapes in
- * one place is what stops the three from drifting apart - a field renamed in
- * one app and not the others is the classic way a check-in silently stops
- * showing up on the admin screen.
+ * The desktop app, the admin dashboard, the website and both phone apps all
+ * read and write the same Firestore documents. Keeping the shapes here means a
+ * field renamed in one place is a compile error in the others rather than a
+ * silently empty column on the boss's screen.
  */
 
-/** Where a vehicle is in its visit. Set by reception, advanced by admin. */
-export type ArrivalStatus =
-  | 'waiting'      // logged at the gate, nobody has looked at it yet
-  | 'acknowledged' // admin has seen the notification
-  | 'in_service'   // a job card exists for it
-  | 'closed';      // left the premises
+// ---------------------------------------------------------------- stock ----
 
-export interface Arrival {
+export interface Part {
   id: string;
-  garageId: string;
-
-  /** What reception can see from the gate, without a system lookup. */
-  plate: string;
-  make?: string;
-  model?: string;
-  colour?: string;
-
-  driverName?: string;
-  driverPhone?: string;
-  reason: string;
-
-  /** Set when the plate matches a vehicle already on file. */
-  vehicleId?: string;
-  clientId?: string;
-
-  status: ArrivalStatus;
-  /** Server timestamp. Never trust a phone's clock for ordering. */
-  arrivedAt: unknown;
-  acknowledgedAt?: unknown;
-  acknowledgedBy?: string;
-
-  /** Who logged it, for accountability at the gate. */
-  loggedBy: string;
-  loggedByName?: string;
-
-  /** Set once a job card is opened from this arrival. */
-  jobId?: string;
-  notes?: string;
+  name: string;
+  partNumber: string;
+  /**
+   * Never written by reading this value and adding to it. Every change goes
+   * through an atomic increment, so two people drawing the same part at the
+   * same time - or while offline - both land instead of one overwriting the
+   * other. It may go negative: that means more was taken than the books knew
+   * about, which is a recount, not an error to hide.
+   */
+  quantity: number;
+  reorderLevel: number;
+  unitCost: number;
+  supplier: string;
+  updatedAt?: string;
 }
+
+export type MovementReason =
+  | 'issued_to_vehicle'
+  | 'received'
+  | 'count_adjustment'
+  | 'returned'
+  | 'written_off';
+
+export const MOVEMENT_REASON_LABEL: Record<MovementReason, string> = {
+  issued_to_vehicle: 'Issued to vehicle',
+  received: 'Received into store',
+  count_adjustment: 'Stock count adjustment',
+  returned: 'Returned to store',
+  written_off: 'Written off',
+};
+
+/**
+ * One line in the stock ledger. Append-only: a movement is what happened, and
+ * what happened does not change. Correcting a mistake means another movement,
+ * so the trail stays honest.
+ */
+export interface StockMovement {
+  id: string;
+  partId: string;
+  /** Copied, not looked up. A part renamed later must not rewrite history. */
+  partName: string;
+  partNumber: string;
+  /** Negative leaves the store, positive comes in. */
+  delta: number;
+  /** Stock after this movement, as the writing device understood it. */
+  balanceAfter: number;
+  reason: MovementReason;
+  plate?: string;
+  vehicleId?: string;
+  arrivalId?: string;
+  jobId?: string;
+  note?: string;
+  byName: string;
+  byRole: DeviceRole;
+  at?: unknown;
+  atLocal: string;
+}
+
+// ------------------------------------------------------------- arrivals ----
+
+export type ArrivalStatus = 'waiting' | 'acknowledged' | 'in_service' | 'closed';
 
 export const ARRIVAL_STATUS_LABEL: Record<ArrivalStatus, string> = {
   waiting: 'Waiting',
-  acknowledged: 'Seen',
+  acknowledged: 'Seen by admin',
   in_service: 'In service',
   closed: 'Closed',
 };
 
-/** Website content the admin edits from a panel, never from code. */
-export interface SiteContent {
-  brand: { name: string; tagline: string; logoUrl?: string };
-  topBar: { address: string; emergencyPhone: string; hours: string; promo?: string };
-  hero: { eyebrow: string; titleLead: string; titleAccent: string; titleTail: string; titleAccent2: string; body: string; ctaLabel: string; backgroundUrl: string };
-  highlights: { title: string; body: string }[];
-  about: { eyebrow: string; title: string; body: string; satisfactionPct: number; badges: string[]; phone: string; imageUrl: string };
-  services: { eyebrow: string; titleLead: string; titleAccent: string; intro: string; items: { title: string; body: string; imageUrl: string; icon: string }[] };
-  contact: { headline: string; phone: string; email: string; address: string };
-  updatedAt?: string;
+/** A part the receptionist already took out of the store for this vehicle. */
+export interface ArrivalPart {
+  partId: string;
+  partName: string;
+  qty: number;
+  unitCost: number;
+}
+
+export interface Arrival {
+  id: string;
+  plate: string;
+  plateKey?: string;
+  make?: string;
+  colour?: string;
+  driverName?: string;
+  driverPhone?: string;
+  /** What the client came in asking for, in their words. */
+  requestedWork: string;
+  notes?: string;
+  partsUsed?: ArrivalPart[];
+  vehicleId?: string;
+  clientId?: string;
+  isNewClient?: boolean;
+  status: ArrivalStatus;
+  arrivedAt?: unknown;
+  loggedByName?: string;
+}
+
+// -------------------------------------------------------------- devices ----
+
+export type DeviceRole = 'reception' | 'stock';
+
+export const DEVICE_ROLE_LABEL: Record<DeviceRole, string> = {
+  reception: 'Reception',
+  stock: 'Stock manager',
+};
+
+/**
+ * A phone paired to a garage.
+ *
+ * There is no password on the phone apps by choice. Identity is the pairing:
+ * the boss generates a short code, the phone redeems it once, and from then on
+ * the device's own anonymous account is what the rules check. The staff name is
+ * a label for the audit trail, not a credential.
+ */
+export interface Device {
+  id: string;
+  role: DeviceRole;
+  staffName: string;
+  garageId: string;
+  pairedAt?: unknown;
+  lastSeenAt?: unknown;
+  appVersion?: string;
+}
+
+/** A one-shot pairing code. Unguessable, short-lived, deleted once redeemed. */
+export interface PairingCode {
+  code: string;
+  garageId: string;
+  role: DeviceRole;
+  createdAt?: unknown;
+  expiresAtMs: number;
+}
+
+// ------------------------------------------------------------ enquiries ----
+
+export type EnquiryStatus = 'new' | 'answered' | 'closed';
+
+export const ENQUIRY_STATUS_LABEL: Record<EnquiryStatus, string> = {
+  new: 'New',
+  answered: 'Answered',
+  closed: 'Closed',
+};
+
+/** A question or booking request sent from the public website. */
+export interface Enquiry {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  vehicle?: string;
+  service?: string;
+  message: string;
+  status: EnquiryStatus;
+  source: 'website';
+  createdAt?: unknown;
+  createdAtLocal: string;
+  answeredNote?: string;
 }

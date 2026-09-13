@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,14 +39,21 @@ class MainActivity : ComponentActivity() {
                 var tab by remember { mutableIntStateOf(0) }
                 when {
                     state.loading -> Box(Modifier.fillMaxSize()) { CircularProgressIndicator(Modifier.align(Alignment.Center)) }
-                    state.profile == null -> ConnectingScreen(state.error) { vm.retry() }
+                    // An unpaired phone reaches nothing else until it knows
+                    // which garage it belongs to.
+                    state.session == null -> PairingScreen(state, vm::pair)
                     else -> Scaffold(
                         topBar = {
                             TopAppBar(
                                 title = {
-                                    Row {
-                                        Text("Garage ", fontWeight = FontWeight.Black, fontSize = 16.sp)
-                                        Text("Reception", fontWeight = FontWeight.Black, fontSize = 16.sp, color = Amber)
+                                    Column {
+                                        Row {
+                                            Text("Garage ", fontWeight = FontWeight.Black, fontSize = 16.sp)
+                                            Text("Reception", fontWeight = FontWeight.Black, fontSize = 16.sp, color = Amber)
+                                        }
+                                        state.session?.staffName?.let {
+                                            Text(it, fontSize = 11.sp, color = Muted)
+                                        }
                                     }
                                 },
                                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Navy2),
@@ -69,7 +75,12 @@ class MainActivity : ComponentActivity() {
                     ) { pad ->
                         Box(Modifier.padding(pad)) {
                             when (tab) {
-                                0 -> CheckInScreen(state, vm::checkIn) { vm.clearConfirmation(); tab = 1 }
+                                0 -> CheckInScreen(
+                                    state = state,
+                                    onCheckIn = vm::checkIn,
+                                    onAddPart = vm::addPart,
+                                    onSetPartQty = vm::setPartQty,
+                                ) { vm.clearConfirmation(); tab = 1 }
                                 1 -> ArrivalsScreen(state, onClick = vm::selectArrival)
                                 else -> ArchiveScreen(state, onShiftDay = vm::shiftArchiveDay, onClick = vm::selectArrival)
                             }
@@ -79,23 +90,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ConnectingScreen(error: String?, onRetry: () -> Unit) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            if (error == null) {
-                CircularProgressIndicator()
-                Spacer(Modifier.height(16.dp))
-                Text("Connecting…")
-            } else {
-                Text(error, textAlign = TextAlign.Center)
-                Spacer(Modifier.height(16.dp))
-                Button(onClick = onRetry) { Text("Retry") }
             }
         }
     }

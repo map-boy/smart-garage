@@ -1,4 +1,4 @@
-﻿package rw.smartgarage.reception.data
+package rw.smartgarage.reception.data
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -17,56 +17,201 @@ class ReceptionRepository(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
 ) {
 
-    suspend fun signIn(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email.trim(), password).await()
+    /**
+     * No password on this app by choice, so the phone still needs an identity
+     * the rules can check. An anonymous account is stable for the life of the
+     * install, which is exactly the lifetime of a pairing.
+     */
+    suspend fun ensureSignedIn(): String {
+        auth.currentUser?.let { return it.uid }
+        return auth.signInAnonymously().await().user!!.uid
     }
-
-    fun signOut() = auth.signOut()
 
     fun currentUid(): String? = auth.currentUser?.uid
 
-    suspend fun loadProfile(uid: String): Profile? {
-        val snap = db.collection("users").document(uid).get().await()
-        if (!snap.exists()) return null
-        return Profile(
-            uid = uid,
-            role = snap.getString("role").orEmpty(),
-            garageId = snap.getString("garageId").orEmpty(),
-            displayName = snap.getString("displayName"),
-        )
+    /**
+     * Redeems a pairing code read out by the boss.
+     *
+     * The code is the only secret involved. Reading it tells the phone which
+     * garage and role it grants; writing the device document is what the rules
+     * actually check from then on. Codes cannot be listed, so a phone that was
+     * never given one cannot register itself.
+     */
+    suspend fun pair(code: String, staffName: String): Result<DeviceSession> = runCatching {
+        val uid = ensureSignedIn()
+        val trimmed = code.trim().uppercase()
+        val snap = db.collection("pairing").document(trimmed).get().await()
+        require(snap.exists()) { "That code is not recognised. Check it and try again." }
+
+        val expiresAt = snap.getLong("expiresAtMs") ?: 0L
+        require(expiresAt == 0L || expiresAt > System.currentTimeMillis()) {
+            "That code has expired. Ask for a new one."
+        }
+
+        val garageId = snap.getString("garageId").orEmpty()
+        require(garageId.isNotBlank()) { "That code is not set up correctly." }
+        val role = DeviceRole.from(snap.getString("role"))
+
+        db.collection("garages").document(garageId)
+            .collection("devices").document(uid)
+            .set(
+                hashMapOf(
+                    "role" to role.wire,
+                    "staffName" to staffName.trim(),
+                    "garageId" to garageId,
+                    "pairingCode" to trimmed,
+                    "pairedAt" to FieldValue.serverTimestamp(),
+                    "lastSeenAt" to FieldValue.serverTimestamp(),
+                )
+            ).await()
+
+        DeviceSession(garageId = garageId, role = role, staffName = staffName.trim())
     }
 
     /**
      * Records an arrival.
      *
-     * Deliberately does NOT await the write task. Firestore only completes that
-     * task once the server acknowledges, so awaiting it would hang the screen
-     * for the entire time the phone has no signal - the exact moment the
-     * receptionist most needs an instant confirmation. The local write has
-     * already been applied by the time this returns, and the SDK delivers it
-     * when the connection comes back.
+     * Deliberately does NOT await the write. Firestore completes that task only
+     * once the server acknowledges, so awaiting it would freeze the screen for
+     * as long as the phone has no signal - the exact moment the receptionist
+     * most needs an instant confirmation. The local write has already been
+     * applied by the time this returns, and the SDK delivers it when the
+     * connection comes back.
      */
-    fun checkIn(garageId: String, profile: Profile, arrival: Arrival, isNewClient: Boolean = false) {
-        val data = hashMapOf<String, Any?>(
-            "plate" to arrival.plate.uppercase().trim(),
-            "plateKey" to normalisePlate(arrival.plate),
-            "make" to arrival.make?.takeIf { it.isNotBlank() },
-            "colour" to arrival.colour?.takeIf { it.isNotBlank() },
-            "driverName" to arrival.driverName?.takeIf { it.isNotBlank() },
-            "driverPhone" to arrival.driverPhone?.takeIf { it.isNotBlank() },
-            "reason" to arrival.reason,
-            "notes" to arrival.notes?.takeIf { it.isNotBlank() },
-            "vehicleId" to arrival.vehicleId,
-            "clientId" to arrival.clientId,
-            "isNewClient" to isNewClient,
-            "status" to ArrivalStatus.WAITING.wire,
-            "arrivedAt" to FieldValue.serverTimestamp(),
-            "loggedBy" to profile.uid,
-            "loggedByName" to (profile.displayName ?: "Reception"),
+    fun checkIn(
+        session: DeviceSession,
+        arrival: Arrival,
+        isNewClient: Boolean = false,
+    ): String {
+        val ref = db.collection("garages").document(session.garageId)
+            .collection("arrivals").document()
+        ref.set(
+            hashMapOf(
+                "plate" to arrival.plate.uppercase().trim(),
+                "plateKey" to normalisePlate(arrival.plate),
+                "make" to arrival.make?.takeIf { it.isNotBlank() },
+                "colour" to arrival.colour?.takeIf { it.isNotBlank() },
+                "driverName" to arrival.driverName?.takeIf { it.isNotBlank() },
+                "driverPhone" to arrival.driverPhone?.takeIf { it.isNotBlank() },
+                "requestedWork" to arrival.requestedWork.trim(),
+                "notes" to arrival.notes?.takeIf { it.isNotBlank() },
+                "partsUsed" to emptyList<Map<String, Any?>>(),
+                "vehicleId" to arrival.vehicleId,
+                "clientId" to arrival.clientId,
+                "isNewClient" to isNewClient,
+                "status" to ArrivalStatus.WAITING.wire,
+                "arrivedAt" to FieldValue.serverTimestamp(),
+                "loggedBy" to (currentUid() ?: ""),
+                "loggedByName" to session.staffName,
+            )
         )
-        db.collection("garages").document(garageId)
-            .collection("arrivals").add(data)
+        return ref.id
     }
+
+    // ------------------------------------------------------------- stock ----
+
+    /**
+     * The shelf, live.
+     *
+     * Served from the local cache first, so the picker opens instantly and
+     * still works with no signal. Ordered by name because that is how someone
+     * hunting for a part actually scans a list.
+     */
+    fun stock(garageId: String): Flow<List<Part>> = callbackFlow {
+        val reg = db.collection("garages").document(garageId)
+            .collection("stock")
+            .orderBy("name")
+            .addSnapshotListener(MetadataChanges.INCLUDE) { snap, err ->
+                if (err != null || snap == null) return@addSnapshotListener
+                trySend(snap.documents.map { d ->
+                    Part(
+                        id = d.id,
+                        name = d.getString("name").orEmpty(),
+                        partNumber = d.getString("partNumber").orEmpty(),
+                        quantity = (d.getLong("quantity") ?: 0L).toInt(),
+                        reorderLevel = (d.getLong("reorderLevel") ?: 0L).toInt(),
+                        unitCost = d.getDouble("unitCost") ?: 0.0,
+                        supplier = d.getString("supplier").orEmpty(),
+                    )
+                })
+            }
+        awaitClose { reg.remove() }
+    }
+
+    /**
+     * Takes parts out of the store for a vehicle.
+     *
+     * Quantities move by increment, never by writing a computed total. That is
+     * what lets two phones draw from the same shelf at once, and what lets this
+     * phone do it with no signal at all: the SDK queues "minus two", not "set
+     * to seven", so an hour offline does not undo whatever happened meanwhile.
+     *
+     * The shelf may go below zero. That means more was taken than the books
+     * knew about, which is a recount - and a recount is a far better outcome
+     * than refusing a receptionist standing in front of a waiting customer.
+     */
+    fun issueParts(
+        session: DeviceSession,
+        arrivalId: String,
+        plate: String,
+        vehicleId: String?,
+        lines: List<Pair<Part, Int>>,
+    ) {
+        if (lines.isEmpty()) return
+        val garage = db.collection("garages").document(session.garageId)
+        val batch = db.batch()
+        val nowIso = isoNow()
+
+        lines.forEach { (part, qty) ->
+            if (qty <= 0) return@forEach
+            batch.update(
+                garage.collection("stock").document(part.id),
+                mapOf("quantity" to FieldValue.increment(-qty.toLong()), "updatedAt" to nowIso),
+            )
+            batch.set(
+                garage.collection("stockMovements").document(),
+                hashMapOf(
+                    "partId" to part.id,
+                    // Copied, not referenced: renaming a part next year must
+                    // not rewrite what this line says happened today.
+                    "partName" to part.name,
+                    "partNumber" to part.partNumber,
+                    "delta" to -qty,
+                    "balanceAfter" to part.quantity - qty,
+                    "reason" to "issued_to_vehicle",
+                    "plate" to plate.uppercase().trim(),
+                    "vehicleId" to vehicleId,
+                    "arrivalId" to arrivalId,
+                    "jobId" to null,
+                    "note" to null,
+                    "byName" to session.staffName,
+                    "byRole" to session.role.wire,
+                    "at" to FieldValue.serverTimestamp(),
+                    "atLocal" to nowIso,
+                )
+            )
+        }
+
+        batch.update(
+            garage.collection("arrivals").document(arrivalId),
+            mapOf(
+                "partsUsed" to lines.filter { it.second > 0 }.map { (part, qty) ->
+                    mapOf(
+                        "partId" to part.id,
+                        "partName" to part.name,
+                        "qty" to qty,
+                        "unitCost" to part.unitCost,
+                    )
+                }
+            ),
+        )
+
+        // Not awaited, for the same reason check-in is not: the local cache has
+        // the change already and the server gets it when there is a network.
+        batch.commit()
+    }
+
+    // ---------------------------------------------------------- vehicles ----
 
     /** Best-effort link to a vehicle already on file. Never blocks a check-in. */
     suspend fun findVehicle(garageId: String, plate: String): Pair<String, String?>? = runCatching {
@@ -79,7 +224,7 @@ class ReceptionRepository(
 
     /**
      * No vehicle on file means a walk-in reception has never seen before.
-     * Pre-allocated doc refs give both IDs synchronously (works offline).
+     * Pre-allocated doc refs give both IDs synchronously, so this works offline.
      */
     fun createClientAndVehicle(garageId: String, arrival: Arrival): Pair<String, String> {
         val garageRef = db.collection("garages").document(garageId)
@@ -87,33 +232,31 @@ class ReceptionRepository(
         val clientRef = garageRef.collection("clients").document()
         val nowIso = isoNow()
 
-        val clientData = hashMapOf<String, Any?>(
-            "name" to (arrival.driverName?.takeIf { it.isNotBlank() } ?: "Walk-in customer"),
-            "phone" to (arrival.driverPhone ?: ""),
-            "email" to "",
-            "vehicleIds" to listOf(vehicleRef.id),
-            "createdAt" to nowIso,
+        clientRef.set(
+            hashMapOf(
+                "name" to (arrival.driverName?.takeIf { it.isNotBlank() } ?: "Walk-in customer"),
+                "phone" to (arrival.driverPhone ?: ""),
+                "email" to "",
+                "vehicleIds" to listOf(vehicleRef.id),
+                "createdAt" to nowIso,
+            )
         )
-        val vehicleData = hashMapOf<String, Any?>(
-            "plate" to arrival.plate.uppercase().trim(),
-            "make" to (arrival.make ?: ""),
-            "model" to "",
-            "year" to "",
-            "color" to (arrival.colour ?: ""),
-            "clientId" to clientRef.id,
-            "mileage" to "",
-            "fuelType" to "Petrol",
+        vehicleRef.set(
+            hashMapOf(
+                "plate" to arrival.plate.uppercase().trim(),
+                "make" to (arrival.make ?: ""),
+                "model" to "",
+                "year" to "",
+                "color" to (arrival.colour ?: ""),
+                "clientId" to clientRef.id,
+                "mileage" to "",
+                "fuelType" to "Petrol",
+            )
         )
-        clientRef.set(clientData)
-        vehicleRef.set(vehicleData)
         return clientRef.id to vehicleRef.id
     }
 
-    private fun isoNow(): String {
-        val fmt = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US)
-        fmt.timeZone = java.util.TimeZone.getTimeZone("UTC")
-        return fmt.format(Date())
-    }
+    // ---------------------------------------------------------- arrivals ----
 
     fun arrivals(garageId: String): Flow<List<Arrival>> = callbackFlow {
         val reg = db.collection("garages").document(garageId)
@@ -127,7 +270,7 @@ class ReceptionRepository(
         awaitClose { reg.remove() }
     }
 
-    /** Every arrival between [dayStart] (inclusive) and [dayEnd] (exclusive). Not live - fetched once per call. */
+    /** Every arrival in a day. Fetched once per call, not live. */
     suspend fun arrivalsForDay(garageId: String, dayStart: Date, dayEnd: Date): List<Arrival> {
         val q = db.collection("garages").document(garageId)
             .collection("arrivals")
@@ -146,11 +289,28 @@ class ReceptionRepository(
         colour = d.getString("colour"),
         driverName = d.getString("driverName"),
         driverPhone = d.getString("driverPhone"),
-        reason = d.getString("reason").orEmpty(),
+        // Older documents used `reason`; read both so history keeps rendering.
+        requestedWork = d.getString("requestedWork") ?: d.getString("reason").orEmpty(),
         notes = d.getString("notes"),
+        partsUsed = (d.get("partsUsed") as? List<*>).orEmpty().mapNotNull { row ->
+            (row as? Map<*, *>)?.let {
+                ArrivalPart(
+                    partId = it["partId"] as? String ?: "",
+                    partName = it["partName"] as? String ?: "",
+                    qty = (it["qty"] as? Number)?.toInt() ?: 0,
+                    unitCost = (it["unitCost"] as? Number)?.toDouble() ?: 0.0,
+                )
+            }
+        },
         status = ArrivalStatus.from(d.getString("status")),
         arrivedAt = d.getTimestamp("arrivedAt"),
         loggedByName = d.getString("loggedByName"),
         pending = d.metadata.hasPendingWrites(),
     )
+
+    private fun isoNow(): String {
+        val fmt = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US)
+        fmt.timeZone = java.util.TimeZone.getTimeZone("UTC")
+        return fmt.format(Date())
+    }
 }

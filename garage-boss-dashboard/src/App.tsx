@@ -16,7 +16,7 @@ import {
   getDoc 
 } from 'firebase/firestore';
 import { 
-  Wrench, FileText, BarChart3, Users, Car, Eye, CalendarClock, LogOut, KeyRound, ShieldAlert, BadgeInfo, CheckCircle2, ChevronRight, Menu, X, Package, CreditCard, Sparkles, RefreshCw, Archive, AlertTriangle, MessageCircle
+  Wrench, FileText, BarChart3, Users, Car, Eye, CalendarClock, LogOut, KeyRound, ShieldAlert, BadgeInfo, CheckCircle2, ChevronRight, Menu, X, Package, CreditCard, Sparkles, RefreshCw, Archive, AlertTriangle, MessageCircle, Inbox
 } from 'lucide-react';
 import { auth, db, handleFirestoreError, OperationType } from './firebase';
 import WhatsAppPanel from './components/WhatsAppPanel';
@@ -27,6 +27,7 @@ import ReportsPage from './components/ReportsPage';
 import EntitiesView from './components/EntitiesView';
 import LiveMonitoring from './components/LiveMonitoring';
 import ArchivesView from './components/ArchivesView';
+import EnquiriesView from './components/EnquiriesView';
 
 /**
  * How many live records each unbounded collection holds.
@@ -63,7 +64,7 @@ export default function App() {
   const [loadingCollections, setLoadingCollections] = useState(false);
 
   // Sidebar / Navigation States
-  const [activeTab, setActiveTab] = useState<'overview' | 'reports' | 'jobs' | 'invoices' | 'inventory' | 'vehicles' | 'customers' | 'reminders' | 'cctv' | 'archives' | 'whatsapp'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'reports' | 'jobs' | 'invoices' | 'inventory' | 'vehicles' | 'customers' | 'reminders' | 'cctv' | 'archives' | 'enquiries' | 'whatsapp'>('overview');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Start New Month (archive + reset) States
@@ -344,6 +345,7 @@ export default function App() {
     { id: 'customers', name: 'Customers', icon: Users },
     { id: 'reminders', name: 'Reminders', icon: CalendarClock },
     { id: 'cctv', name: 'CCTV Camera', icon: Eye },
+    { id: 'enquiries', name: 'Enquiries', icon: Inbox },
     { id: 'archives', name: 'Archives', icon: Archive },
     { id: 'whatsapp', name: 'WhatsApp', icon: MessageCircle },
   ];
@@ -711,6 +713,10 @@ export default function App() {
               streamUrl={settings?.cameraStreamUrl} 
               label={settings?.cameraLabel} 
             />
+          )}
+
+          {activeTab === 'enquiries' && (
+            <EnquiriesView garageId={userProfile?.garageId || ''} />
           )}
 
           {activeTab === 'archives' && (

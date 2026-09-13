@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useJobs } from '../hooks/useJobs';
 import { useVehicles } from '../hooks/useVehicles';
@@ -33,7 +33,7 @@ export function JobCardDetailPage() {
   const { jobs, updateJob, deleteJob } = useJobs();
   const { vehicles } = useVehicles();
   const { clients } = useClients();
-  const { stock, updateQuantity } = useStock();
+  const { stock, issue, receive } = useStock();
   const { addInvoice, invoices } = useInvoices();
 
   const [isAddPartOpen, setIsAddPartOpen] = useState(false);
@@ -68,7 +68,8 @@ export function JobCardDetailPage() {
     }
 
     updateJob({ ...job, partsUsed: newParts });
-    updateQuantity(selectedPartId, -partQty);
+    const part = stock.find(p => p.id === selectedPartId);
+    if (part) issue(part, partQty, { jobId: job.id, vehicleId: job.vehicleId });
     setIsAddPartOpen(false);
     setSelectedPartId('');
     setPartQty(1);
@@ -110,7 +111,10 @@ export function JobCardDetailPage() {
     const diff = newQty - existing.quantity;
     const newParts = job.partsUsed.map(p => p.partId === partId ? { ...p, quantity: newQty } : p);
     updateJob({ ...job, partsUsed: newParts });
-    if (diff !== 0) updateQuantity(partId, -diff);
+    const part = stock.find(p => p.id === partId);
+    if (part && diff > 0) issue(part, diff, { jobId: job.id, vehicleId: job.vehicleId });
+    // Reducing the count on a job puts the difference back on the shelf.
+    if (part && diff < 0) receive(part, -diff, { jobId: job.id, note: 'Job quantity reduced' });
   };
 
   const handleRemovePart = (partId: string) => {
@@ -118,7 +122,8 @@ export function JobCardDetailPage() {
     if (!existing) return;
     const newParts = job.partsUsed.filter(p => p.partId !== partId);
     updateJob({ ...job, partsUsed: newParts });
-    updateQuantity(partId, existing.quantity);
+    const part = stock.find(p => p.id === partId);
+    if (part) receive(part, existing.quantity, { jobId: job.id, note: 'Removed from job' });
   };
 
   const totalPartsCost = job.partsUsed.reduce((acc, item) => {

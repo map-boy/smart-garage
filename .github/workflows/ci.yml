@@ -56,8 +56,12 @@ jobs:
 
   android:
     timeout-minutes: 30
-    name: build reception-android
+    name: build ${{ matrix.app }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [reception-android, stock-android]
     steps:
       - uses: actions/checkout@v5
 
@@ -69,7 +73,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
 
       - name: Compile debug APK
-        working-directory: reception-android
+        working-directory: ${{ matrix.app }}
         # No Firebase values needed to compile: they are BuildConfig strings
         # that default to empty, so a missing secret cannot break CI.
         # --stacktrace so a failure here is diagnosable from the log alone.

@@ -49,7 +49,7 @@ export function CheckIn({ onDone }: { onDone: () => void }) {
         colour: colour.trim() || undefined,
         driverName: driverName.trim() || undefined,
         driverPhone: driverPhone.trim() || undefined,
-        reason, notes: notes.trim() || undefined,
+        requestedWork: reason, notes: notes.trim() || undefined,
         vehicleId, clientId,
         status: "waiting",
         arrivedAt: serverTimestamp(),

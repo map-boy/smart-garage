@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { backupService } from '../services/backupService';
 import { settingsService } from '../services/settingsService';
 import { useAuth } from '../context/AuthContext';
@@ -7,6 +7,7 @@ import { Button } from '../components/ui/Button';
 import { Toast, ToastType } from '../components/ui/Toast';
 import { Database, Download, Upload, Trash2, ShieldCheck, Save, Camera, Image as ImageIcon } from 'lucide-react';
 import { MonthCloseCard } from '../components/settings/MonthCloseCard';
+import { DevicePairingCard } from '../components/settings/DevicePairingCard';
 
 export function SettingsPage() {
   const { profile } = useAuth();
@@ -82,6 +83,8 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-8 max-w-3xl">
+      <DevicePairingCard />
+
       <MonthCloseCard />
       <div className="space-y-2">
         <h1 className="text-2xl font-black text-gray-900 tracking-tight">System Settings</h1>

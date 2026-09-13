@@ -1,0 +1,286 @@
+rules_version = '2';
+
+// The one ruleset for this project.
+//
+// There used to be two copies, one open and one hardened, and whichever was
+// deployed last decided how safe the data was. Both firebase.json files now
+// point here so that cannot happen again.
+//
+// Two kinds of caller:
+//
+//   People  - email accounts with a users/{uid} profile carrying role and
+//             garageId. Staff on the desktop app and the boss on the web.
+//   Devices - the reception and stock phones. They have no password by
+//             design, so they sign in anonymously and prove themselves by
+//             redeeming a one-shot pairing code the boss generates. From then
+//             on garages/{gid}/devices/{uid} is the credential, and a device
+//             can only ever touch its own garage.
+//
+// Firestore ORs matching allow rules, so a `match /{document=**} { allow: if
+// false }` denies nothing - it only looks like a lock. Access is denied by
+// default when nothing grants it, so there is no deny-all here.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ---- people ------------------------------------------------------
+    function profilePath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function hasProfile() {
+      return isSignedIn() && exists(profilePath());
+    }
+
+    function userProfile() {
+      return get(profilePath()).data;
+    }
+
+    function userRole() {
+      return hasProfile() ? userProfile().role : '';
+    }
+
+    function isBoss() {
+      return userRole() == 'BOSS';
+    }
+
+    function isStaffOf(garageId) {
+      return hasProfile()
+        && (userProfile().garageId == garageId || isBoss())
+        && userRole() in [
+          'owner', 'manager', 'technician', 'receptionist',
+          'store_keeper', 'cashier', 'BOSS'
+        ];
+    }
+
+    // Manager of somewhere - used where no single garage is in scope, such as
+    // the public site content shared by the whole marketing site.
+    function isAnyManager() {
+      return hasProfile() && userRole() in ['owner', 'manager', 'BOSS'];
+    }
+
+    function isManagerOf(garageId) {
+      return hasProfile()
+        && (userProfile().garageId == garageId || isBoss())
+        && userRole() in ['owner', 'manager', 'BOSS'];
+    }
+
+    // ---- devices -----------------------------------------------------
+    function devicePath(garageId) {
+      return /databases/$(database)/documents/garages/$(garageId)/devices/$(request.auth.uid);
+    }
+
+    function isDeviceOf(garageId) {
+      return isSignedIn() && exists(devicePath(garageId));
+    }
+
+    function deviceRole(garageId) {
+      return get(devicePath(garageId)).data.role;
+    }
+
+    // Anyone the garage recognises: a person on staff, or a paired phone.
+    function belongsTo(garageId) {
+      return isStaffOf(garageId) || isDeviceOf(garageId);
+    }
+
+    // True when an update leaves every field in `fields` untouched. Uses
+    // affectedKeys so an added or deleted field counts as a change too, which
+    // a plain value comparison would miss.
+    function unchangedAll(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys()
+        .hasAny(fields.toSet());
+    }
+
+    function changesOnly(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(fields.toSet());
+    }
+
+    // ---- public website content --------------------------------------
+    // The marketing site reads this before anyone signs in, so it is public.
+    // Only a manager can change what the public sees.
+    match /site/{docId} {
+      allow read: if true;
+      allow write: if isAnyManager();
+    }
+
+    // ---- pairing codes -----------------------------------------------
+    // The code itself is the secret. A phone that knows one may read it to
+    // learn which garage and role it grants; it cannot list or guess others.
+    match /pairing/{code} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      allow create: if isManagerOf(request.resource.data.garageId)
+                    && request.resource.data.role in ['reception', 'stock'];
+      allow update: if false;
+      allow delete: if isManagerOf(resource.data.garageId);
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isBoss());
+      allow list: if isBoss();
+      allow create: if isSignedIn()
+                    && request.auth.uid == userId
+                    && request.resource.data.garageId is string
+                    && request.resource.data.role is string
+                    // A self-made profile may never mint a BOSS.
+                    && request.resource.data.role != 'BOSS';
+      // Role and garage are identity, not preferences. Changing either is
+      // privilege escalation, so both are pinned to their stored values.
+      allow update: if isSignedIn()
+                    && request.auth.uid == userId
+                    && unchangedAll(['garageId', 'role']);
+      allow delete: if false;
+    }
+
+    match /garages/{garageId} {
+
+      function serverOwnedGarageFields() {
+        return [
+          'whatsappMessagesUsed', 'whatsappMessagesLimit', 'whatsappQuotaPeriod',
+          'whatsappQuotaUpdatedAt', 'whatsappSessionId', 'whatsappSessionStatus',
+          'whatsappSessionPhone', 'whatsappSessionCheckedAt', 'ownerId'
+        ];
+      }
+
+      allow read: if belongsTo(garageId);
+      allow create: if isSignedIn()
+                    && request.auth.uid == garageId
+                    && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isStaffOf(garageId)
+                    && unchangedAll(serverOwnedGarageFields());
+      allow delete: if false;
+
+      // ---- paired phones ---------------------------------------------
+      match /devices/{deviceUid} {
+        allow read: if isStaffOf(garageId)
+                    || (isSignedIn() && request.auth.uid == deviceUid);
+
+        // Redeeming a pairing code is what creates a device. The rule proves
+        // the code exists without the phone ever being able to list codes, so
+        // an unpaired stranger cannot register itself.
+        allow create: if isSignedIn()
+                      && request.auth.uid == deviceUid
+                      && request.resource.data.garageId == garageId
+                      && request.resource.data.role in ['reception', 'stock']
+                      && exists(/databases/$(database)/documents/pairing/$(request.resource.data.pairingCode));
+
+        // A device may refresh its own heartbeat, never its role or garage.
+        allow update: if isSignedIn()
+                      && request.auth.uid == deviceUid
+                      && unchangedAll(['role', 'garageId', 'pairingCode']);
+        allow delete: if isManagerOf(garageId);
+      }
+
+      // ---- stock ------------------------------------------------------
+      match /stock/{partId} {
+        allow read: if belongsTo(garageId);
+
+        // Staff and the stock phone maintain the catalogue. The reception
+        // phone may only move the number - it cannot rename a part, change
+        // its cost, or delete it.
+        allow create: if isStaffOf(garageId)
+                      || (isDeviceOf(garageId) && deviceRole(garageId) == 'stock');
+        allow update: if isStaffOf(garageId)
+                      || (isDeviceOf(garageId) && deviceRole(garageId) == 'stock')
+                      || (isDeviceOf(garageId) && deviceRole(garageId) == 'reception'
+                          && changesOnly(['quantity', 'updatedAt']));
+        allow delete: if isManagerOf(garageId)
+                      || (isDeviceOf(garageId) && deviceRole(garageId) == 'stock');
+      }
+
+      // ---- stock ledger ----------------------------------------------
+      // Append-only. A mistake is corrected by another movement, never by
+      // editing what was already recorded.
+      match /stockMovements/{movementId} {
+        allow read: if belongsTo(garageId);
+        allow create: if belongsTo(garageId)
+                      && request.resource.data.delta is number
+                      && request.resource.data.partId is string;
+        allow update, delete: if false;
+      }
+
+      // ---- arrivals ---------------------------------------------------
+      match /arrivals/{arrivalId} {
+        allow read: if belongsTo(garageId);
+        allow create: if isStaffOf(garageId)
+                      || (isDeviceOf(garageId) && deviceRole(garageId) == 'reception');
+        allow update: if isStaffOf(garageId)
+                      || (isDeviceOf(garageId) && deviceRole(garageId) == 'reception');
+        allow delete: if isManagerOf(garageId);
+      }
+
+      // ---- website enquiries -------------------------------------------
+      // A visitor is a nobody: signed in anonymously, no profile, no device.
+      // They may post one enquiry and never read anything back.
+      match /enquiries/{enquiryId} {
+        allow read: if isStaffOf(garageId);
+        allow create: if isSignedIn()
+                      && request.resource.data.status == 'new'
+                      && request.resource.data.source == 'website'
+                      && request.resource.data.name is string
+                      && request.resource.data.name.size() > 0
+                      && request.resource.data.name.size() < 120
+                      && request.resource.data.message is string
+                      && request.resource.data.message.size() < 4000
+                      && request.resource.data.phone is string
+                      && request.resource.data.phone.size() < 40;
+        allow update: if isStaffOf(garageId);
+        allow delete: if isManagerOf(garageId);
+      }
+
+      match /invoices/{invoiceId} {
+        allow read: if belongsTo(garageId);
+        allow create: if isStaffOf(garageId)
+                      && !request.resource.data.keys()
+                        .hasAny(['whatsappPaid', 'whatsappIssued']);
+        allow update: if isStaffOf(garageId)
+                      && unchangedAll(['whatsappPaid', 'whatsappIssued']);
+        allow delete: if isManagerOf(garageId);
+      }
+
+      // Written only by Cloud Functions through the Admin SDK, which bypasses
+      // rules. Nobody else may forge or erase an audit line.
+      match /whatsappLogs/{logId} {
+        allow read: if isManagerOf(garageId);
+        allow write: if false;
+      }
+
+      // ---- archives ---------------------------------------------------
+      // A closed month. The desktop app writes one subcollection per record
+      // type; the dashboard's older chunked `records` layout is still read, so
+      // both shapes stay readable.
+      match /archives/{periodId} {
+        allow read: if belongsTo(garageId);
+        allow write: if isStaffOf(garageId);
+
+        match /{archiveCollection}/{recordId} {
+          allow read: if belongsTo(garageId);
+          allow write: if isStaffOf(garageId);
+        }
+      }
+
+      // Everything else the garage keeps: clients, vehicles, jobs, reminders,
+      // settings, cameras. Read by anyone the garage knows, written by staff.
+      match /{collectionName}/{docId} {
+        function hasOwnRule() {
+          return collectionName in [
+            'devices', 'stock', 'stockMovements', 'arrivals',
+            'enquiries', 'invoices', 'whatsappLogs', 'archives'
+          ];
+        }
+
+        allow read: if belongsTo(garageId) && !hasOwnRule();
+        allow write: if isStaffOf(garageId) && !hasOwnRule();
+      }
+    }
+
+    match /system/{docId} {
+      allow read, write: if false;
+    }
+  }
+}
