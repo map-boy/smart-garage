@@ -1,7 +1,8 @@
-﻿import React from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
+  Archive,
   Car,
   ClipboardList,
   Package,
@@ -21,11 +22,12 @@ import type { ClientNotification } from '../../hooks/useClientNotifications';
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-  { id: 'vehicles', label: 'Vehicles', icon: Car, path: '/vehicles' },
-  { id: 'jobs', label: 'Job Cards', icon: ClipboardList, path: '/jobs' },
-  { id: 'inventory', label: 'Inventory', icon: Package, path: '/inventory' },
   { id: 'customers', label: 'Customers', icon: Users, path: '/customers' },
+  { id: 'vehicles', label: 'Vehicles', icon: Car, path: '/vehicles' },
+  { id: 'inventory', label: 'Inventory', icon: Package, path: '/inventory' },
+  { id: 'jobs', label: 'Job Cards', icon: ClipboardList, path: '/jobs' },
   { id: 'invoices', label: 'Invoices', icon: FileText, path: '/invoices' },
+  { id: 'archive', label: 'Archive', icon: Archive, path: '/archive' },
   { id: 'reminders', label: 'Reminders', icon: Bell, path: '/reminders' },
   { id: 'reports', label: 'Reports', icon: BarChart3, path: '/reports' },
   { id: 'monitoring', label: 'CCTV Monitoring', icon: Camera, path: '/monitoring' },
