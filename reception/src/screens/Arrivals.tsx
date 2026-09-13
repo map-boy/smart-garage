@@ -29,7 +29,7 @@ export function Arrivals() {
             <div>
               <div className="pl">{a.plate}</div>
               <div className="sub">
-                {[a.make, a.colour, a.reason].filter(Boolean).join(" \u00b7 ")}
+                {[a.make, a.colour, a.requestedWork ?? a.reason].filter(Boolean).join(" \u00b7 ")}
                 {t ? " \u00b7 " + t.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : " \u00b7 sending..."}
               </div>
             </div>

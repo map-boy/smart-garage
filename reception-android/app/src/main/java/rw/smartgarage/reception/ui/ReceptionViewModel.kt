@@ -1,148 +1,241 @@
-﻿package rw.smartgarage.reception.ui
+package rw.smartgarage.reception.ui
 
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.os.Build
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import rw.smartgarage.reception.data.Arrival
-import rw.smartgarage.reception.data.Profile
+import rw.smartgarage.reception.data.DeviceSession
+import rw.smartgarage.reception.data.DeviceStore
+import rw.smartgarage.reception.data.Part
 import rw.smartgarage.reception.data.ReceptionRepository
-import rw.smartgarage.reception.data.normalisePlate
 import java.util.Calendar
-import java.util.Date
+
+/** One part picked for the vehicle in front of the receptionist. */
+data class PickedPart(val part: Part, val qty: Int)
 
 data class UiState(
     val loading: Boolean = true,
-    val profile: Profile? = null,
+    val session: DeviceSession? = null,
+    val pairing: Boolean = false,
+    val pairError: String? = null,
+
     val arrivals: List<Arrival> = emptyList(),
+    val stock: List<Part> = emptyList(),
+    val picked: List<PickedPart> = emptyList(),
+
     val error: String? = null,
     val busy: Boolean = false,
     val lastCheckedIn: String? = null,
     val selectedArrival: Arrival? = null,
+
     val archiveDayStart: Long = startOfDay(System.currentTimeMillis()),
     val archiveArrivals: List<Arrival> = emptyList(),
     val archiveLoading: Boolean = false,
-)
+) {
+    /** What the picked parts will cost the garage, before anything is charged. */
+    val pickedCost: Double get() = picked.sumOf { it.part.unitCost * it.qty }
+}
 
 class ReceptionViewModel @JvmOverloads constructor(
     application: Application,
     private val repo: ReceptionRepository = ReceptionRepository(),
 ) : AndroidViewModel(application) {
 
+    private val store = DeviceStore(application)
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
+    private var arrivalsJob: Job? = null
+    private var stockJob: Job? = null
+
     init { restore() }
 
-    fun retry() {
-        _state.value = _state.value.copy(loading = true, error = null)
-        restore()
+    private fun restore() = viewModelScope.launch {
+        // An anonymous account is what the rules check once the phone is
+        // paired. Getting it now means the pairing screen has an identity to
+        // write with the moment a code is typed.
+        runCatching { repo.ensureSignedIn() }
+        val saved = store.load()
+        _state.value = _state.value.copy(loading = false, session = saved)
+        saved?.let { watch(it) }
     }
 
-    private fun restore() = viewModelScope.launch {
-        // No login for reception staff: this app always writes to one fixed garage.
-        _state.value = _state.value.copy(loading = false, profile = RECEPTION_PROFILE)
-        watch(GARAGE_ID)
+    // ----------------------------------------------------------- pairing ----
+
+    fun pair(code: String, staffName: String) = viewModelScope.launch {
+        if (code.isBlank()) {
+            _state.value = _state.value.copy(pairError = "Enter the code from the office.")
+            return@launch
+        }
+        if (staffName.isBlank()) {
+            _state.value = _state.value.copy(pairError = "Enter your name so jobs can be traced back.")
+            return@launch
+        }
+        _state.value = _state.value.copy(pairing = true, pairError = null)
+        repo.pair(code, staffName)
+            .onSuccess { session ->
+                store.save(session)
+                _state.value = _state.value.copy(pairing = false, session = session)
+                watch(session)
+            }
+            .onFailure { e ->
+                _state.value = _state.value.copy(
+                    pairing = false,
+                    pairError = e.message ?: "Could not pair this phone. Check the code.",
+                )
+            }
+    }
+
+    fun unpair() {
+        arrivalsJob?.cancel()
+        stockJob?.cancel()
+        store.clear()
+        _state.value = UiState(loading = false)
+    }
+
+    // ------------------------------------------------------------ watching --
+
+    private fun watch(session: DeviceSession) {
+        arrivalsJob?.cancel()
+        arrivalsJob = viewModelScope.launch {
+            repo.arrivals(session.garageId).collect { list ->
+                _state.value = _state.value.copy(arrivals = list)
+            }
+        }
+        stockJob?.cancel()
+        stockJob = viewModelScope.launch {
+            repo.stock(session.garageId).collect { list ->
+                _state.value = _state.value.copy(stock = list)
+            }
+        }
         loadArchiveDay(_state.value.archiveDayStart)
     }
 
-    companion object {
-        private const val GARAGE_ID = "garage-aimable-001"
-        private val RECEPTION_PROFILE = Profile(
-            uid = "reception",
-            role = "reception",
-            garageId = GARAGE_ID,
-            displayName = "Reception",
-        )
-        private const val CHANNEL_ID = "garage_checkins"
-    }
+    // -------------------------------------------------------- part picker ---
 
-    private fun watch(garageId: String) = viewModelScope.launch {
-        repo.arrivals(garageId).collect { list ->
-            _state.value = _state.value.copy(arrivals = list)
-        }
-    }
-
-    fun checkIn(arrival: Arrival) = viewModelScope.launch {
-        val p = _state.value.profile ?: return@launch
-        if (normalisePlate(arrival.plate).length < 3) {
-            _state.value = _state.value.copy(error = "Enter the number plate.")
-            return@launch
-        }
-        _state.value = _state.value.copy(busy = true, error = null)
-        val link = repo.findVehicle(p.garageId, arrival.plate)
-        val (vehicleId, clientId, isNewClient) = if (link != null) {
-            Triple(link.first, link.second, false)
+    fun addPart(part: Part, qty: Int = 1) {
+        if (qty <= 0) return
+        val existing = _state.value.picked.find { it.part.id == part.id }
+        val next = if (existing == null) {
+            _state.value.picked + PickedPart(part, qty)
         } else {
-            val (newClientId, newVehicleId) = repo.createClientAndVehicle(p.garageId, arrival)
-            Triple(newVehicleId, newClientId, true)
+            _state.value.picked.map {
+                if (it.part.id == part.id) it.copy(qty = it.qty + qty) else it
+            }
         }
-        repo.checkIn(p.garageId, p, arrival.copy(vehicleId = vehicleId, clientId = clientId), isNewClient)
-        val plate = arrival.plate.uppercase().trim()
-        _state.value = _state.value.copy(busy = false, lastCheckedIn = plate)
-        notifyCheckIn(plate, arrival.driverName)
+        _state.value = _state.value.copy(picked = next)
     }
 
-    private fun notifyCheckIn(plate: String, driverName: String?) {
-        val ctx = getApplication<Application>()
-        val mgr = ctx.getSystemService(NotificationManager::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr.getNotificationChannel(CHANNEL_ID) == null) {
-            mgr.createNotificationChannel(
-                NotificationChannel(CHANNEL_ID, "Check-ins", NotificationManager.IMPORTANCE_DEFAULT)
+    fun setPartQty(partId: String, qty: Int) {
+        val next = if (qty <= 0) {
+            _state.value.picked.filterNot { it.part.id == partId }
+        } else {
+            _state.value.picked.map { if (it.part.id == partId) it.copy(qty = qty) else it }
+        }
+        _state.value = _state.value.copy(picked = next)
+    }
+
+    fun removePart(partId: String) = setPartQty(partId, 0)
+
+    fun clearPicked() { _state.value = _state.value.copy(picked = emptyList()) }
+
+    // ---------------------------------------------------------- check in ----
+
+    /**
+     * Writes the arrival, then takes the picked parts off the shelf.
+     *
+     * Nothing here awaits the network. Both writes land in the local cache
+     * immediately, so the receptionist sees the confirmation and the reduced
+     * stock at once even with no signal, and the server receives them when
+     * there is one.
+     */
+    fun checkIn(arrival: Arrival) = viewModelScope.launch {
+        val session = _state.value.session ?: return@launch
+        _state.value = _state.value.copy(busy = true, error = null)
+        try {
+            var vehicleId = arrival.vehicleId
+            var clientId = arrival.clientId
+            var isNew = false
+
+            if (vehicleId.isNullOrBlank()) {
+                val found = repo.findVehicle(session.garageId, arrival.plate)
+                if (found != null) {
+                    vehicleId = found.first
+                    clientId = found.second
+                } else {
+                    val created = repo.createClientAndVehicle(session.garageId, arrival)
+                    clientId = created.first
+                    vehicleId = created.second
+                    isNew = true
+                }
+            }
+
+            val filled = arrival.copy(vehicleId = vehicleId, clientId = clientId)
+            val arrivalId = repo.checkIn(session, filled, isNewClient = isNew)
+
+            val picked = _state.value.picked
+            if (picked.isNotEmpty()) {
+                repo.issueParts(
+                    session = session,
+                    arrivalId = arrivalId,
+                    plate = arrival.plate,
+                    vehicleId = vehicleId,
+                    lines = picked.map { it.part to it.qty },
+                )
+            }
+
+            _state.value = _state.value.copy(
+                busy = false,
+                picked = emptyList(),
+                lastCheckedIn = arrival.plate.uppercase().trim(),
+            )
+        } catch (e: Exception) {
+            _state.value = _state.value.copy(
+                busy = false,
+                error = e.message ?: "Could not record that arrival.",
             )
         }
-        val title = if (driverName.isNullOrBlank()) "Vehicle checked in" else "$driverName checked in"
-        val notif = NotificationCompat.Builder(ctx, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_menu_myplaces)
-            .setContentTitle(title)
-            .setContentText(plate)
-            .setAutoCancel(true)
-            .build()
-        runCatching { NotificationManagerCompat.from(ctx).notify(plate.hashCode(), notif) }
     }
 
     fun clearConfirmation() { _state.value = _state.value.copy(lastCheckedIn = null) }
-    fun clearError() { _state.value = _state.value.copy(error = null) }
 
-    fun selectArrival(arrival: Arrival?) { _state.value = _state.value.copy(selectedArrival = arrival) }
+    fun selectArrival(a: Arrival?) { _state.value = _state.value.copy(selectedArrival = a) }
 
-    /** Loads every arrival for the calendar day that [dayStart] falls in. */
-    fun loadArchiveDay(dayStart: Long) {
-        val p = _state.value.profile ?: return
-        _state.value = _state.value.copy(archiveDayStart = dayStart, archiveLoading = true, archiveArrivals = emptyList())
-        viewModelScope.launch {
-            val list = runCatching {
-                repo.arrivalsForDay(p.garageId, Date(dayStart), Date(endOfDay(dayStart)))
-            }.getOrElse { emptyList() }
-            _state.value = _state.value.copy(archiveArrivals = list, archiveLoading = false)
-        }
-    }
+    // ----------------------------------------------------------- archive ----
 
-    fun shiftArchiveDay(deltaDays: Int) {
+    fun shiftArchiveDay(days: Int) {
         val cal = Calendar.getInstance().apply {
             timeInMillis = _state.value.archiveDayStart
-            add(Calendar.DAY_OF_MONTH, deltaDays)
+            add(Calendar.DAY_OF_YEAR, days)
         }
-        val newStart = startOfDay(cal.timeInMillis)
-        if (newStart > startOfDay(System.currentTimeMillis())) return // no browsing into the future
-        loadArchiveDay(newStart)
+        val start = startOfDay(cal.timeInMillis)
+        _state.value = _state.value.copy(archiveDayStart = start)
+        loadArchiveDay(start)
+    }
+
+    private fun loadArchiveDay(dayStart: Long) = viewModelScope.launch {
+        val session = _state.value.session ?: return@launch
+        _state.value = _state.value.copy(archiveLoading = true)
+        val end = Calendar.getInstance().apply {
+            timeInMillis = dayStart
+            add(Calendar.DAY_OF_YEAR, 1)
+        }.timeInMillis
+        val rows = runCatching {
+            repo.arrivalsForDay(session.garageId, java.util.Date(dayStart), java.util.Date(end))
+        }.getOrDefault(emptyList())
+        _state.value = _state.value.copy(archiveArrivals = rows, archiveLoading = false)
     }
 }
 
-private fun startOfDay(millis: Long): Long = Calendar.getInstance().apply {
+fun startOfDay(millis: Long): Long = Calendar.getInstance().apply {
     timeInMillis = millis
-    set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
-}.timeInMillis
-
-private fun endOfDay(dayStart: Long): Long = Calendar.getInstance().apply {
-    timeInMillis = dayStart
-    add(Calendar.DAY_OF_MONTH, 1)
+    set(Calendar.HOUR_OF_DAY, 0)
+    set(Calendar.MINUTE, 0)
+    set(Calendar.SECOND, 0)
+    set(Calendar.MILLISECOND, 0)
 }.timeInMillis

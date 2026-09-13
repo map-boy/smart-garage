@@ -8,7 +8,13 @@ export interface Arrival {
   colour?: string;
   driverName?: string;
   driverPhone?: string;
-  reason: string;
+  /**
+   * What the client asked for. The Android app writes requestedWork; older
+   * rows written by this PWA used `reason`. Both are read so a day's history
+   * does not go blank the moment the phones take over.
+   */
+  requestedWork?: string;
+  reason?: string;
   vehicleId?: string;
   clientId?: string;
   status: ArrivalStatus;
