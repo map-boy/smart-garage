@@ -134,6 +134,28 @@ await check('a device may update its own heartbeat', () =>
 await check('pairing codes cannot be listed', () =>
   assertFails(getDocs(collection(stranger, 'pairing'))));
 
+// The desktop app mints these; if a manager cannot, no phone can ever pair.
+await check('a manager may mint a pairing code', () =>
+  assertSucceeds(setDoc(doc(manager, 'pairing/NEWCODE1'), {
+    garageId: GARAGE, role: 'stock', expiresAtMs: Date.now() + 6e5,
+  })));
+
+await check('a technician cannot mint a pairing code', () =>
+  assertFails(setDoc(doc(tech, 'pairing/SNEAKY01'), {
+    garageId: GARAGE, role: 'stock', expiresAtMs: Date.now() + 6e5,
+  })));
+
+await check("a manager cannot mint a code for another garage", () =>
+  assertFails(setDoc(doc(manager, 'pairing/WRONGGRG'), {
+    garageId: OTHER, role: 'stock', expiresAtMs: Date.now() + 6e5,
+  })));
+
+// Unpairs the throwaway phone created just above, never a fixture other
+// cases still depend on - deleting shared state makes later tests fail for
+// reasons that have nothing to do with what they are checking.
+await check('a manager may unpair a phone', () =>
+  assertSucceeds(deleteDoc(doc(manager, `garages/${GARAGE}/devices/fresh-phone`))));
+
 // ---- stock ----------------------------------------------------------------
 await check('the reception phone may take stock out', () =>
   assertSucceeds(updateDoc(doc(reception, `garages/${GARAGE}/stock/part1`), {
