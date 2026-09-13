@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useStock } from '../hooks/useStock';
 import { Table, TableRow, TableCell } from '../components/ui/Table';
 import { Button } from '../components/ui/Button';
@@ -12,7 +12,7 @@ import { Part } from '../types';
 
 export function StockPage() {
   const currency = settingsService.get().currency;
-  const { stock, addPart, updatePart, deletePart } = useStock();
+  const { stock, addPart, updatePart, deletePart, setCount, oversoldParts } = useStock();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -53,6 +53,14 @@ export function StockPage() {
     
     if (selectedPart) {
       updatePart(data);
+      // Details and quantity move by different routes on purpose. Typing a
+      // number in this box means "the shelf actually holds this many", so it
+      // is recorded as a counted adjustment with a ledger line, not as a
+      // blind overwrite that would erase whatever moved while the form was
+      // open.
+      if (data.quantity !== selectedPart.quantity) {
+        setCount(selectedPart, data.quantity, { note: 'Edited in inventory' });
+      }
     } else {
       addPart(data);
     }
@@ -88,11 +96,35 @@ export function StockPage() {
           <div>
             <p className="text-[10px] font-bold text-gray-400 uppercase">Low Stock</p>
             <p className="text-lg font-black text-gray-900">
-              {stock.filter(p => p.quantity <= p.reorderLevel).length}
+              {stock.filter(p => p.quantity >= 0 && p.quantity <= p.reorderLevel).length}
             </p>
           </div>
         </div>
+        {oversoldParts.length > 0 && (
+          <div className="bg-white p-4 rounded-xl border border-rose-200 shadow-xs flex items-center gap-3">
+            <div className="w-10 h-10 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center">
+              <AlertCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-rose-500 uppercase">Needs recount</p>
+              <p className="text-lg font-black text-rose-700">{oversoldParts.length}</p>
+            </div>
+          </div>
+        )}
       </div>
+
+      {oversoldParts.length > 0 && (
+        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 text-sm text-rose-800">
+          <p className="font-bold">
+            {oversoldParts.length} part{oversoldParts.length > 1 ? 's have' : ' has'} gone below zero.
+          </p>
+          <p className="text-xs mt-1 text-rose-700">
+            More was taken than the books knew about &mdash; usually stock that arrived
+            without being entered. Count the shelf and correct the figure; the
+            movement history shows who took what.
+          </p>
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-50">
@@ -117,11 +149,15 @@ export function StockPage() {
                   <p className="text-xs text-gray-500 font-mono">{p.partNumber}</p>
                 </div>
               </TableCell>
-              <TableCell className="font-mono text-xs">{p.quantity}</TableCell>
+              <TableCell className={'font-mono text-xs ' + (p.quantity < 0 ? 'text-rose-600 font-bold' : '')}>
+                {p.quantity}
+              </TableCell>
               <TableCell className="font-bold">{formatCurrency(p.unitCost)}</TableCell>
               <TableCell className="text-sm text-gray-600">{p.supplier}</TableCell>
               <TableCell>
-                {p.quantity <= p.reorderLevel ? (
+                {p.quantity < 0 ? (
+                  <Badge variant="danger">Recount</Badge>
+                ) : p.quantity <= p.reorderLevel ? (
                   <Badge variant="warning">Order Soon</Badge>
                 ) : (
                   <Badge variant="success">In Stock</Badge>
