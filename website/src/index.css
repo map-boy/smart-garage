@@ -67,3 +67,133 @@ footer{background:#0d1220;padding:40px 0;text-align:center;color:var(--muted);fo
 
 .logo-img { height: 42px; width: auto; display: block; cursor: pointer; user-select: none; }
 
+
+/* ---------- conversion surfaces ----------------------------------------
+   Everything below exists so a visitor who has decided to act can do it
+   without hunting: the number is a link wherever it appears, the request
+   panel is one scroll away, and on a phone the call and ask buttons follow
+   the page down. */
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 100;
+  background: #f5b921; color: #111827; padding: 10px 16px; font-weight: 800;
+}
+.skip:focus { left: 8px; top: 8px; }
+
+.callbtn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-weight: 800; font-size: 14px; white-space: nowrap;
+}
+.callbtn.big { font-size: 16px; }
+
+.nav-cta { display: flex; align-items: center; gap: 16px; margin-left: auto; }
+.hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 22px; }
+
+.card .price { font-weight: 900; font-size: 15px; color: #f5b921; margin-top: 10px; }
+.card .price small { font-weight: 700; font-size: 11px; opacity: .75; text-transform: uppercase; }
+.card .detail { font-size: 13px; line-height: 1.6; opacity: .8; margin-top: 8px; }
+.card .more {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+  background: none; border: 0; padding: 0; cursor: pointer; color: inherit;
+  font: inherit; font-size: 11px; font-weight: 800; letter-spacing: .08em;
+}
+.card .more svg { transition: transform .18s ease; }
+.ask-link {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
+  font-size: 11px; font-weight: 800; letter-spacing: .08em; color: #f5b921;
+}
+
+/* ---------- request panel ---------- */
+.asksec { background: #0d1220; padding: 70px 0; }
+.asklayout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: start; }
+
+.panel {
+  background: #1b2338; border: 1px solid #ffffff14; border-radius: 6px;
+  padding: 32px; display: flex; flex-direction: column; gap: 16px;
+}
+.panel h2 { font-size: 26px; }
+.panel label { display: flex; flex-direction: column; gap: 6px; }
+.panel label > span {
+  font-size: 10px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; opacity: .65;
+}
+.panel label em { font-style: normal; text-transform: none; letter-spacing: 0; opacity: .7; }
+.panel input, .panel select, .panel textarea {
+  background: #111827; border: 1px solid #ffffff1f; border-radius: 4px;
+  padding: 12px 14px; color: inherit; font: inherit; font-size: 14px; width: 100%;
+}
+.panel input:focus, .panel select:focus, .panel textarea:focus {
+  outline: none; border-color: #f5b921;
+}
+.panel textarea { resize: vertical; }
+.prow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.btn.block { width: 100%; justify-content: center; }
+.panel .hint { font-size: 12px; opacity: .55; }
+.note { font-size: 13px; background: #f5b92118; border-left: 3px solid #f5b921; padding: 10px 12px; }
+.note.bad { background: #f43f5e18; border-left-color: #f43f5e; }
+.note a { text-decoration: underline; }
+.panel-done { align-items: center; text-align: center; gap: 14px; padding: 52px 32px; color: #10b981; }
+.panel-done h2, .panel-done .lead { color: inherit; }
+.panel-done .lead { color: #8e97ad; max-width: 360px; }
+
+.aside { display: flex; flex-direction: column; gap: 10px; }
+.aside h3 { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .6; }
+.aside-row {
+  display: flex; align-items: center; gap: 14px; padding: 14px;
+  background: #1b2338; border: 1px solid #ffffff10; border-radius: 6px;
+}
+.aside-row b { display: block; font-size: 14px; }
+.aside-row span { display: block; font-size: 12px; opacity: .6; }
+.aside-row svg { color: #f5b921; flex-shrink: 0; }
+.hours { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+.hours li { display: flex; justify-content: space-between; gap: 12px; }
+.hours span { opacity: .65; }
+.area { font-size: 12px; opacity: .55; margin-top: 12px; }
+
+/* ---------- questions ---------- */
+.faqsec { padding: 70px 0; }
+.faq { display: flex; flex-direction: column; gap: 10px; margin-top: 26px; }
+.faq-item { background: #1b2338; border: 1px solid #ffffff10; border-radius: 6px; }
+.faq-item button {
+  width: 100%; display: flex; justify-content: space-between; align-items: center;
+  gap: 16px; padding: 18px 20px; background: none; border: 0; cursor: pointer;
+  color: inherit; font: inherit; font-weight: 700; font-size: 15px; text-align: left;
+}
+.faq-item svg { flex-shrink: 0; transition: transform .18s ease; }
+.faq-item.on svg { transform: rotate(180deg); }
+.faq-item p { padding: 0 20px 18px; font-size: 14px; line-height: 1.7; opacity: .75; }
+
+/* ---------- always-there contact ---------- */
+.wa-fab {
+  position: fixed; right: 18px; bottom: 18px; z-index: 40;
+  width: 54px; height: 54px; border-radius: 50%; background: #25d366; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px #00000055;
+}
+.sticky { display: none; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin .9s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .spin { animation-duration: 2.4s; animation-timing-function: steps(8, end); }
+}
+
+@media (max-width: 900px) {
+  .asklayout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .prow { grid-template-columns: 1fr; }
+  .panel { padding: 22px; }
+  .nav-cta .btn, .nav-cta .callbtn { display: none; }
+  .topbar .wrap { justify-content: center; gap: 10px; font-size: 11px; }
+  /* The bar is the main conversion path on a phone, so it follows the page. */
+  .sticky {
+    display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
+    background: #1b2338; border-top: 1px solid #ffffff18; gap: 8px;
+    padding: 9px 10px calc(9px + env(safe-area-inset-bottom));
+  }
+  .sticky .btn { flex: 1; justify-content: center; padding: 13px 8px; font-size: 12px; }
+  .wa-fab { bottom: 78px; }
+  body { padding-bottom: 76px; }
+}

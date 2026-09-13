@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth";
@@ -156,11 +156,55 @@ export function AdminPanel({ onClose }: { onClose: () => void }) {
                   <Field label="Title" value={s.title} onChange={v => { const arr = [...content.services.items]; arr[i] = { ...s, title: v }; set("services", { ...content.services, items: arr }); }} />
                   <TextAreaField label="Body" value={s.body} onChange={v => { const arr = [...content.services.items]; arr[i] = { ...s, body: v }; set("services", { ...content.services, items: arr }); }} />
                   <Field label="Icon (lucide name)" value={s.icon} onChange={v => { const arr = [...content.services.items]; arr[i] = { ...s, icon: v }; set("services", { ...content.services, items: arr }); }} />
+                  <Field label="From price" value={String(s.fromPrice)} onChange={v => { const arr = [...content.services.items]; arr[i] = { ...s, fromPrice: Number(v) || 0 }; set("services", { ...content.services, items: arr }); }} />
+                  <Field label="Currency" value={s.currency} onChange={v => { const arr = [...content.services.items]; arr[i] = { ...s, currency: v }; set("services", { ...content.services, items: arr }); }} />
+                  <TextAreaField label="Detail (shown on Read more)" value={s.detail ?? ""} onChange={v => { const arr = [...content.services.items]; arr[i] = { ...s, detail: v }; set("services", { ...content.services, items: arr }); }} />
                   <ImageField label="Image" value={s.imageUrl} onUpload={async f => { const url = await uploadImage(f); const arr = [...content.services.items]; arr[i] = { ...s, imageUrl: url }; set("services", { ...content.services, items: arr }); }} />
                   <button className="admin-remove" onClick={() => set("services", { ...content.services, items: content.services.items.filter((_, j) => j !== i) })}>Remove service</button>
                 </div>
               ))}
-              <button className="admin-add" onClick={() => set("services", { ...content.services, items: [...content.services.items, { title: "New service", body: "", imageUrl: "", icon: "Wrench" }] })}>+ Add service</button>
+              <button className="admin-add" onClick={() => set("services", { ...content.services, items: [...content.services.items, { title: "New service", body: "", imageUrl: "", icon: "Wrench", fromPrice: 0, currency: "RWF", detail: "" }] })}>+ Add service</button>
+            </Section>
+
+            <Section title="Contact channels">
+              <Field label="WhatsApp number (digits only)" value={content.whatsapp} onChange={v => set("whatsapp", v)} />
+              <Field label="Map link" value={content.mapUrl} onChange={v => set("mapUrl", v)} />
+              <Field label="Service area" value={content.serviceArea} onChange={v => set("serviceArea", v)} />
+            </Section>
+
+            <Section title="Opening hours">
+              {content.hours.map((h, i) => (
+                <div className="admin-row" key={i}>
+                  <Field label="Days" value={h.days} onChange={v => { const arr = [...content.hours]; arr[i] = { ...h, days: v }; set("hours", arr); }} />
+                  <Field label="Hours" value={h.open} onChange={v => { const arr = [...content.hours]; arr[i] = { ...h, open: v }; set("hours", arr); }} />
+                  <button className="admin-remove" onClick={() => set("hours", content.hours.filter((_, j) => j !== i))}>Remove</button>
+                </div>
+              ))}
+              <button className="admin-add" onClick={() => set("hours", [...content.hours, { days: "Saturday", open: "08:00 - 14:00" }])}>+ Add row</button>
+            </Section>
+
+            <Section title="Questions people ask">
+              {content.faq.map((f, i) => (
+                <div className="admin-row" key={i}>
+                  <Field label="Question" value={f.q} onChange={v => { const arr = [...content.faq]; arr[i] = { ...f, q: v }; set("faq", arr); }} />
+                  <TextAreaField label="Answer" value={f.a} onChange={v => { const arr = [...content.faq]; arr[i] = { ...f, a: v }; set("faq", arr); }} />
+                  <button className="admin-remove" onClick={() => set("faq", content.faq.filter((_, j) => j !== i))}>Remove</button>
+                </div>
+              ))}
+              <button className="admin-add" onClick={() => set("faq", [...content.faq, { q: "New question", a: "" }])}>+ Add question</button>
+            </Section>
+
+            <Section title="Request panel wording">
+              <Field label="Eyebrow" value={content.requestPanel.eyebrow} onChange={v => set("requestPanel", { ...content.requestPanel, eyebrow: v })} />
+              <Field label="Title" value={content.requestPanel.title} onChange={v => set("requestPanel", { ...content.requestPanel, title: v })} />
+              <TextAreaField label="Body" value={content.requestPanel.body} onChange={v => set("requestPanel", { ...content.requestPanel, body: v })} />
+              <Field label="Thank-you title" value={content.requestPanel.successTitle} onChange={v => set("requestPanel", { ...content.requestPanel, successTitle: v })} />
+              <TextAreaField label="Thank-you body" value={content.requestPanel.successBody} onChange={v => set("requestPanel", { ...content.requestPanel, successBody: v })} />
+            </Section>
+
+            <Section title="Search listing">
+              <Field label="Page title" value={content.seo.title} onChange={v => set("seo", { ...content.seo, title: v })} />
+              <TextAreaField label="Description" value={content.seo.description} onChange={v => set("seo", { ...content.seo, description: v })} />
             </Section>
 
             <Section title="Contact / Footer">
