@@ -1,6 +1,6 @@
 # Smart Garage
 
-One repository, five pieces of one system. All of them talk to the same
+One repository, six pieces of one system. All of them talk to the same
 Firebase project, so a car checked in at the gate is on the boss's screen
 before the receptionist has put the phone down.
 
@@ -8,7 +8,8 @@ before the receptionist has put the phone down.
 | --- | --- | --- |
 | `garage/` | The admin desktop app (React) and its Electron shell in `garage/desktop`. Works fully offline; syncs when the internet comes back. | Windows `.exe` on the GitHub release |
 | `garage-boss-dashboard/` | The owner's web view of the same data — read-mostly, openable from anywhere. | Vercel |
-| `reception-android/` | The Kotlin/Compose phone app the client fills in on arrival. | `.apk` on the GitHub release |
+| `reception-android/` | The Kotlin/Compose phone app the receptionist fills in at the gate: who arrived, what they want, which parts go on the car. | `.apk` on the GitHub release |
+| `stock-android/` | The Kotlin/Compose phone app the stock manager keeps the shelf straight with — receive, recount, and read the ledger. | `.apk` on the GitHub release |
 | `reception/` | The same check-in flow as an installable web app, for a tablet at the desk. | Vercel |
 | `website/` | The public marketing site, editable by the admin without touching code. | Vercel |
 | `shared/` | Types both the web surfaces agree on. | imported directly |
@@ -23,6 +24,7 @@ Everything live, in one place.
 | Boss dashboard | [Vercel project `garage-website`](https://vercel.com/map-boys-projects/garage-website) |
 | Desktop renderer on the web | [Vercel project `garage-management`](https://vercel.com/map-boys-projects/garage-management) |
 | Desktop installer + APK downloads | [Releases](https://github.com/map-boy/smart-garage/releases) |
+| Latest build (v1.0.0) | [Windows installer](https://github.com/map-boy/smart-garage/releases/download/v1.0.0/Garage.Management.Pro-Setup-1.0.0.exe) &middot; [Reception APK](https://github.com/map-boy/smart-garage/releases/download/v1.0.0/smart-garage-reception-1.0.0.apk) &middot; [Stock APK](https://github.com/map-boy/smart-garage/releases/download/v1.0.0/smart-garage-stock-1.0.0.apk) |
 | Build and release runs | [Actions](https://github.com/map-boy/smart-garage/actions) |
 | Repository secrets | [Settings → Secrets → Actions](https://github.com/map-boy/smart-garage/settings/secrets/actions) |
 
@@ -33,7 +35,7 @@ project and its current domain is at the top; paste it here once it settles.
 Every pull request also gets its own preview URL for each site, posted by the
 Vercel bot as a comment on the PR.
 
-## Releasing the desktop app and the APK
+## Releasing the desktop app and the two APKs
 
 Push a tag. That is the whole procedure.
 
@@ -42,10 +44,20 @@ git tag v1.2.0
 git push origin v1.2.0
 ```
 
-`.github/workflows/release.yml` then builds the Windows installer and the
-Android APK in parallel and publishes **one** release carrying both, at
-`https://github.com/map-boy/smart-garage/releases`. The version in the tag is
-stamped onto both artifacts, so the installer says 1.2.0 and so does the phone.
+`.github/workflows/release.yml` then builds three things in parallel — the
+Windows installer, the reception APK and the stock APK — and publishes **one**
+release carrying all of them, at
+`https://github.com/map-boy/smart-garage/releases`:
+
+| File | Goes on |
+| --- | --- |
+| `Garage.Management.Pro-Setup-<version>.exe` | the boss's Windows machine |
+| `smart-garage-reception-<version>.apk` | the gate phone |
+| `smart-garage-stock-<version>.apk` | the store phone |
+
+The version in the tag is stamped onto all three, so the installer says 1.2.0
+and so do both phones. `latest.yml` and the `.blockmap` beside the installer
+are what `electron-updater` reads; leave them on the release.
 
 You can also run it by hand from the **Actions** tab (*Release* → *Run
 workflow*) and type the version, which is useful for a rebuild without a new
