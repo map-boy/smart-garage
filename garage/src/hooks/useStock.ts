@@ -16,7 +16,7 @@ import {
  */
 export function useStock() {
   const { profile } = useAuth();
-  const { items, loading, remove } = useGarageCollection<Part>('stock');
+  const { items, loading, remove, error } = useGarageCollection<Part>('stock');
   const garageId = profile?.garageId ?? '';
   const who = (): MovementContext => ({
     byName: profile?.displayName || profile?.email || 'Desktop',
@@ -26,6 +26,7 @@ export function useStock() {
   return {
     stock: items,
     loading,
+    error,
 
     addPart: (p: Part) => garageId && seedPart(garageId, p, who().byName),
     /** Details only - quantity is never set from a form. */
