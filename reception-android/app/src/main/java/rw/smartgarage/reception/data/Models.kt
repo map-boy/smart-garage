@@ -55,6 +55,8 @@ data class Part(
     val reorderLevel: Int = 0,
     val unitCost: Double = 0.0,
     val supplier: String = "",
+    /** True while this quantity is still only in the phone's local cache. */
+    val pending: Boolean = false,
 ) {
     /** Below zero means more went out than the books knew about: recount. */
     val isOversold: Boolean get() = quantity < 0
@@ -88,3 +90,24 @@ data class DeviceSession(
 /** Plates are typed by hand under pressure; compare them normalised. */
 fun normalisePlate(raw: String): String =
     raw.uppercase().filter { it.isLetterOrDigit() }
+
+/**
+ * The shelf as this phone currently understands it, and how much to trust it.
+ *
+ * Reception issues parts against these numbers. Firestore will happily serve
+ * them from the local cache for days with no hint that nothing has been heard
+ * from the server since - so the freshness travels with the data rather than
+ * being inferred at the screen, where it would be forgotten.
+ */
+data class StockSnapshot(
+    val parts: List<Part> = emptyList(),
+    /** True when this came from the local cache rather than the server. */
+    val fromCache: Boolean = false,
+    /** Wall clock of the last snapshot the server actually confirmed. */
+    val confirmedAtMs: Long? = null,
+) {
+    /** Counts older than this are worth warning about before issuing parts. */
+    val isStale: Boolean
+        get() = confirmedAtMs == null ||
+            System.currentTimeMillis() - confirmedAtMs > 15 * 60 * 1000L
+}

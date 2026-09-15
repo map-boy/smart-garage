@@ -9,6 +9,7 @@ import { Plus, Search, Car, Trash2, Edit, User } from 'lucide-react';
 import { generateId } from '../lib/utils';
 import { FUEL_TYPES } from '../lib/constants';
 import { Vehicle } from '../types';
+import { SyncBadge } from '../components/ui/SyncBadge';
 
 export function VehiclesPage() {
   const { vehicles, addVehicle, updateVehicle, deleteVehicle } = useVehicles();
@@ -92,7 +93,9 @@ export function VehiclesPage() {
             const owner = clients.find(c => c.id === v.clientId);
             return (
               <TableRow key={v.id}>
-                <TableCell className="font-black text-blue-600 tracking-tighter">{v.plate}</TableCell>
+                <TableCell className="font-black text-blue-600 tracking-tighter">
+                  {v.plate} <SyncBadge pending={v._pending} />
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center">

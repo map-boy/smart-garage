@@ -13,6 +13,7 @@ import {
   Camera,
   Settings,
   Menu,
+  Wrench,
   X
 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -108,6 +109,26 @@ export default function Shell({
         </nav>
 
         <div className="p-4 mt-auto border-t border-slate-200 space-y-4">
+          {/* Deliberately not a menu item. The technician console can edit
+              every garage in the project, so it is reachable but not
+              advertised - staff should never wander into it, and a technician
+              who needs it knows the wrench is here. It asks for a password
+              either way. */}
+          <button
+            onClick={() => navigate('/technician')}
+            title="Technician console"
+            aria-label="Technician console"
+            className={cn(
+              "flex items-center gap-2 text-slate-300 hover:text-slate-500 transition-colors",
+              isSidebarOpen ? "px-2" : "justify-center w-full"
+            )}
+          >
+            <Wrench className="w-3.5 h-3.5" />
+            {isSidebarOpen && (
+              <span className="text-[10px] uppercase tracking-widest">Service</span>
+            )}
+          </button>
+
           {isSidebarOpen && (
             <div className="flex items-center gap-3 px-2 py-3 bg-slate-50 rounded-2xl overflow-hidden mr-2 ml-2 border border-slate-100">
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-400 to-orange-600 flex-shrink-0 shadow-sm border-2 border-white" />

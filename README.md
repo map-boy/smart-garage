@@ -26,6 +26,7 @@ Everything live, in one place.
 | Desktop installer + APK downloads | [Releases](https://github.com/map-boy/smart-garage/releases) |
 | Latest build (v1.0.0) | [Windows installer](https://github.com/map-boy/smart-garage/releases/download/v1.0.0/Garage.Management.Pro-Setup-1.0.0.exe) &middot; [Reception APK](https://github.com/map-boy/smart-garage/releases/download/v1.0.0/smart-garage-reception-1.0.0.apk) &middot; [Stock APK](https://github.com/map-boy/smart-garage/releases/download/v1.0.0/smart-garage-stock-1.0.0.apk) |
 | Build and release runs | [Actions](https://github.com/map-boy/smart-garage/actions) |
+| Technician console | [TECHNICIAN.md](TECHNICIAN.md) - hidden support screen in the desktop app |
 | Repository secrets | [Settings → Secrets → Actions](https://github.com/map-boy/smart-garage/settings/secrets/actions) |
 
 The two Vercel entries link to the project rather than a fixed address,

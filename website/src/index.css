@@ -197,3 +197,23 @@ footer{background:#0d1220;padding:40px 0;text-align:center;color:var(--muted);fo
   .wa-fab { bottom: 78px; }
   body { padding-bottom: 76px; }
 }
+
+/* ---- free-form sections -------------------------------------------------
+   Content the garage adds from the technician console rather than from code.
+   They borrow the existing service-card and section rhythm so an added block
+   looks like it was always part of the page, not bolted on. */
+.sec-text, .sec-cards { padding: 64px 0; }
+.sec-text .lead, .sec-cards .lead { max-width: 70ch; }
+
+.sec-banner { position: relative; padding: 88px 0; overflow: hidden; }
+.sec-banner > img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: .28;
+}
+.sec-banner .wrap { position: relative; }
+.sec-banner h2 { max-width: 22ch; }
+
+.sec-cards .grid {
+  display: grid; gap: 22px; margin-top: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}

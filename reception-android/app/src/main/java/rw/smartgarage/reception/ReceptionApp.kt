@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.PersistentCacheSettings
+import rw.smartgarage.shared.CrashReporter
 
 class ReceptionApp : Application() {
     override fun onCreate() {
@@ -40,5 +41,11 @@ class ReceptionApp : Application() {
                         .build()
                 )
                 .build()
+
+        // Uncaught exceptions go to the project's own `diagnostics`
+        // collection, where the technician console reads crashes from every
+        // install together. Firestore's disk cache holds the report until the
+        // phone next has signal, so a crash in the yard is not lost.
+        CrashReporter.install(this, "garage-reception", BuildConfig.VERSION_NAME)
     }
 }

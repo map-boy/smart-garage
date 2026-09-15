@@ -59,7 +59,6 @@
     "wait-on": "^7.0.0"
   },
   "dependencies": {
-    "@sentry/electron": "^7.15.0",
     "electron-log": "^5.0.0",
     "electron-updater": "^6.0.0"
   }

@@ -8,12 +8,16 @@ import { Toast, ToastType } from '../components/ui/Toast';
 import { Database, Download, Upload, Trash2, ShieldCheck, Save, Camera, Image as ImageIcon } from 'lucide-react';
 import { MonthCloseCard } from '../components/settings/MonthCloseCard';
 import { DevicePairingCard } from '../components/settings/DevicePairingCard';
+import { DangerConfirm } from '../components/ui/DangerConfirm';
 
 export function SettingsPage() {
   const { profile } = useAuth();
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
   const [settings, setSettings] = useState<GarageSettings>(settingsService.get());
   const [busy, setBusy] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
+  const [counting, setCounting] = useState(false);
+  const [resetCounts, setResetCounts] = useState<{ name: string; count: number }[]>([]);
 
   const garageId = profile?.garageId;
 
@@ -71,14 +75,26 @@ export function SettingsPage() {
     }
   };
 
+  // Counting before asking, so the dialog can say what will actually go
+  // rather than asking someone to agree to the words "all data".
+  const handleResetRequest = async () => {
+    if (!garageId) return;
+    setCounting(true);
+    try {
+      setResetCounts(await backupService.countData(garageId));
+      setResetOpen(true);
+    } finally {
+      setCounting(false);
+    }
+  };
+
   const handleReset = async () => {
     if (!garageId) return;
-    if (confirm('CRITICAL: This will permanently delete ALL clients, vehicles, jobs, invoices, stock and reminders for this garage. This cannot be undone. Proceed?')) {
-      setBusy(true);
-      await backupService.clearData(garageId);
-      setBusy(false);
-      setToast({ message: 'All data erased', type: 'success' });
-    }
+    setBusy(true);
+    await backupService.clearData(garageId);
+    setBusy(false);
+    setResetOpen(false);
+    setToast({ message: 'All data erased', type: 'success' });
   };
 
   return (
@@ -242,12 +258,33 @@ export function SettingsPage() {
           </div>
 
           <div className="pt-8 border-t border-gray-50 flex justify-end">
-            <Button variant="ghost" size="sm" className="text-rose-500 hover:bg-rose-50" onClick={handleReset} disabled={busy}>
-              <Trash2 className="w-3.5 h-3.5 mr-2" /> Erase All Data
+            <Button variant="ghost" size="sm" className="text-rose-500 hover:bg-rose-50" onClick={handleResetRequest} disabled={busy || counting}>
+              <Trash2 className="w-3.5 h-3.5 mr-2" />
+              {counting ? 'Counting...' : 'Erase All Data'}
             </Button>
           </div>
         </div>
       </div>
+
+      <DangerConfirm
+        isOpen={resetOpen}
+        onClose={() => setResetOpen(false)}
+        onConfirm={handleReset}
+        title="Erase all data for this garage"
+        summary={
+          'This permanently deletes every record listed below from ' +
+          `garages/${garageId}. It cannot be undone, and a backup taken after ` +
+          'the erase will not bring anything back - export first if you are unsure.'
+        }
+        items={resetCounts.map((c) =>
+          c.count < 0
+            ? `${c.name}: could not be read, may still contain records`
+            : `${c.name}: ${c.count} record(s)`
+        )}
+        requirePhrase="ERASE"
+        confirmLabel="Erase everything"
+        busy={busy}
+      />
 
       {toast && (
         <Toast

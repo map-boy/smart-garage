@@ -288,6 +288,62 @@ await check('a paired phone may read vehicles', () =>
 await check('a paired phone cannot rewrite job cards', () =>
   assertFails(setDoc(doc(reception, `garages/${GARAGE}/jobs/j1`), { status: 'done' })));
 
+// ---- crash reports ---------------------------------------------------------
+// Anyone may file one: a phone that crashes before it ever pairs is exactly
+// the crash worth seeing, and it has no privileges to prove.
+await check('any signed-in app may file a crash report', () =>
+  assertSucceeds(addDoc(collection(reception, 'diagnostics'), {
+    app: 'garage-reception', message: 'boom', stack: 'at x()',
+  })));
+
+await check('a crash report without a stack is refused', () =>
+  assertFails(addDoc(collection(reception, 'diagnostics'), {
+    app: 'garage-reception', message: 'boom',
+  })));
+
+await check('a crash report cannot be used as free storage', () =>
+  assertFails(addDoc(collection(reception, 'diagnostics'), {
+    app: 'garage-reception', message: 'boom', stack: 'x'.repeat(10001),
+  })));
+
+await check('a manager may read crash reports', () =>
+  assertSucceeds(getDocs(collection(manager, 'diagnostics'))));
+
+await check('a phone cannot read crash reports back', () =>
+  assertFails(getDocs(collection(reception, 'diagnostics'))));
+
+await check('a crash report cannot be edited after the fact', async () => {
+  await setDoc(doc(manager, 'diagnostics/seed'), {
+    app: 'x', message: 'm', stack: 's',
+  }).catch(() => {});
+  return assertFails(updateDoc(doc(manager, 'diagnostics/seed'), { message: 'nicer' }));
+});
+
+// ---- technician audit log --------------------------------------------------
+await check('a manager may write an audit line', () =>
+  assertSucceeds(addDoc(collection(manager, 'technicianActions'), {
+    op: 'update', path: `garages/${GARAGE}/stock/p1`, before: {}, after: {},
+  })));
+
+await check('a phone cannot write an audit line', () =>
+  assertFails(addDoc(collection(reception, 'technicianActions'), {
+    op: 'update', path: 'anything',
+  })));
+
+await check('an audit line cannot be rewritten', async () => {
+  await setDoc(doc(manager, 'technicianActions/a1'), { op: 'delete', path: 'p' });
+  return assertFails(updateDoc(doc(manager, 'technicianActions/a1'), { op: 'update' }));
+});
+
+await check('an audit line cannot be deleted, even by a manager', () =>
+  assertFails(deleteDoc(doc(manager, 'technicianActions/a1'))));
+
+// ---- pairing codes are one-shot -------------------------------------------
+// The device create rule requires the code document to exist, so deleting it
+// as part of redemption is what stops a second phone using the same code.
+await check('a redeeming phone may burn the code it used', () =>
+  assertSucceeds(deleteDoc(doc(freshPhone, 'pairing/GOODCODE'))));
+
 await env.cleanup();
 
 const failed = results.filter((r) => r[0] === 'FAIL');

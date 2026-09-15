@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import rw.smartgarage.reception.data.Arrival
 import rw.smartgarage.reception.data.Part
+import rw.smartgarage.reception.data.StockSnapshot
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -260,6 +261,7 @@ fun CheckInScreen(
     if (pickerOpen) {
         PartPickerDialog(
             stock = state.stock,
+            freshness = state.stockFreshness,
             onPick = { part, qty -> onAddPart(part, qty) },
             onDismiss = { pickerOpen = false },
         )
@@ -337,6 +339,7 @@ private fun PartsSection(
 @Composable
 private fun PartPickerDialog(
     stock: List<Part>,
+    freshness: StockSnapshot,
     onPick: (Part, Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -356,6 +359,29 @@ private fun PartPickerDialog(
             shape = RoundedCornerShape(18.dp),
         ) {
             Column(Modifier.padding(16.dp).fillMaxHeight(0.85f)) {
+                // Issuing parts against a count nobody has confirmed for a
+                // while is allowed - going negative is a real signal that the
+                // shelf needs recounting, and blocking it would just send
+                // people back to paper. But the person doing it should see
+                // the uncertainty instead of a clean number that might be wrong.
+                if (freshness.fromCache || freshness.isStale) {
+                    Surface(
+                        color = Amber.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                    ) {
+                        Text(
+                            text = freshness.confirmedAtMs?.let {
+                                "Stock count last confirmed at " +
+                                    java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+                                        .format(java.util.Date(it)) +
+                                    ". It may be out of date."
+                            } ?: "These counts have not been confirmed with the office yet. They may be out of date.",
+                            color = Amber, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(10.dp),
+                        )
+                    }
+                }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         "Take from store", color = Ink, fontWeight = FontWeight.Black,

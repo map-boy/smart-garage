@@ -45,6 +45,28 @@ export const backupService = {
     }
   },
 
+  /**
+   * How many records an erase would actually destroy, per collection.
+   *
+   * The confirmation dialog shows this. "Delete all data" is a sentence
+   * someone can agree to without picturing it; "delete 1,284 records
+   * including 412 invoices" is not.
+   */
+  countData: async (garageId: string): Promise<{ name: string; count: number }[]> => {
+    const counts: { name: string; count: number }[] = [];
+    for (const name of COLLECTIONS) {
+      try {
+        const snap = await getDocs(collection(db, 'garages', garageId, name));
+        counts.push({ name, count: snap.size });
+      } catch {
+        // A collection we cannot read is one we cannot count. Saying so beats
+        // reporting a confident zero for something that may be full.
+        counts.push({ name, count: -1 });
+      }
+    }
+    return counts;
+  },
+
   clearData: async (garageId: string): Promise<void> => {
     try {
       const batch = writeBatch(db);

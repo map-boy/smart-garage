@@ -9,6 +9,7 @@ import { Plus, Search, Package, Trash2, Edit, AlertCircle } from 'lucide-react';
 import { generateId, formatCurrency } from '../lib/utils';
 import { settingsService } from '../services/settingsService';
 import { Part } from '../types';
+import { SyncBadge } from '../components/ui/SyncBadge';
 
 export function StockPage() {
   const currency = settingsService.get().currency;
@@ -145,7 +146,9 @@ export function StockPage() {
             <TableRow key={p.id}>
               <TableCell>
                 <div>
-                  <p className="font-bold text-gray-900 leading-tight">{p.name}</p>
+                  <p className="font-bold text-gray-900 leading-tight">
+                    {p.name} <SyncBadge pending={p._pending} />
+                  </p>
                   <p className="text-xs text-gray-500 font-mono">{p.partNumber}</p>
                 </div>
               </TableCell>

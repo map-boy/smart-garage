@@ -223,6 +223,7 @@ class StockRepository(
         reorderLevel = (d.getLong("reorderLevel") ?: 0L).toInt(),
         unitCost = d.getDouble("unitCost") ?: 0.0,
         supplier = d.getString("supplier").orEmpty(),
+        pending = d.metadata.hasPendingWrites(),
     )
 
     private fun isoNow(): String {

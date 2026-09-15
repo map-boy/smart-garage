@@ -57,7 +57,10 @@ object DevicePairing {
 
         val pairingRef = db.collection("pairing").document(trimmed)
 
-        return db.runTransaction { tx ->
+        // The type argument is explicit: without it Kotlin has to infer the
+        // transaction's result through a SAM conversion, which it does not
+        // always manage.
+        return db.runTransaction<PairedDevice> { tx ->
             val snap = tx.get(pairingRef)
             if (!snap.exists()) {
                 throw IllegalArgumentException(

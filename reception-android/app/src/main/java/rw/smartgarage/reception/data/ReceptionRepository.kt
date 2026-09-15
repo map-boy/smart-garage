@@ -102,23 +102,35 @@ class ReceptionRepository(
      * still works with no signal. Ordered by name because that is how someone
      * hunting for a part actually scans a list.
      */
-    fun stock(garageId: String): Flow<List<Part>> = callbackFlow {
+    fun stock(garageId: String): Flow<StockSnapshot> = callbackFlow {
+        // Remembered across snapshots: once the server has confirmed the shelf,
+        // later cache-only snapshots must not erase the fact that it did, or
+        // the freshness warning would flap on every local edit.
+        var confirmedAtMs: Long? = null
         val reg = db.collection("garages").document(garageId)
             .collection("stock")
             .orderBy("name")
             .addSnapshotListener(MetadataChanges.INCLUDE) { snap, err ->
                 if (err != null || snap == null) return@addSnapshotListener
-                trySend(snap.documents.map { d ->
-                    Part(
-                        id = d.id,
-                        name = d.getString("name").orEmpty(),
-                        partNumber = d.getString("partNumber").orEmpty(),
-                        quantity = (d.getLong("quantity") ?: 0L).toInt(),
-                        reorderLevel = (d.getLong("reorderLevel") ?: 0L).toInt(),
-                        unitCost = d.getDouble("unitCost") ?: 0.0,
-                        supplier = d.getString("supplier").orEmpty(),
+                if (!snap.metadata.isFromCache) confirmedAtMs = System.currentTimeMillis()
+                trySend(
+                    StockSnapshot(
+                        parts = snap.documents.map { d ->
+                            Part(
+                                id = d.id,
+                                name = d.getString("name").orEmpty(),
+                                partNumber = d.getString("partNumber").orEmpty(),
+                                quantity = (d.getLong("quantity") ?: 0L).toInt(),
+                                reorderLevel = (d.getLong("reorderLevel") ?: 0L).toInt(),
+                                unitCost = d.getDouble("unitCost") ?: 0.0,
+                                supplier = d.getString("supplier").orEmpty(),
+                                pending = d.metadata.hasPendingWrites(),
+                            )
+                        },
+                        fromCache = snap.metadata.isFromCache,
+                        confirmedAtMs = confirmedAtMs,
                     )
-                })
+                )
             }
         awaitClose { reg.remove() }
     }

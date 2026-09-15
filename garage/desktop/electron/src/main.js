@@ -1,5 +1,3 @@
-const Sentry = require('@sentry/electron/main');
-Sentry.init({ dsn: 'https://66213e0e7054b0122b8c69717e016afa@o4511678051778560.ingest.de.sentry.io/4511678073405520' });
 const { app, BrowserWindow, shell, dialog, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');

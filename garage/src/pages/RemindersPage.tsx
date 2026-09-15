@@ -9,6 +9,7 @@ import { Plus, Search, Bell, CheckCircle2, Trash2, Calendar, Car } from 'lucide-
 import { generateId, formatDate } from '../lib/utils';
 import { REMINDER_TYPES } from '../lib/constants';
 import { ServiceReminder } from '../types';
+import { SyncBadge } from '../components/ui/SyncBadge';
 
 export function RemindersPage() {
   const { reminders, addReminder, updateReminder, deleteReminder } = useReminders();
@@ -82,7 +83,9 @@ export function RemindersPage() {
                 </div>
               </div>
 
-              <h4 className="font-black text-gray-900 text-lg tracking-tight mb-1">{rem.type}</h4>
+              <h4 className="font-black text-gray-900 text-lg tracking-tight mb-1">
+                {rem.type} <SyncBadge pending={rem._pending} />
+              </h4>
               <div className="space-y-2 mt-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Car className="w-4 h-4 text-gray-400" />

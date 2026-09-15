@@ -157,8 +157,12 @@ private fun PartRow(part: Part, onEdit: () -> Unit, onAdjust: () -> Unit, onRece
                         listOfNotNull(
                             part.partNumber.ifBlank { null },
                             part.supplier.ifBlank { null },
+                            // The count on screen is the phone's own until the
+                            // server confirms it. Say so rather than showing a
+                            // clean number that the office cannot see yet.
+                            if (part.pending) "syncing..." else null,
                         ).joinToString("  ·  "),
-                        color = Muted, fontSize = 12.sp,
+                        color = if (part.pending) Amber else Muted, fontSize = 12.sp,
                     )
                 }
                 Text(

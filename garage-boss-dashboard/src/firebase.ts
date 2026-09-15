@@ -1,6 +1,10 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
 
 const env = (import.meta as any).env;
 
@@ -15,7 +19,23 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+/**
+ * Offline store, kept on disk rather than in memory.
+ *
+ * Without this the cache lives only in the page: a refresh threw away
+ * everything not yet acknowledged by the server, so a write made on a bad
+ * connection could disappear with no sign it had ever happened. IndexedDB
+ * keeps the queue across a reload and a browser restart.
+ *
+ * Multi-tab manager because this is an ordinary web app - the boss will have
+ * it open in more than one tab eventually, and single-tab ownership would
+ * leave the others unable to read their own cache.
+ */
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+  }),
+});
 export const auth = getAuth(app);
 
 export enum OperationType {

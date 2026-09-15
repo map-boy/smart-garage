@@ -1,16 +1,13 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
-import * as Sentry from '@sentry/electron/renderer';
 import App from './App.tsx';
 import './index.css';
+import {installCrashReporter} from './lib/crashReporter';
 
-try {
-  Sentry.init({
-    dsn: 'https://66213e0e7054b0122b8c69717e016afa@o4511678051778560.ingest.de.sentry.io/4511678073405520',
-  });
-} catch (e) {
-  console.warn('Sentry failed to initialize, app continues normally:', e);
-}
+// Crashes go to the project's own `diagnostics` collection, where the
+// technician console reads them alongside every other install. This replaced
+// Sentry, whose free tier ran out and whose DSN was hard-coded here.
+installCrashReporter();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
