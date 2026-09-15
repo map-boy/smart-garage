@@ -55,6 +55,14 @@ data class Part(
     val reorderLevel: Int = 0,
     val unitCost: Double = 0.0,
     val supplier: String = "",
+    /**
+     * What this sits under on the shelf: "Car wash", "Brakes", "Oils".
+     *
+     * Blank means it stands on its own. A washing bay buys soap, wax, cloths
+     * and brushes, and a flat list of every one of those buries the fifteen
+     * parts anyone actually looks for - so they hang off one heading instead.
+     */
+    val group: String = "",
     /** True while this quantity is still only in the phone's local cache. */
     val pending: Boolean = false,
 ) {
@@ -118,3 +126,30 @@ data class Movement(
     val atLocal: String = "",
     val pending: Boolean = false,
 )
+
+/**
+ * A heading on the shelf and everything under it.
+ *
+ * Built from the parts themselves rather than stored separately: a group is
+ * only ever a name several parts share, so there is no second collection to
+ * keep in step and no way to end up with a heading that has nothing under it.
+ */
+data class PartGroup(
+    val name: String,
+    val parts: List<Part>,
+) {
+    val totalQuantity: Int get() = parts.sumOf { it.quantity }
+    val lowCount: Int get() = parts.count { it.isLow }
+    val oversoldCount: Int get() = parts.count { it.isOversold }
+    val pending: Boolean get() = parts.any { it.pending }
+}
+
+/** Groups first, alphabetically, with loose parts under their own heading. */
+const val UNGROUPED = "Ungrouped"
+
+fun List<Part>.byGroup(): List<PartGroup> =
+    groupBy { it.group.trim().ifBlank { UNGROUPED } }
+        .map { (name, parts) -> PartGroup(name, parts.sortedBy { it.name.lowercase() }) }
+        // The loose pile sorts last however it is named, so a heading someone
+        // actually chose is never pushed below it.
+        .sortedWith(compareBy({ it.name == UNGROUPED }, { it.name.lowercase() }))

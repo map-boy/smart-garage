@@ -13,6 +13,9 @@ import rw.smartgarage.stock.data.DeviceStore
 import rw.smartgarage.stock.data.Movement
 import rw.smartgarage.stock.data.MovementReason
 import rw.smartgarage.stock.data.Part
+import rw.smartgarage.stock.data.PartGroup
+import rw.smartgarage.stock.data.UNGROUPED
+import rw.smartgarage.stock.data.byGroup
 import rw.smartgarage.stock.data.StockRepository
 
 data class StockUiState(
@@ -26,13 +29,40 @@ data class StockUiState(
     val query: String = "",
     val editing: Part? = null,
     val adjusting: Part? = null,
+    val deleting: Part? = null,
+    /** The heading being looked inside, or null at the top of the shelf. */
+    val openGroup: String? = null,
+    /** True while the "new heading and its products" sheet is up. */
+    val addingGroup: Boolean = false,
 ) {
     val visible: List<Part>
-        get() = if (query.isBlank()) stock else stock.filter {
-            it.name.contains(query, true) ||
-                it.partNumber.contains(query, true) ||
-                it.supplier.contains(query, true)
+        get() {
+            val matching = if (query.isBlank()) stock else stock.filter {
+                it.name.contains(query, true) ||
+                    it.partNumber.contains(query, true) ||
+                    it.supplier.contains(query, true) ||
+                    it.group.contains(query, true)
+            }
+            // Inside a heading the list is that heading only. A search from in
+            // there still searches the whole shelf, because someone hunting a
+            // part does not always remember which heading it lives under.
+            val group = openGroup
+            return if (group != null && query.isBlank()) {
+                matching.filter { it.group.trim().ifBlank { UNGROUPED } == group }
+            } else {
+                matching
+            }
         }
+
+    /** The top level of the shelf: headings, not products. */
+    val groups: List<PartGroup> get() = visible.byGroup()
+
+    /** True when the list should show products rather than headings. */
+    val showingParts: Boolean get() = openGroup != null || query.isNotBlank()
+
+    /** Existing headings, offered as suggestions when filing a new product. */
+    val knownGroups: List<String>
+        get() = stock.map { it.group.trim() }.filter { it.isNotBlank() }.distinct().sorted()
 
     val lowCount: Int get() = stock.count { it.isLow }
     val oversoldCount: Int get() = stock.count { it.isOversold }
@@ -100,6 +130,26 @@ class StockViewModel @JvmOverloads constructor(
 
     fun edit(part: Part?) { _state.value = _state.value.copy(editing = part) }
     fun adjust(part: Part?) { _state.value = _state.value.copy(adjusting = part) }
+    fun confirmDelete(part: Part?) { _state.value = _state.value.copy(deleting = part) }
+
+    fun openGroup(name: String?) {
+        _state.value = _state.value.copy(openGroup = name, query = "")
+    }
+
+    fun addGroup(open: Boolean) { _state.value = _state.value.copy(addingGroup = open) }
+
+    /** Saves a heading and everything typed under it in one go. */
+    fun createGroup(name: String, parts: List<Part>) {
+        val s = _state.value.session ?: return
+        repo.createGroup(s, name, parts)
+        _state.value = _state.value.copy(addingGroup = false)
+    }
+
+    fun deletePart(part: Part) {
+        val s = _state.value.session ?: return
+        repo.deletePart(s, part)
+        _state.value = _state.value.copy(deleting = null, editing = null)
+    }
 
     fun receive(part: Part, qty: Int) {
         val s = _state.value.session ?: return

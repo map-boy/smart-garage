@@ -132,10 +132,105 @@ class StockRepository(
                     "reorderLevel" to part.reorderLevel,
                     "unitCost" to part.unitCost,
                     "supplier" to part.supplier.trim(),
+                    "group" to part.group.trim(),
                     "updatedAt" to isoNow(),
                 ),
                 com.google.firebase.firestore.SetOptions.merge(),
             )
+    }
+
+    /**
+     * Creates a whole heading at once: the group name and everything under it.
+     *
+     * A washing bay is set up in one sitting - soap, wax, cloths, brushes -
+     * and adding those one dialog at a time is why shelves end up half
+     * entered. One batch, so the group either arrives complete or not at all.
+     */
+    fun createGroup(session: DeviceSession, groupName: String, parts: List<Part>): Int {
+        val clean = parts.filter { it.name.isNotBlank() }
+        if (clean.isEmpty()) return 0
+
+        val garage = db.collection("garages").document(session.garageId)
+        val nowIso = isoNow()
+        val batch = db.batch()
+
+        clean.forEach { part ->
+            val ref = garage.collection("stock").document()
+            batch.set(
+                ref,
+                hashMapOf(
+                    "name" to part.name.trim(),
+                    "partNumber" to part.partNumber.trim(),
+                    "quantity" to part.quantity,
+                    "reorderLevel" to part.reorderLevel,
+                    "unitCost" to part.unitCost,
+                    "supplier" to part.supplier.trim(),
+                    "group" to groupName.trim(),
+                    "updatedAt" to nowIso,
+                )
+            )
+            if (part.quantity != 0) {
+                batch.set(
+                    garage.collection("stockMovements").document(),
+                    hashMapOf(
+                        "partId" to ref.id,
+                        "partName" to part.name.trim(),
+                        "partNumber" to part.partNumber.trim(),
+                        "delta" to part.quantity,
+                        "balanceAfter" to part.quantity,
+                        "reason" to MovementReason.RECEIVED.wire,
+                        "plate" to null, "vehicleId" to null,
+                        "arrivalId" to null, "jobId" to null,
+                        "note" to "Opening stock for ${groupName.trim()}",
+                        "byName" to session.staffName,
+                        "byRole" to session.role.wire,
+                        "at" to FieldValue.serverTimestamp(),
+                        "atLocal" to nowIso,
+                    )
+                )
+            }
+        }
+
+        batch.commit()
+        return clean.size
+    }
+
+    /**
+     * Takes a part off the shelf for good.
+     *
+     * Anything still counted is written off first, in the same batch. Deleting
+     * a part that held twelve units would otherwise make twelve units vanish
+     * from a ledger whose whole purpose is that they cannot - the history has
+     * to say where they went, even when the answer is "removed from the
+     * catalogue". Past movements are left alone; they record what happened.
+     */
+    fun deletePart(session: DeviceSession, part: Part) {
+        val garage = db.collection("garages").document(session.garageId)
+        val nowIso = isoNow()
+        val batch = db.batch()
+
+        if (part.quantity != 0) {
+            batch.set(
+                garage.collection("stockMovements").document(),
+                hashMapOf(
+                    "partId" to part.id,
+                    "partName" to part.name,
+                    "partNumber" to part.partNumber,
+                    "delta" to -part.quantity,
+                    "balanceAfter" to 0,
+                    "reason" to MovementReason.WRITTEN_OFF.wire,
+                    "plate" to null, "vehicleId" to null,
+                    "arrivalId" to null, "jobId" to null,
+                    "note" to "Part removed from the catalogue",
+                    "byName" to session.staffName,
+                    "byRole" to session.role.wire,
+                    "at" to FieldValue.serverTimestamp(),
+                    "atLocal" to nowIso,
+                )
+            )
+        }
+        batch.delete(garage.collection("stock").document(part.id))
+        batch.commit()
     }
 
     /** A part that did not exist before, with its opening count as a movement. */
@@ -154,6 +249,7 @@ class StockRepository(
                 "reorderLevel" to part.reorderLevel,
                 "unitCost" to part.unitCost,
                 "supplier" to part.supplier.trim(),
+                "group" to part.group.trim(),
                 "updatedAt" to nowIso,
             )
         )
@@ -223,6 +319,7 @@ class StockRepository(
         reorderLevel = (d.getLong("reorderLevel") ?: 0L).toInt(),
         unitCost = d.getDouble("unitCost") ?: 0.0,
         supplier = d.getString("supplier").orEmpty(),
+        group = d.getString("group").orEmpty(),
         pending = d.metadata.hasPendingWrites(),
     )
 
