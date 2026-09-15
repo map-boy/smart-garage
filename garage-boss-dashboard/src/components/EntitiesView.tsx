@@ -218,7 +218,7 @@ export default function EntitiesView({
                         <td className="px-6 py-4 font-bold text-gray-800">{client.name}</td>
                         <td className="px-6 py-4">
                           <p className="text-gray-600 font-mono font-medium">{client.phone}</p>
-                          <p className="text-[11px] text-gray-400 mt-0.5">{client.email || 'â€”'}</p>
+                          <p className="text-[11px] text-gray-400 mt-0.5">{client.email || '—'}</p>
                         </td>
                         <td className="px-6 py-4 text-gray-600 max-w-xs truncate">
                           {clientPlates.length > 0 ? (
@@ -335,12 +335,12 @@ export default function EntitiesView({
                     const isLow = item.quantity <= item.reorderLevel;
                     return (
                       <tr key={item.id} className={`hover:bg-gray-50/40 ${isLow ? 'bg-rose-50/20' : ''}`}>
-                        <td className="px-6 py-4 font-mono font-bold text-gray-800">{item.partNumber || 'â€”'}</td>
+                        <td className="px-6 py-4 font-mono font-bold text-gray-800">{item.partNumber || '—'}</td>
                         <td className="px-6 py-4">
                           <p className="font-bold text-gray-800">{item.name}</p>
                           <p className="text-[10px] text-gray-400">Reorder Level: {item.reorderLevel}</p>
                         </td>
-                        <td className="px-6 py-4 text-gray-500">{item.supplier || 'â€”'}</td>
+                        <td className="px-6 py-4 text-gray-500">{item.supplier || '—'}</td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                             <span className={`font-mono font-black text-sm ${isLow ? 'text-rose-600' : 'text-gray-800'}`}>{item.quantity}</span>
@@ -460,10 +460,10 @@ export default function EntitiesView({
                               <p className="font-bold text-gray-800">{vehicle.plate.toUpperCase()}</p>
                               <p className="text-[10px] text-gray-400">{vehicle.make} {vehicle.model}</p>
                             </div>
-                          ) : 'â€”'}
+                          ) : '—'}
                         </td>
                         <td className="px-6 py-4 text-gray-500 max-w-xs truncate italic">
-                          {rem.notes ? `â€œ${rem.notes}â€` : 'No instruction'}
+                          {rem.notes ? `“${rem.notes}”` : 'No instruction'}
                         </td>
                         <td className="px-6 py-4">
                           {rem.isDone ? (
