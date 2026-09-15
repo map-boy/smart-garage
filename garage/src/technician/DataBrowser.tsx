@@ -119,8 +119,17 @@ export function DataBrowser({ garageId }: Props) {
     setSaving(true);
     setNotice(null);
     try {
-      await saveDoc(spec, garageId, id, parsed, creating ? 'created from console' : 'edited from console');
-      setNotice(`Saved ${spec.label} / ${id}.`);
+      const outcome = await saveDoc(
+        spec, garageId, id, parsed,
+        creating ? 'created from console' : 'edited from console'
+      );
+      setNotice(
+        outcome === 'queued'
+          ? `Saved on this computer, but the server has not confirmed it yet. ` +
+            `It uploads by itself when the connection is back - check Diagnostics ` +
+            `if it is still unconfirmed in a few minutes.`
+          : `Saved ${spec.label} / ${id}.`
+      );
       await load();
     } catch (e) {
       const code = (e as { code?: string })?.code;
@@ -137,18 +146,23 @@ export function DataBrowser({ garageId }: Props) {
   async function doDelete() {
     setDeleting(true);
     try {
-      const { deleted, failed } = await removeMany(
+      const { deleted, queued, failed } = await removeMany(
         spec,
         garageId,
         [...checked],
         'deleted from console'
       );
-      setNotice(
-        failed.length === 0
-          ? `Deleted ${deleted.length} document(s).`
-          : `Deleted ${deleted.length}, refused ${failed.length}: ` +
+      const parts = [`Deleted ${deleted.length}`];
+      if (queued.length) {
+        parts.push(`${queued.length} queued but not yet confirmed by the server`);
+      }
+      if (failed.length) {
+        parts.push(
+          `${failed.length} refused: ` +
             failed.map((f) => `${f.id} (${f.reason})`).join(', ')
-      );
+        );
+      }
+      setNotice(parts.join('. ') + '.');
       setConfirmOpen(false);
       await load();
     } finally {

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { settle } from './audit';
 import { Button } from '../components/ui/Button';
 import type { CheckResult, StuckWrite } from './diagnostics';
 import { findStuckWrites, runAllChecks, STUCK_AFTER_MINUTES } from './diagnostics';
@@ -60,12 +61,22 @@ export function DiagnosticsPanel({ garageId }: Props) {
   async function retry(item: StuckWrite) {
     setNotice(null);
     try {
-      await setDoc(
-        doc(db, item.path, item.id),
-        { retriedAt: new Date().toISOString() },
-        { merge: true }
+      const outcome = await settle(
+        setDoc(
+          doc(db, item.path, item.id),
+          { retriedAt: new Date().toISOString() },
+          { merge: true }
+        )
       );
-      setNotice(`Retried ${item.title}. It cleared, so the original write went through.`);
+      setNotice(
+        outcome === 'queued'
+          ? `${item.title} is still not reaching the server. Nothing is lost - it ` +
+            'stays queued - but the connection is the thing to look at, not the record.'
+          : outcome === 'refused'
+            ? `${item.title} is refused by the rules, not delayed. It will never sync ` +
+              'as it stands - fix the rule or the record, or delete it from the Data tab.'
+            : `Retried ${item.title}. It cleared, so the original write went through.`
+      );
       setStuck(await findStuckWrites(garageId));
     } catch (e) {
       const code = (e as { code?: string })?.code;

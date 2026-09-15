@@ -18,7 +18,8 @@ import {
   setDoc,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { recordAction } from './audit';
+import { recordAction, settle } from './audit';
+import type { Settled } from './audit';
 import type { CollectionSpec } from './registry';
 import { READ_ONLY_COLLECTIONS, resolvePath, rowTitle } from './registry';
 
@@ -86,7 +87,7 @@ export async function saveDoc(
   id: string,
   value: Record<string, unknown>,
   note?: string
-): Promise<void> {
+): Promise<Settled> {
   if (isReadOnly(spec)) {
     throw new Error(
       `${spec.label} is append-only - the rules reject updates and deletes for ` +
@@ -96,10 +97,10 @@ export async function saveDoc(
   const path = resolvePath(spec, garageId);
   const before = await readBefore(path, id);
 
-  // The audit entry is written first. If the mutation then fails, the log has
-  // a harmless extra line; if the order were reversed, a mutation that
-  // succeeded while the log failed would be invisible.
-  await recordAction({
+  // The audit entry goes first, so a mutation that lands while the log fails
+  // cannot happen. A refusal here means the account cannot write the log at
+  // all, and going ahead would make an untracked change - so stop.
+  const logged = await recordAction({
     op: before === null ? 'create' : 'update',
     path: `${path}/${id}`,
     before,
@@ -107,8 +108,14 @@ export async function saveDoc(
     garageId: spec.scope === 'garage' ? garageId : undefined,
     note,
   });
+  if (logged === 'refused') {
+    throw new Error(
+      'This account cannot write the audit log, so the change was not made. ' +
+        'Only a manager or owner may use the console.'
+    );
+  }
 
-  await setDoc(doc(db, path, id), value);
+  return settle(setDoc(doc(db, path, id), value));
 }
 
 export async function removeDoc(
@@ -116,14 +123,14 @@ export async function removeDoc(
   garageId: string,
   id: string,
   note?: string
-): Promise<void> {
+): Promise<Settled> {
   if (isReadOnly(spec)) {
     throw new Error(`${spec.label} is append-only - entries cannot be deleted.`);
   }
   const path = resolvePath(spec, garageId);
   const before = await readBefore(path, id);
 
-  await recordAction({
+  const logged = await recordAction({
     op: 'delete',
     path: `${path}/${id}`,
     before,
@@ -131,8 +138,13 @@ export async function removeDoc(
     garageId: spec.scope === 'garage' ? garageId : undefined,
     note,
   });
+  if (logged === 'refused') {
+    throw new Error(
+      'This account cannot write the audit log, so nothing was deleted.'
+    );
+  }
 
-  await deleteDoc(doc(db, path, id));
+  return settle(deleteDoc(doc(db, path, id)));
 }
 
 /**
@@ -147,13 +159,21 @@ export async function removeMany(
   garageId: string,
   ids: string[],
   note?: string
-): Promise<{ deleted: string[]; failed: { id: string; reason: string }[] }> {
+): Promise<{
+  deleted: string[];
+  queued: string[];
+  failed: { id: string; reason: string }[];
+}> {
   const deleted: string[] = [];
+  const queued: string[] = [];
   const failed: { id: string; reason: string }[] = [];
   for (const id of ids) {
     try {
-      await removeDoc(spec, garageId, id, note);
-      deleted.push(id);
+      const outcome = await removeDoc(spec, garageId, id, note);
+      if (outcome === 'queued') queued.push(id);
+      else if (outcome === 'refused') {
+        failed.push({ id, reason: 'refused by the rules' });
+      } else deleted.push(id);
     } catch (e) {
       failed.push({
         id,
@@ -161,7 +181,7 @@ export async function removeMany(
       });
     }
   }
-  return { deleted, failed };
+  return { deleted, queued, failed };
 }
 
 /** Lists the garages this console can offer, falling back to the current one. */

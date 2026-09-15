@@ -6,11 +6,12 @@
  * the document path, the value before, the value after, who did it and when -
  * enough to put a document back by hand from the log alone.
  *
- * Logging is best-effort on purpose. If writing the audit entry fails the
- * mutation still goes through, because a technician working a live fault must
- * not be blocked by a second write that can fail for its own reasons. The
- * failure is reported to the caller so the console can say so rather than
- * implying the action was recorded.
+ * The entry is written before the mutation, so a mutation that lands while the
+ * log fails cannot happen. But it is not waited on to the server: with a
+ * persistent cache a Firestore write only resolves once the server
+ * acknowledges it, so awaiting here would hang the console indefinitely on a
+ * bad connection - which is exactly the situation a technician is called out
+ * for. `settle` below reports which of the three things happened instead.
  */
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -64,8 +65,36 @@ function cap(value: unknown): unknown {
   return scrubbed;
 }
 
-export async function recordAction(entry: AuditEntry): Promise<void> {
-  await addDoc(collection(db, 'technicianActions'), {
+export type Settled = 'confirmed' | 'queued' | 'refused';
+
+/**
+ * Waits a short while for a write to be acknowledged, then stops waiting.
+ *
+ * Firestore gives three genuinely different outcomes and only distinguishes
+ * two of them by itself:
+ *
+ *   confirmed - the server took it.
+ *   refused   - the server rejected it, and never will take it.
+ *   queued    - nobody has answered yet. The write is safe in the local cache
+ *               and will go up on its own, but pretending that is the same as
+ *               "saved" is how a sync failure ends up looking like a success.
+ *
+ * The promise is left running after the timeout on purpose: the write is still
+ * queued and will still land. Only the waiting stops.
+ */
+export function settle(write: Promise<unknown>, ms = 6_000): Promise<Settled> {
+  return Promise.race([
+    write.then<Settled>(() => 'confirmed').catch<Settled>((e) => {
+      if ((e as { code?: string })?.code === 'permission-denied') return 'refused';
+      throw e;
+    }),
+    new Promise<Settled>((resolve) => setTimeout(() => resolve('queued'), ms)),
+  ]);
+}
+
+/** Files the entry and reports whether the server has it yet. */
+export function recordAction(entry: AuditEntry): Promise<Settled> {
+  return settle(addDoc(collection(db, 'technicianActions'), {
     op: entry.op,
     path: entry.path,
     before: cap(entry.before),
@@ -77,5 +106,5 @@ export async function recordAction(entry: AuditEntry): Promise<void> {
     // The server stamp is null until it round-trips, and the console wants to
     // sort the log the moment it is written.
     atLocal: new Date().toISOString(),
-  });
+  }));
 }
