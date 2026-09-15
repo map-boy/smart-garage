@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import rw.smartgarage.reception.data.Arrival
+import rw.smartgarage.reception.data.FUEL_TYPES
 import rw.smartgarage.reception.data.Part
 import rw.smartgarage.reception.data.StockSnapshot
 import java.text.SimpleDateFormat
@@ -121,9 +122,15 @@ fun CheckInScreen(
 ) {
     var plate by remember { mutableStateOf("") }
     var make by remember { mutableStateOf("") }
+    var model by remember { mutableStateOf("") }
     var colour by remember { mutableStateOf("") }
+    var year by remember { mutableStateOf("") }
+    var mileage by remember { mutableStateOf("") }
+    var fuel by remember { mutableStateOf(FUEL_TYPES.first()) }
     var driver by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var technician by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
     var work by remember { mutableStateOf("") }
     var pickerOpen by remember { mutableStateOf(false) }
@@ -150,8 +157,10 @@ fun CheckInScreen(
             Spacer(Modifier.height(24.dp))
             OutlinedButton(
                 onClick = {
-                    plate = ""; make = ""; colour = ""; driver = ""; phone = ""
-                    notes = ""; work = ""; onDone()
+                    plate = ""; make = ""; model = ""; colour = ""; year = ""
+                    mileage = ""; fuel = FUEL_TYPES.first(); driver = ""
+                    phone = ""; email = ""; technician = ""; notes = ""
+                    work = ""; onDone()
                 },
                 shape = RoundedCornerShape(14.dp),
             ) { Text("Log another vehicle") }
@@ -175,15 +184,51 @@ fun CheckInScreen(
         )
 
         Spacer(Modifier.height(14.dp))
+        // Make and model are separate boxes because the vehicle record keeps
+        // them apart, and a job card that says "Toyota" with no model is the
+        // kind of gap the workshop has to phone the gate about.
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             OutlinedTextField(
-                make, { make = it }, label = { Text("Make / model") },
+                make, { make = it }, label = { Text("Make") },
                 singleLine = true, modifier = Modifier.weight(1f),
             )
+            OutlinedTextField(
+                model, { model = it }, label = { Text("Model") },
+                singleLine = true, modifier = Modifier.weight(1f),
+            )
+        }
+
+        Spacer(Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             OutlinedTextField(
                 colour, { colour = it }, label = { Text("Colour") },
                 singleLine = true, modifier = Modifier.weight(1f),
             )
+            OutlinedTextField(
+                year, { year = it.filter { c -> c.isDigit() } },
+                label = { Text("Year") }, singleLine = true,
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            )
+            OutlinedTextField(
+                mileage, { mileage = it.filter { c -> c.isDigit() } },
+                label = { Text("Mileage") }, singleLine = true,
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            )
+        }
+
+        Spacer(Modifier.height(12.dp))
+        Text("FUEL", color = Muted, fontSize = 11.sp, fontWeight = FontWeight.Black)
+        Spacer(Modifier.height(6.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FUEL_TYPES.forEach { option ->
+                FilterChip(
+                    selected = fuel == option,
+                    onClick = { fuel = option },
+                    label = { Text(option, fontSize = 12.sp) },
+                )
+            }
         }
 
         Spacer(Modifier.height(16.dp))
@@ -224,6 +269,22 @@ fun CheckInScreen(
 
         Spacer(Modifier.height(12.dp))
         OutlinedTextField(
+            email, { email = it }, label = { Text("Email (optional)") },
+            singleLine = true, modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        )
+
+        Spacer(Modifier.height(12.dp))
+        // Goes straight onto the job card. Left blank it opens as
+        // "Unassigned", which the workshop can pick up on the desktop.
+        OutlinedTextField(
+            technician, { technician = it },
+            label = { Text("Technician (optional)") },
+            singleLine = true, modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(Modifier.height(12.dp))
+        OutlinedTextField(
             notes, { notes = it }, label = { Text("Notes") },
             modifier = Modifier.fillMaxWidth(), minLines = 2,
         )
@@ -238,8 +299,10 @@ fun CheckInScreen(
             onClick = {
                 onCheckIn(
                     Arrival(
-                        plate = plate, make = make, colour = colour,
-                        driverName = driver, driverPhone = phone,
+                        plate = plate, make = make, model = model, colour = colour,
+                        year = year, mileage = mileage, fuelType = fuel,
+                        driverName = driver, driverPhone = phone, driverEmail = email,
+                        technicianName = technician,
                         requestedWork = work, notes = notes,
                     )
                 )

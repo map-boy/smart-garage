@@ -258,6 +258,38 @@ service cloud.firestore {
         allow delete: if isManagerOf(garageId);
       }
 
+      // ---- the customer file a check-in opens --------------------------
+      // A walk-in at the gate becomes four records: the arrival, the client,
+      // the vehicle and the job card for the work asked for. The reception
+      // phone writes all four together, so it needs to create these three as
+      // well - until now only staff could, and because the phone's writes are
+      // not awaited the refusal was invisible: the arrival appeared on the
+      // desktop while the customer it belonged to never existed.
+      //
+      // Create only. Correcting or removing one of these stays with staff on
+      // the desktop, where the whole file is visible rather than one form at
+      // a gate. Every existing staff permission is unchanged.
+      match /clients/{clientId} {
+        allow read: if belongsTo(garageId);
+        allow create: if isStaffOf(garageId)
+                      || (isDeviceOf(garageId) && deviceRole(garageId) == 'reception');
+        allow update, delete: if isStaffOf(garageId);
+      }
+
+      match /vehicles/{vehicleId} {
+        allow read: if belongsTo(garageId);
+        allow create: if isStaffOf(garageId)
+                      || (isDeviceOf(garageId) && deviceRole(garageId) == 'reception');
+        allow update, delete: if isStaffOf(garageId);
+      }
+
+      match /jobs/{jobId} {
+        allow read: if belongsTo(garageId);
+        allow create: if isStaffOf(garageId)
+                      || (isDeviceOf(garageId) && deviceRole(garageId) == 'reception');
+        allow update, delete: if isStaffOf(garageId);
+      }
+
       // ---- website enquiries -------------------------------------------
       // A visitor is a nobody: signed in anonymously, no profile, no device.
       // They may post one enquiry and never read anything back.
@@ -308,12 +340,13 @@ service cloud.firestore {
         }
       }
 
-      // Everything else the garage keeps: clients, vehicles, jobs, reminders,
-      // settings, cameras. Read by anyone the garage knows, written by staff.
+      // Everything else the garage keeps: reminders, settings, cameras.
+      // Read by anyone the garage knows, written by staff.
       match /{collectionName}/{docId} {
         function hasOwnRule() {
           return collectionName in [
             'devices', 'stock', 'stockMovements', 'arrivals',
+            'clients', 'vehicles', 'jobs',
             'enquiries', 'invoices', 'whatsappLogs', 'archives'
           ];
         }
