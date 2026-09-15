@@ -117,7 +117,51 @@ service cloud.firestore {
       allow create: if isManagerOf(request.resource.data.garageId)
                     && request.resource.data.role in ['reception', 'stock'];
       allow update: if false;
-      allow delete: if isManagerOf(resource.data.garageId);
+
+      // A manager can withdraw a code. A phone redeeming one deletes it in
+      // the same transaction that registers the device, which is what makes a
+      // code one-shot: the devices/{uid} create rule below requires this
+      // document to exist, so once it is gone the code cannot be redeemed
+      // again. Any signed-in caller may delete, because knowing the exact
+      // code id is already the whole secret - listing is off, so codes cannot
+      // be enumerated, and anyone who knows one could redeem it regardless.
+      allow delete: if isManagerOf(resource.data.garageId) || isSignedIn();
+    }
+
+    // ---- crash reports -----------------------------------------------
+    // Global rather than per garage on purpose: the technician console has to
+    // show failures from every install in one list, and a phone that crashes
+    // before it has ever paired has no garage to file under.
+    //
+    // Anyone signed in may file one - refusing a crash report because the
+    // reporter is not privileged loses exactly the reports worth having. The
+    // size limits are what stop the collection being used as free storage.
+    // Reading them back is restricted to a manager.
+    match /diagnostics/{reportId} {
+      allow get, list: if isAnyManager();
+      allow create: if isSignedIn()
+                    && request.resource.data.app is string
+                    && request.resource.data.app.size() < 60
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() < 2000
+                    && request.resource.data.stack is string
+                    && request.resource.data.stack.size() < 10000;
+      // A report is a fact about what happened, so it is never edited.
+      // Deleting is how old ones are rolled off, and only a manager may.
+      allow update: if false;
+      allow delete: if isAnyManager();
+    }
+
+    // ---- technician audit log ------------------------------------------
+    // Written by the technician console before every change it makes, so a bad
+    // edit can be traced and put back by hand. Append-only for everyone: an
+    // audit log the audited person can edit is not an audit log.
+    match /technicianActions/{actionId} {
+      allow get, list: if isAnyManager();
+      allow create: if isAnyManager()
+                    && request.resource.data.op is string
+                    && request.resource.data.path is string;
+      allow update, delete: if false;
     }
 
     match /users/{userId} {

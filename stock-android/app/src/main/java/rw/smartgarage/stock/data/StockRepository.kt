@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.Date
+import rw.smartgarage.shared.DevicePairing
 
 /**
  * Everything this app does to the shelf.
@@ -34,37 +35,18 @@ class StockRepository(
 
     /** Redeems the code the boss reads out. See the reception app for why. */
     suspend fun pair(code: String, staffName: String): Result<DeviceSession> = runCatching {
-        val uid = ensureSignedIn()
-        val trimmed = code.trim().uppercase()
-        val snap = db.collection("pairing").document(trimmed).get().await()
-        require(snap.exists()) { "That code is not recognised. Check it and try again." }
-
-        val expiresAt = snap.getLong("expiresAtMs") ?: 0L
-        require(expiresAt == 0L || expiresAt > System.currentTimeMillis()) {
-            "That code has expired. Ask for a new one."
-        }
-
-        val garageId = snap.getString("garageId").orEmpty()
-        require(garageId.isNotBlank()) { "That code is not set up correctly." }
-        val role = DeviceRole.from(snap.getString("role"))
-        require(role == DeviceRole.STOCK) {
-            "That code is for the reception app. Ask for a stock code."
-        }
-
-        db.collection("garages").document(garageId)
-            .collection("devices").document(uid)
-            .set(
-                hashMapOf(
-                    "role" to role.wire,
-                    "staffName" to staffName.trim(),
-                    "garageId" to garageId,
-                    "pairingCode" to trimmed,
-                    "pairedAt" to FieldValue.serverTimestamp(),
-                    "lastSeenAt" to FieldValue.serverTimestamp(),
-                )
-            ).await()
-
-        DeviceSession(garageId = garageId, role = role, staffName = staffName.trim())
+        val paired = DevicePairing.redeem(
+            db = db,
+            auth = auth,
+            code = code,
+            staffName = staffName,
+            expectedRole = DevicePairing.ROLE_STOCK,
+        )
+        DeviceSession(
+            garageId = paired.garageId,
+            role = DeviceRole.STOCK,
+            staffName = paired.staffName,
+        )
     }
 
     // ------------------------------------------------------------- shelf ----
@@ -241,6 +223,7 @@ class StockRepository(
         reorderLevel = (d.getLong("reorderLevel") ?: 0L).toInt(),
         unitCost = d.getDouble("unitCost") ?: 0.0,
         supplier = d.getString("supplier").orEmpty(),
+        pending = d.metadata.hasPendingWrites(),
     )
 
     private fun isoNow(): String {

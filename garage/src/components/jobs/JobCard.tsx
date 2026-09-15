@@ -3,9 +3,11 @@ import { Calendar, User, Car } from 'lucide-react';
 import { JobCard as JobCardType, Vehicle } from '../../types';
 import { formatDate } from '../../lib/utils';
 import { JobStatusBadge } from './JobStatusBadge';
+import { SyncBadge } from '../ui/SyncBadge';
 
 interface JobCardProps {
-  job: JobCardType;
+  /** `_pending` arrives from useGarageCollection; absent elsewhere. */
+  job: JobCardType & { _pending?: boolean };
   vehicle?: Vehicle;
   onClick?: () => void;
 }
@@ -18,7 +20,9 @@ export function JobCard({ job, vehicle, onClick }: JobCardProps) {
     >
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h4 className="font-bold text-gray-900 mb-1">#{job.id}</h4>
+          <h4 className="font-bold text-gray-900 mb-1">
+            #{job.id} <SyncBadge pending={job._pending} />
+          </h4>
           <p className="text-sm text-gray-500 line-clamp-1">{job.description}</p>
         </div>
         <JobStatusBadge status={job.status} />

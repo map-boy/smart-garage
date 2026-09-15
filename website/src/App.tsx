@@ -8,6 +8,7 @@ import { DEFAULT_CONTENT } from "./content";
 import { subscribeContent } from "./contentSource";
 import { AdminPanel } from "./admin/AdminPanel";
 import { RequestPanel } from "./components/RequestPanel";
+import { Sections } from "./components/Sections";
 import { telHref, waHref } from "./enquiries";
 import { applySeo } from "./seo";
 
@@ -161,6 +162,8 @@ export function App() {
           </div>
           <img src={c.about.imageUrl} alt="" style={{ width: "100%", borderRadius: 4 }} />
         </div></section>
+
+        <Sections sections={c.sections} />
 
         <section id="ask" className="asksec"><div className="wrap asklayout">
           <RequestPanel c={c} />

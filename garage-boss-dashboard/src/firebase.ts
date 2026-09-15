@@ -1,7 +1,10 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
 
 const env = (import.meta as any).env;
 
@@ -16,39 +19,24 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-export const functions = getFunctions(app, 'us-central1');
-export const sendManualWhatsAppFn = httpsCallable(functions, 'sendManualWhatsApp');
-export const createWhatsAppSessionFn = httpsCallable(functions, 'createWhatsAppSession');
-export const getWhatsAppSessionStatusFn = httpsCallable(functions, 'getWhatsAppSessionStatus');
-export const getWhatsAppQrFn = httpsCallable(functions, 'getWhatsAppQr');
-export const requestWhatsAppPairingCodeFn = httpsCallable(functions, 'requestWhatsAppPairingCode');
-export const wakeVmFn = httpsCallable(functions, 'wakeVm');
-export const getVmStatusFn = httpsCallable(functions, 'getVmStatus');
-export const disconnectWhatsAppSessionFn = httpsCallable(functions, 'disconnectWhatsAppSession');
-export const restartWhatsAppSessionFn = httpsCallable(functions, 'restartWhatsAppSession');
-
 /**
- * Session statuses that mean "this number can send a message right now".
+ * Offline store, kept on disk rather than in memory.
  *
- * Mirrors SESSION_READY_STATES in functions/src/lib/openwa.ts. These drifted
- * apart once: the backend accepted 'ready' while this dashboard only checked
- * for 'connected', so a perfectly healthy session displayed as unlinked and
- * operators re-scanned QR codes that were never the problem. The backend now
- * also returns a `ready` boolean it has already evaluated — prefer that, and
- * keep this list only as a fallback for an older deployed backend.
+ * Without this the cache lives only in the page: a refresh threw away
+ * everything not yet acknowledged by the server, so a write made on a bad
+ * connection could disappear with no sign it had ever happened. IndexedDB
+ * keeps the queue across a reload and a browser restart.
+ *
+ * Multi-tab manager because this is an ordinary web app - the boss will have
+ * it open in more than one tab eventually, and single-tab ownership would
+ * leave the others unable to read their own cache.
  */
-export const SESSION_READY_STATES = [
-  'ready',
-  'connected',
-  'active',
-  'authenticated',
-];
-
-export function isSessionReady(status?: string | null): boolean {
-  return !!status && SESSION_READY_STATES.includes(status.toLowerCase());
-}
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+  }),
+});
+export const auth = getAuth(app);
 
 export enum OperationType {
   CREATE = 'create',
@@ -118,7 +106,3 @@ export function handleFirestoreError(
       return error instanceof Error ? error.message : 'Something went wrong.';
   }
 }
-
-
-
-

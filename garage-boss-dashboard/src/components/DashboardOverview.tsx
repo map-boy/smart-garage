@@ -68,15 +68,15 @@ export default function DashboardOverview({
   const currentMonthRevenue = monthlyRevenue.length > 0 ? monthlyRevenue[monthlyRevenue.length - 1].value : 0;
 
   // Revenue change label calculations
-  let revenueChangeLabel = "â€”";
+  let revenueChangeLabel = "—";
   if (monthlyRevenue.length >= 2) {
     const prevVal = monthlyRevenue[monthlyRevenue.length - 2].value;
     const currentVal = monthlyRevenue[monthlyRevenue.length - 1].value;
     if (prevVal > 0) {
       const pct = ((currentVal - prevVal) / prevVal) * 100;
-      revenueChangeLabel = `${pct >= 0 ? 'â–²' : 'â–¼'} ${Math.abs(pct).toFixed(0)}% vs last month`;
+      revenueChangeLabel = `${pct >= 0 ? '▲' : '▼'} ${Math.abs(pct).toFixed(0)}% vs last month`;
     } else {
-      revenueChangeLabel = "â–² 100% vs last month";
+      revenueChangeLabel = "▲ 100% vs last month";
     }
   } else if (monthlyRevenue.length === 1) {
     revenueChangeLabel = "Initial baseline month";
@@ -296,7 +296,7 @@ export default function DashboardOverview({
               <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <span className="text-[10px] font-bold text-gray-400 block uppercase tracking-wider">Turnaround</span>
                 <span className="text-lg font-black text-gray-800 font-mono mt-1 block">
-                  {avgTurnaroundHours > 0 ? `${avgTurnaroundHours.toFixed(1)} hrs` : 'â€”'}
+                  {avgTurnaroundHours > 0 ? `${avgTurnaroundHours.toFixed(1)} hrs` : '—'}
                 </span>
                 <span className="text-[9px] text-gray-400 block mt-0.5">Avg per job</span>
               </div>

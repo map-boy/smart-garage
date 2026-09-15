@@ -7,6 +7,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Search, FileText, Eye, Printer, Filter } from 'lucide-react';
 import { formatCurrency, formatDate } from '../lib/utils';
+import { SyncBadge } from '../components/ui/SyncBadge';
 
 export function InvoicesPage() {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ export function InvoicesPage() {
                 <TableCell className="font-black text-gray-900 uppercase tracking-tighter">
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-blue-500" />
-                    {inv.id}
+                    {inv.id} <SyncBadge pending={inv._pending} />
                   </div>
                 </TableCell>
                 <TableCell className="font-bold text-gray-700">{client?.name || 'Unknown'}</TableCell>

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.Date
+import rw.smartgarage.shared.DevicePairing
 
 class ReceptionRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
@@ -38,34 +39,18 @@ class ReceptionRepository(
      * never given one cannot register itself.
      */
     suspend fun pair(code: String, staffName: String): Result<DeviceSession> = runCatching {
-        val uid = ensureSignedIn()
-        val trimmed = code.trim().uppercase()
-        val snap = db.collection("pairing").document(trimmed).get().await()
-        require(snap.exists()) { "That code is not recognised. Check it and try again." }
-
-        val expiresAt = snap.getLong("expiresAtMs") ?: 0L
-        require(expiresAt == 0L || expiresAt > System.currentTimeMillis()) {
-            "That code has expired. Ask for a new one."
-        }
-
-        val garageId = snap.getString("garageId").orEmpty()
-        require(garageId.isNotBlank()) { "That code is not set up correctly." }
-        val role = DeviceRole.from(snap.getString("role"))
-
-        db.collection("garages").document(garageId)
-            .collection("devices").document(uid)
-            .set(
-                hashMapOf(
-                    "role" to role.wire,
-                    "staffName" to staffName.trim(),
-                    "garageId" to garageId,
-                    "pairingCode" to trimmed,
-                    "pairedAt" to FieldValue.serverTimestamp(),
-                    "lastSeenAt" to FieldValue.serverTimestamp(),
-                )
-            ).await()
-
-        DeviceSession(garageId = garageId, role = role, staffName = staffName.trim())
+        val paired = DevicePairing.redeem(
+            db = db,
+            auth = auth,
+            code = code,
+            staffName = staffName,
+            expectedRole = DevicePairing.ROLE_RECEPTION,
+        )
+        DeviceSession(
+            garageId = paired.garageId,
+            role = DeviceRole.RECEPTION,
+            staffName = paired.staffName,
+        )
     }
 
     /**
@@ -117,23 +102,35 @@ class ReceptionRepository(
      * still works with no signal. Ordered by name because that is how someone
      * hunting for a part actually scans a list.
      */
-    fun stock(garageId: String): Flow<List<Part>> = callbackFlow {
+    fun stock(garageId: String): Flow<StockSnapshot> = callbackFlow {
+        // Remembered across snapshots: once the server has confirmed the shelf,
+        // later cache-only snapshots must not erase the fact that it did, or
+        // the freshness warning would flap on every local edit.
+        var confirmedAtMs: Long? = null
         val reg = db.collection("garages").document(garageId)
             .collection("stock")
             .orderBy("name")
             .addSnapshotListener(MetadataChanges.INCLUDE) { snap, err ->
                 if (err != null || snap == null) return@addSnapshotListener
-                trySend(snap.documents.map { d ->
-                    Part(
-                        id = d.id,
-                        name = d.getString("name").orEmpty(),
-                        partNumber = d.getString("partNumber").orEmpty(),
-                        quantity = (d.getLong("quantity") ?: 0L).toInt(),
-                        reorderLevel = (d.getLong("reorderLevel") ?: 0L).toInt(),
-                        unitCost = d.getDouble("unitCost") ?: 0.0,
-                        supplier = d.getString("supplier").orEmpty(),
+                if (!snap.metadata.isFromCache) confirmedAtMs = System.currentTimeMillis()
+                trySend(
+                    StockSnapshot(
+                        parts = snap.documents.map { d ->
+                            Part(
+                                id = d.id,
+                                name = d.getString("name").orEmpty(),
+                                partNumber = d.getString("partNumber").orEmpty(),
+                                quantity = (d.getLong("quantity") ?: 0L).toInt(),
+                                reorderLevel = (d.getLong("reorderLevel") ?: 0L).toInt(),
+                                unitCost = d.getDouble("unitCost") ?: 0.0,
+                                supplier = d.getString("supplier").orEmpty(),
+                                pending = d.metadata.hasPendingWrites(),
+                            )
+                        },
+                        fromCache = snap.metadata.isFromCache,
+                        confirmedAtMs = confirmedAtMs,
                     )
-                })
+                )
             }
         awaitClose { reg.remove() }
     }

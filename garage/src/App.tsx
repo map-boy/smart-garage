@@ -16,6 +16,7 @@ import { RemindersPage } from './pages/RemindersPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { CameraPage } from './pages/CameraPage';
+import { TechnicianPage } from './pages/TechnicianPage';
 import { useClientNotifications } from './hooks/useClientNotifications';
 import { NotificationToasts } from './components/ui/NotificationToasts';
 
@@ -55,6 +56,7 @@ function AppRoutes() {
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/monitoring" element={<CameraPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/technician" element={<TechnicianPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Shell>

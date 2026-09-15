@@ -186,7 +186,7 @@ export default function ArchivesView({ garageId, archives, settings }: ArchivesV
                 {isExpanded && isLoading && (
                   <div className="border-t border-gray-100 px-6 py-8 flex items-center justify-center gap-3 text-xs text-gray-400">
                     <span className="h-4 w-4 border-2 border-gray-200 border-t-gray-400 rounded-full animate-spin" />
-                    Loading archived recordsâ€¦
+                    Loading archived records…
                   </div>
                 )}
 
@@ -211,7 +211,7 @@ export default function ArchivesView({ garageId, archives, settings }: ArchivesV
                         <tbody className="divide-y divide-gray-100 text-xs">
                           {loaded.jobs.map(job => (
                             <tr key={job.id} className="hover:bg-gray-50/40">
-                              <td className="px-6 py-3 text-gray-600 max-w-xs truncate">{job.description || 'â€”'}</td>
+                              <td className="px-6 py-3 text-gray-600 max-w-xs truncate">{job.description || '—'}</td>
                               <td className="px-6 py-3 text-gray-500">{job.technicianName || 'Unassigned'}</td>
                               <td className="px-6 py-3 text-gray-500">{job.status}</td>
                               <td className="px-6 py-3 text-right font-mono font-bold text-gray-800">{formatCurrency(job.laborCost, settings.currency)}</td>

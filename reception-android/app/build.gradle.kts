@@ -24,6 +24,13 @@ android {
         freeCompilerArgs += listOf("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
     }
 
+    // The pairing logic both phone apps run is kept in one file at the repo
+    // root rather than copied into each app, where the two copies had already
+    // drifted apart. These are separate Gradle builds, so it is shared as a
+    // source directory instead of a module - no build restructuring, one
+    // implementation.
+    sourceSets["main"].java.srcDir("../../shared/android/src/main/java")
+
     namespace = "rw.smartgarage.reception"
     compileSdk = 35
 

@@ -93,7 +93,7 @@ export interface UserProfile {
  * A month-close snapshot.
  *
  * The manifest carries only counts. The archived jobs and invoices live in
- * `archives/{id}/records/*` chunks and are fetched on demand â€” an archive
+ * `archives/{id}/records/*` chunks and are fetched on demand — an archive
  * used to embed every record inline, which both hit Firestore's 1 MiB
  * document cap and forced the dashboard to download years of history just to
  * render the list of month names.

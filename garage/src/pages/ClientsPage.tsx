@@ -7,6 +7,7 @@ import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { Plus, Search, Mail, Phone, Trash2, Edit } from 'lucide-react';
 import { generateId } from '../lib/utils';
 import { Client } from '../types';
+import { SyncBadge } from '../components/ui/SyncBadge';
 
 export function ClientsPage() {
   const { clients, addClient, updateClient, deleteClient } = useClients();
@@ -80,7 +81,9 @@ export function ClientsPage() {
         <Table headers={['Client Name', 'Email', 'Phone', 'Joined', 'Actions']}>
           {filtered.map((client) => (
             <TableRow key={client.id}>
-              <TableCell className="font-bold text-gray-900">{client.name}</TableCell>
+              <TableCell className="font-bold text-gray-900">
+                {client.name} <SyncBadge pending={client._pending} />
+              </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-gray-400" />

@@ -105,7 +105,38 @@ export interface SiteContent {
   };
   seo: { title: string; description: string };
 
+  /**
+   * Free-form sections, rendered in order between About and the request panel.
+   *
+   * Everything above this is a fixed field, which means adding a block of
+   * content to the site - a seasonal offer, a new workshop, a notice - needed a
+   * code change and a deploy. These do not: the technician console writes them
+   * into site/content and the page picks them up live. Anything the renderer
+   * does not recognise is skipped rather than breaking the page.
+   */
+  sections?: SiteSection[];
+
   updatedAt?: string;
+}
+
+export type SiteSectionKind = 'text' | 'banner' | 'cards';
+
+export interface SiteSection {
+  /** Stable key so React can keep its place when the order changes. */
+  id: string;
+  kind: SiteSectionKind;
+  /** Left out or set false to take a section off the site without losing it. */
+  hidden?: boolean;
+  /** Lower numbers render first. Ties keep their order in the array. */
+  order?: number;
+
+  eyebrow?: string;
+  title?: string;
+  body?: string;
+  imageUrl?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  cards?: { title: string; body: string; imageUrl?: string }[];
 }
 
 /** What the visitor filled in on the request panel. */

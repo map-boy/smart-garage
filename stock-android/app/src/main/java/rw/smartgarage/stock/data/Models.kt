@@ -55,6 +55,8 @@ data class Part(
     val reorderLevel: Int = 0,
     val unitCost: Double = 0.0,
     val supplier: String = "",
+    /** True while this quantity is still only in the phone's local cache. */
+    val pending: Boolean = false,
 ) {
     /** Below zero means more went out than the books knew about: recount. */
     val isOversold: Boolean get() = quantity < 0

@@ -14,6 +14,7 @@ import rw.smartgarage.reception.data.DeviceStore
 import rw.smartgarage.reception.data.Part
 import rw.smartgarage.reception.data.ReceptionRepository
 import java.util.Calendar
+import rw.smartgarage.reception.data.StockSnapshot
 
 /** One part picked for the vehicle in front of the receptionist. */
 data class PickedPart(val part: Part, val qty: Int)
@@ -26,6 +27,8 @@ data class UiState(
 
     val arrivals: List<Arrival> = emptyList(),
     val stock: List<Part> = emptyList(),
+    /** How much the shelf numbers above can be trusted right now. */
+    val stockFreshness: StockSnapshot = StockSnapshot(),
     val picked: List<PickedPart> = emptyList(),
 
     val error: String? = null,
@@ -109,8 +112,11 @@ class ReceptionViewModel @JvmOverloads constructor(
         }
         stockJob?.cancel()
         stockJob = viewModelScope.launch {
-            repo.stock(session.garageId).collect { list ->
-                _state.value = _state.value.copy(stock = list)
+            repo.stock(session.garageId).collect { snapshot ->
+                _state.value = _state.value.copy(
+                    stock = snapshot.parts,
+                    stockFreshness = snapshot,
+                )
             }
         }
         loadArchiveDay(_state.value.archiveDayStart)

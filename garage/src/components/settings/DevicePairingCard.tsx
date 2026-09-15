@@ -5,6 +5,7 @@ import {
 import { Smartphone, Copy, Check, Trash2, AlertCircle } from 'lucide-react';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
+import { DangerConfirm } from '../ui/DangerConfirm';
 
 type Role = 'reception' | 'stock';
 
@@ -58,6 +59,8 @@ export function DevicePairingCard() {
   const [copied, setCopied] = useState(false);
   const [devices, setDevices] = useState<PairedDevice[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [unpairTarget, setUnpairTarget] = useState<any | null>(null);
+  const [unpairing, setUnpairing] = useState(false);
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -99,8 +102,17 @@ export function DevicePairingCard() {
     }
   };
 
-  const unpair = async (deviceId: string) => {
-    await deleteDoc(doc(db, 'garages', garageId, 'devices', deviceId));
+  const unpair = async () => {
+    if (!unpairTarget) return;
+    setUnpairing(true);
+    try {
+      await deleteDoc(doc(db, 'garages', garageId, 'devices', unpairTarget.id));
+      setUnpairTarget(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not unpair that phone.');
+    } finally {
+      setUnpairing(false);
+    }
   };
 
   const secondsLeft = code ? Math.max(0, Math.round((expiresAt - now) / 1000)) : 0;
@@ -200,7 +212,7 @@ export function DevicePairingCard() {
                     working locally until it next reaches the server, which is
                     the honest limit of any offline-first design. */}
                 <button
-                  onClick={() => unpair(d.id)}
+                  onClick={() => setUnpairTarget(d)}
                   className="text-rose-400 hover:text-rose-600 transition"
                   title="Unpair this phone"
                 >
@@ -211,6 +223,21 @@ export function DevicePairingCard() {
           </div>
         )}
       </div>
+      <DangerConfirm
+        isOpen={!!unpairTarget}
+        onClose={() => setUnpairTarget(null)}
+        onConfirm={unpair}
+        title="Unpair this phone"
+        summary={
+          'This removes the credential that lets the phone read and write for this ' +
+          'garage. It keeps working on what it already has until it next reaches ' +
+          'the server, then stops - which is the honest limit of an offline-first ' +
+          'design. Pairing it again needs a fresh code.'
+        }
+        items={unpairTarget ? [`${unpairTarget.staffName || unpairTarget.id} (${unpairTarget.role})`] : []}
+        confirmLabel="Unpair"
+        busy={unpairing}
+      />
     </div>
   );
 }
