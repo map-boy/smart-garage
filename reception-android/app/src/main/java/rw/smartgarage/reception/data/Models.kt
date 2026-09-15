@@ -28,9 +28,18 @@ data class Arrival(
     val id: String = "",
     val plate: String = "",
     val make: String? = null,
+    /** Split from make, because the vehicle record keeps them apart. */
+    val model: String? = null,
     val colour: String? = null,
+    /** Blank when reception did not ask; the desktop can fill it in later. */
+    val year: String? = null,
+    val mileage: String? = null,
+    val fuelType: String = "Petrol",
     val driverName: String? = null,
     val driverPhone: String? = null,
+    val driverEmail: String? = null,
+    /** Who the job card is opened against. Blank means unassigned. */
+    val technicianName: String? = null,
     /** What the client came in asking for, in their own words. */
     val requestedWork: String = "",
     val notes: String? = null,
@@ -111,3 +120,14 @@ data class StockSnapshot(
         get() = confirmedAtMs == null ||
             System.currentTimeMillis() - confirmedAtMs > 15 * 60 * 1000L
 }
+
+/** The four records a gate check-in opens, so callers can link them up. */
+data class CheckInResult(
+    val arrivalId: String,
+    val clientId: String,
+    val vehicleId: String,
+    val jobId: String,
+)
+
+/** Fuel types the desktop vehicle record accepts. */
+val FUEL_TYPES = listOf("Petrol", "Diesel", "Electric", "Hybrid")

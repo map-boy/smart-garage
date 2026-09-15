@@ -22,10 +22,13 @@ export function VehiclesPage() {
     plate: '', make: '', model: '', year: 2024, color: '', clientId: '', mileage: 0, fuelType: 'Petrol'
   });
 
-  const filtered = vehicles.filter(v => 
-    v.plate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.model.toLowerCase().includes(searchTerm.toLowerCase())
+  // Vehicles are created by the reception phone as well as here, and the gate
+  // form does not require every descriptive field.
+  const needle = searchTerm.toLowerCase();
+  const filtered = vehicles.filter(v =>
+    (v.plate ?? '').toLowerCase().includes(needle) ||
+    (v.make ?? '').toLowerCase().includes(needle) ||
+    (v.model ?? '').toLowerCase().includes(needle)
   );
 
   const handleOpenAdd = () => {

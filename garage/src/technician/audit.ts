@@ -15,6 +15,8 @@
  */
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { settleWrite } from '../lib/firestoreWrite';
+import type { Settled } from '../lib/firestoreWrite';
 import { sessionId } from './session';
 
 export type AuditOp =
@@ -65,31 +67,12 @@ function cap(value: unknown): unknown {
   return scrubbed;
 }
 
-export type Settled = 'confirmed' | 'queued' | 'refused';
+// One implementation of "what did that write actually do", shared with the
+// rest of the app rather than repeated here.
+export type { Settled };
 
-/**
- * Waits a short while for a write to be acknowledged, then stops waiting.
- *
- * Firestore gives three genuinely different outcomes and only distinguishes
- * two of them by itself:
- *
- *   confirmed - the server took it.
- *   refused   - the server rejected it, and never will take it.
- *   queued    - nobody has answered yet. The write is safe in the local cache
- *               and will go up on its own, but pretending that is the same as
- *               "saved" is how a sync failure ends up looking like a success.
- *
- * The promise is left running after the timeout on purpose: the write is still
- * queued and will still land. Only the waiting stops.
- */
-export function settle(write: Promise<unknown>, ms = 6_000): Promise<Settled> {
-  return Promise.race([
-    write.then<Settled>(() => 'confirmed').catch<Settled>((e) => {
-      if ((e as { code?: string })?.code === 'permission-denied') return 'refused';
-      throw e;
-    }),
-    new Promise<Settled>((resolve) => setTimeout(() => resolve('queued'), ms)),
-  ]);
+export function settle(write: Promise<unknown>, ms = 6_000) {
+  return settleWrite(write, ms).then((o) => o.state);
 }
 
 /** Files the entry and reports whether the server has it yet. */

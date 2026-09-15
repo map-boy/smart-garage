@@ -13,7 +13,7 @@ import { SyncBadge } from '../components/ui/SyncBadge';
 
 export function StockPage() {
   const currency = settingsService.get().currency;
-  const { stock, addPart, updatePart, deletePart, setCount, oversoldParts } = useStock();
+  const { stock, addPart, updatePart, deletePart, setCount, oversoldParts, error } = useStock();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -22,10 +22,13 @@ export function StockPage() {
     name: '', partNumber: '', quantity: 0, reorderLevel: 5, unitCost: 0, supplier: ''
   });
 
-  const filtered = stock.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.partNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.supplier.toLowerCase().includes(searchTerm.toLowerCase())
+  // Parts are also created by the stock phone, which does not require every
+  // descriptive field, so no field here can be assumed present.
+  const needle = searchTerm.toLowerCase();
+  const filtered = stock.filter(p =>
+    (p.name ?? '').toLowerCase().includes(needle) ||
+    (p.partNumber ?? '').toLowerCase().includes(needle) ||
+    (p.supplier ?? '').toLowerCase().includes(needle)
   );
 
   const handleOpenAdd = () => {
@@ -70,6 +73,11 @@ export function StockPage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="px-4 py-3 rounded-xl bg-rose-50 border border-rose-100 text-sm text-rose-700">
+          {error}
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Spare Parts Inventory</h1>

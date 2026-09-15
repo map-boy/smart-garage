@@ -10,17 +10,21 @@ import { Client } from '../types';
 import { SyncBadge } from '../components/ui/SyncBadge';
 
 export function ClientsPage() {
-  const { clients, addClient, updateClient, deleteClient } = useClients();
+  const { clients, addClient, updateClient, deleteClient, error } = useClients();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [formData, setFormData] = useState<Partial<Client>>({ name: '', email: '', phone: '' });
 
-  const filtered = clients.filter(c => 
-    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.phone.includes(searchTerm)
+  // Defensive on every field: these records are also written by the phone
+  // apps and by older builds, and one client with no email used to throw
+  // inside this filter and blank the entire page rather than hide a row.
+  const needle = searchTerm.toLowerCase();
+  const filtered = clients.filter(c =>
+    (c.name ?? '').toLowerCase().includes(needle) ||
+    (c.email ?? '').toLowerCase().includes(needle) ||
+    (c.phone ?? '').includes(searchTerm)
   );
 
   const handleOpenAdd = () => {
@@ -54,6 +58,11 @@ export function ClientsPage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="px-4 py-3 rounded-xl bg-rose-50 border border-rose-100 text-sm text-rose-700">
+          {error}
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Client Management</h1>

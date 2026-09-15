@@ -54,44 +54,152 @@ class ReceptionRepository(
     }
 
     /**
-     * Records an arrival.
+     * Opens the whole customer file for a vehicle at the gate, in one write.
      *
-     * Deliberately does NOT await the write. Firestore completes that task only
-     * once the server acknowledges, so awaiting it would freeze the screen for
-     * as long as the phone has no signal - the exact moment the receptionist
-     * most needs an instant confirmation. The local write has already been
-     * applied by the time this returns, and the SDK delivers it when the
-     * connection comes back.
+     * A walk-in becomes four records: the arrival, the client, the vehicle and
+     * the job card for the work asked for. They are written as a single batch
+     * on purpose - a check-in that lands half-recorded leaves a job card
+     * pointing at a vehicle that does not exist, and no one at the gate is in
+     * a position to notice or repair that.
+     *
+     * Not awaited, like every other write in this app: the batch is in the
+     * local cache the moment it is committed, so the receptionist sees the
+     * confirmation with no signal and the server catches up later.
+     *
+     * [existingVehicleId] and [existingClientId] come from a plate lookup. When
+     * they are set, the client and vehicle are left alone - a returning car
+     * must not produce a second copy of its owner.
      */
     fun checkIn(
         session: DeviceSession,
         arrival: Arrival,
-        isNewClient: Boolean = false,
-    ): String {
-        val ref = db.collection("garages").document(session.garageId)
-            .collection("arrivals").document()
-        ref.set(
+        existingVehicleId: String? = null,
+        existingClientId: String? = null,
+        picked: List<Pair<Part, Int>> = emptyList(),
+    ): CheckInResult {
+        val garageRef = db.collection("garages").document(session.garageId)
+        val batch = db.batch()
+        val nowIso = isoNow()
+
+        val plate = arrival.plate.uppercase().trim()
+        val isNewClient = existingVehicleId.isNullOrBlank()
+
+        // Pre-allocated refs hand back ids synchronously, which is what lets
+        // the four records reference each other without a round trip.
+        val clientRef = if (existingClientId.isNullOrBlank()) {
+            garageRef.collection("clients").document()
+        } else {
+            garageRef.collection("clients").document(existingClientId)
+        }
+        val vehicleRef = if (existingVehicleId.isNullOrBlank()) {
+            garageRef.collection("vehicles").document()
+        } else {
+            garageRef.collection("vehicles").document(existingVehicleId)
+        }
+        val arrivalRef = garageRef.collection("arrivals").document()
+        val jobRef = garageRef.collection("jobs").document()
+
+        if (isNewClient) {
+            batch.set(
+                clientRef,
+                hashMapOf(
+                    "name" to (arrival.driverName?.takeIf { it.isNotBlank() } ?: "Walk-in customer"),
+                    "phone" to (arrival.driverPhone.orEmpty()),
+                    "email" to (arrival.driverEmail.orEmpty()),
+                    "vehicleIds" to listOf(vehicleRef.id),
+                    "createdAt" to nowIso,
+                )
+            )
+            batch.set(
+                vehicleRef,
+                hashMapOf(
+                    "plate" to plate,
+                    // Plates are written by hand at a gate and with spaces on
+                    // the desktop. The normalised copy is what a later lookup
+                    // matches on, so "RAB 123 C" and "RAB123C" stay one car.
+                    "plateKey" to normalisePlate(arrival.plate),
+                    "make" to (arrival.make.orEmpty()),
+                    "model" to (arrival.model.orEmpty()),
+                    "year" to numberOrBlank(arrival.year),
+                    "color" to (arrival.colour.orEmpty()),
+                    "clientId" to clientRef.id,
+                    "mileage" to numberOrBlank(arrival.mileage),
+                    "fuelType" to arrival.fuelType.ifBlank { "Petrol" },
+                )
+            )
+        }
+
+        batch.set(
+            arrivalRef,
             hashMapOf(
-                "plate" to arrival.plate.uppercase().trim(),
+                "plate" to plate,
                 "plateKey" to normalisePlate(arrival.plate),
                 "make" to arrival.make?.takeIf { it.isNotBlank() },
+                "model" to arrival.model?.takeIf { it.isNotBlank() },
                 "colour" to arrival.colour?.takeIf { it.isNotBlank() },
                 "driverName" to arrival.driverName?.takeIf { it.isNotBlank() },
                 "driverPhone" to arrival.driverPhone?.takeIf { it.isNotBlank() },
+                "driverEmail" to arrival.driverEmail?.takeIf { it.isNotBlank() },
                 "requestedWork" to arrival.requestedWork.trim(),
                 "notes" to arrival.notes?.takeIf { it.isNotBlank() },
-                "partsUsed" to emptyList<Map<String, Any?>>(),
-                "vehicleId" to arrival.vehicleId,
-                "clientId" to arrival.clientId,
+                "partsUsed" to picked.map {
+                    hashMapOf(
+                        "partId" to it.first.id,
+                        "partName" to it.first.name,
+                        "qty" to it.second,
+                        "unitCost" to it.first.unitCost,
+                    )
+                },
+                "vehicleId" to vehicleRef.id,
+                "clientId" to clientRef.id,
+                "jobId" to jobRef.id,
                 "isNewClient" to isNewClient,
                 "status" to ArrivalStatus.WAITING.wire,
                 "arrivedAt" to FieldValue.serverTimestamp(),
+                // The server stamp is null until this reaches the server, and
+                // the desktop sorts the feed the moment it arrives.
+                "arrivedAtLocal" to nowIso,
                 "loggedBy" to (currentUid() ?: ""),
                 "loggedByName" to session.staffName,
             )
         )
-        return ref.id
+
+        // The job card the workshop actually works from. Field names match the
+        // desktop's JobCard exactly - `quantity`, not the `qty` the arrival
+        // uses - because the desktop reads these documents directly.
+        batch.set(
+            jobRef,
+            hashMapOf(
+                "vehicleId" to vehicleRef.id,
+                "clientId" to clientRef.id,
+                "arrivalId" to arrivalRef.id,
+                "plate" to plate,
+                "technicianName" to (arrival.technicianName?.takeIf { it.isNotBlank() } ?: "Unassigned"),
+                "description" to arrival.requestedWork.trim()
+                    .ifBlank { "Checked in at the gate - work not yet described" },
+                "status" to "Pending",
+                "partsUsed" to picked.map {
+                    hashMapOf("partId" to it.first.id, "quantity" to it.second)
+                },
+                "laborCost" to 0,
+                "startedAt" to nowIso,
+                "createdAtLocal" to nowIso,
+                "openedBy" to session.staffName,
+            )
+        )
+
+        batch.commit()
+        return CheckInResult(
+            arrivalId = arrivalRef.id,
+            clientId = clientRef.id,
+            vehicleId = vehicleRef.id,
+            jobId = jobRef.id,
+        )
     }
+
+    /** Firestore keeps these as numbers where possible, blank where not. */
+    private fun numberOrBlank(raw: String?): Any =
+        raw?.trim()?.takeIf { it.isNotBlank() }?.toLongOrNull() ?: ""
 
     // ------------------------------------------------------------- stock ----
 
@@ -211,47 +319,26 @@ class ReceptionRepository(
     // ---------------------------------------------------------- vehicles ----
 
     /** Best-effort link to a vehicle already on file. Never blocks a check-in. */
+    /**
+     * Finds a vehicle already on file for this plate.
+     *
+     * Tries the normalised key first and the literal plate second, because
+     * vehicles created before plateKey existed - and any created on the
+     * desktop - only carry the plate as it was typed.
+     */
     suspend fun findVehicle(garageId: String, plate: String): Pair<String, String?>? = runCatching {
-        val q = db.collection("garages").document(garageId)
-            .collection("vehicles")
+        val vehicles = db.collection("garages").document(garageId).collection("vehicles")
+
+        val byKey = vehicles
+            .whereEqualTo("plateKey", normalisePlate(plate))
+            .limit(1).get().await()
+        byKey.documents.firstOrNull()?.let { return@runCatching it.id to it.getString("clientId") }
+
+        val byPlate = vehicles
             .whereEqualTo("plate", plate.uppercase().trim())
             .limit(1).get().await()
-        q.documents.firstOrNull()?.let { it.id to it.getString("clientId") }
+        byPlate.documents.firstOrNull()?.let { it.id to it.getString("clientId") }
     }.getOrNull()
-
-    /**
-     * No vehicle on file means a walk-in reception has never seen before.
-     * Pre-allocated doc refs give both IDs synchronously, so this works offline.
-     */
-    fun createClientAndVehicle(garageId: String, arrival: Arrival): Pair<String, String> {
-        val garageRef = db.collection("garages").document(garageId)
-        val vehicleRef = garageRef.collection("vehicles").document()
-        val clientRef = garageRef.collection("clients").document()
-        val nowIso = isoNow()
-
-        clientRef.set(
-            hashMapOf(
-                "name" to (arrival.driverName?.takeIf { it.isNotBlank() } ?: "Walk-in customer"),
-                "phone" to (arrival.driverPhone ?: ""),
-                "email" to "",
-                "vehicleIds" to listOf(vehicleRef.id),
-                "createdAt" to nowIso,
-            )
-        )
-        vehicleRef.set(
-            hashMapOf(
-                "plate" to arrival.plate.uppercase().trim(),
-                "make" to (arrival.make ?: ""),
-                "model" to "",
-                "year" to "",
-                "color" to (arrival.colour ?: ""),
-                "clientId" to clientRef.id,
-                "mileage" to "",
-                "fuelType" to "Petrol",
-            )
-        )
-        return clientRef.id to vehicleRef.id
-    }
 
     // ---------------------------------------------------------- arrivals ----
 
@@ -283,9 +370,14 @@ class ReceptionRepository(
         id = d.id,
         plate = d.getString("plate").orEmpty(),
         make = d.getString("make"),
+        model = d.getString("model"),
         colour = d.getString("colour"),
         driverName = d.getString("driverName"),
         driverPhone = d.getString("driverPhone"),
+        driverEmail = d.getString("driverEmail"),
+        technicianName = d.getString("technicianName"),
+        vehicleId = d.getString("vehicleId"),
+        clientId = d.getString("clientId"),
         // Older documents used `reason`; read both so history keeps rendering.
         requestedWork = d.getString("requestedWork") ?: d.getString("reason").orEmpty(),
         notes = d.getString("notes"),

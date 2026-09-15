@@ -164,33 +164,34 @@ class ReceptionViewModel @JvmOverloads constructor(
         val session = _state.value.session ?: return@launch
         _state.value = _state.value.copy(busy = true, error = null)
         try {
-            var vehicleId = arrival.vehicleId
-            var clientId = arrival.clientId
-            var isNew = false
-
-            if (vehicleId.isNullOrBlank()) {
-                val found = repo.findVehicle(session.garageId, arrival.plate)
-                if (found != null) {
-                    vehicleId = found.first
-                    clientId = found.second
-                } else {
-                    val created = repo.createClientAndVehicle(session.garageId, arrival)
-                    clientId = created.first
-                    vehicleId = created.second
-                    isNew = true
-                }
+            // A returning car must not produce a second copy of its owner, so
+            // the plate is looked up before anything is created. The lookup is
+            // the one awaited call here: offline it simply finds nothing and
+            // the check-in opens a fresh file, which the desktop can merge.
+            val found = if (arrival.vehicleId.isNullOrBlank()) {
+                repo.findVehicle(session.garageId, arrival.plate)
+            } else {
+                arrival.vehicleId to arrival.clientId
             }
 
-            val filled = arrival.copy(vehicleId = vehicleId, clientId = clientId)
-            val arrivalId = repo.checkIn(session, filled, isNewClient = isNew)
-
             val picked = _state.value.picked
+            val result = repo.checkIn(
+                session = session,
+                arrival = arrival,
+                existingVehicleId = found?.first,
+                existingClientId = found?.second,
+                picked = picked.map { it.part to it.qty },
+            )
+
+            // Stock moves separately: quantities only ever change by increment
+            // alongside a ledger line, which cannot share a batch with the
+            // records above without giving up that guarantee.
             if (picked.isNotEmpty()) {
                 repo.issueParts(
                     session = session,
-                    arrivalId = arrivalId,
+                    arrivalId = result.arrivalId,
                     plate = arrival.plate,
-                    vehicleId = vehicleId,
+                    vehicleId = result.vehicleId,
                     lines = picked.map { it.part to it.qty },
                 )
             }

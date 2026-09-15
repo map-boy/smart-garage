@@ -133,8 +133,18 @@ export function adjustToCount(
 }
 
 /** Creating or editing the part itself. Never touches quantity. */
+/**
+ * Saves the describable fields of a part. Never the quantity.
+ *
+ * Quantity is dropped here on purpose, and dropping it is load-bearing. It
+ * only ever moves by increment alongside a ledger line, and the inventory form
+ * saves details and then adjusts the count as two separate calls. Merging the
+ * form's number in here applied the same change twice - once as an overwrite
+ * and once as the increment that followed - so setting a part that held 0 to
+ * 10 left 20 on the shelf.
+ */
 export function savePartDetails(garageId: string, part: Part): void {
-  const { id, ...rest } = part;
+  const { id, quantity: _ignoredQuantity, ...rest } = part;
   void setDoc(
     doc(db, 'garages', garageId, 'stock', id),
     { ...rest, updatedAt: nowIso() },

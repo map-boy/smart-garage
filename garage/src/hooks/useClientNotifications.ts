@@ -99,6 +99,7 @@ export function useClientNotifications() {
           isNewClient?: boolean;
           requestedWork?: string;
           reason?: string;
+          jobId?: string;
         };
         const isNewClient = !!a.isNewClient;
         const title = isNewClient
@@ -107,8 +108,14 @@ export function useClientNotifications() {
         // What the client actually asked for is the useful half of this
         // notification; the plate alone says a car arrived, not why.
         const work = a.requestedWork || a.reason;
-        const body = [a.plate ? `Plate: ${a.plate}` : null, work]
-          .filter(Boolean).join(' \u00b7 ') || 'Logged by reception';
+        // A check-in from the phone now opens a job card with it, so say so -
+        // the workshop needs to know there is already something to pick up,
+        // not just that a car is at the gate.
+        const body = [
+          a.plate ? `Plate: ${a.plate}` : null,
+          work,
+          a.jobId ? 'Job card opened' : null,
+        ].filter(Boolean).join(' \u00b7 ') || 'Logged by reception';
         raise({ id: change.doc.id, kind: 'arrival', title, body, isNewClient, receivedAt: Date.now() });
       });
     });

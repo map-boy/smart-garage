@@ -25,10 +25,14 @@ export function JobCardsPage() {
 
   const filtered = jobs.filter(j => {
     const v = vehicles.find(vec => vec.id === j.vehicleId);
-    const matchesSearch = 
-      j.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      j.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      v?.plate.toLowerCase().includes(searchTerm.toLowerCase());
+    // Job cards now also arrive from the reception phone, so no field here
+    // can be assumed present - one missing string used to throw inside this
+    // filter and blank the whole page rather than hide a card.
+    const needle = searchTerm.toLowerCase();
+    const matchesSearch =
+      (j.id ?? '').toLowerCase().includes(needle) ||
+      (j.description ?? '').toLowerCase().includes(needle) ||
+      (v?.plate ?? '').toLowerCase().includes(needle);
     
     const matchesStatus = statusFilter === 'All' || j.status === statusFilter;
 

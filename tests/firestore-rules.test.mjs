@@ -285,8 +285,65 @@ await check('staff may write clients', () =>
 await check('a paired phone may read vehicles', () =>
   assertSucceeds(getDocs(collection(reception, `garages/${GARAGE}/vehicles`))));
 
-await check('a paired phone cannot rewrite job cards', () =>
-  assertFails(setDoc(doc(reception, `garages/${GARAGE}/jobs/j1`), { status: 'done' })));
+// ---- the customer file a gate check-in opens -------------------------------
+// A walk-in becomes an arrival, a client, a vehicle and a job card, all
+// written together by the phone. Before this the phone could only write the
+// arrival, and because its writes are not awaited the refusal was invisible -
+// the arrival showed up on the desktop and the customer never existed.
+await check('the reception phone may open a client file', () =>
+  assertSucceeds(setDoc(doc(reception, `garages/${GARAGE}/clients/c-gate`), {
+    name: 'Walk-in', phone: '+250', email: '', vehicleIds: [], createdAt: 'now',
+  })));
+
+await check('the reception phone may add the vehicle', () =>
+  assertSucceeds(setDoc(doc(reception, `garages/${GARAGE}/vehicles/v-gate`), {
+    plate: 'RAB123C', clientId: 'c-gate', make: 'Toyota', model: 'Vitz',
+  })));
+
+await check('the reception phone may open the job card', () =>
+  assertSucceeds(setDoc(doc(reception, `garages/${GARAGE}/jobs/j-gate`), {
+    vehicleId: 'v-gate', description: 'Service', status: 'Pending',
+  })));
+
+// Create only. Once a record exists, correcting it belongs to staff on the
+// desktop, who can see the whole file rather than one form at a gate.
+await check('the reception phone cannot rewrite a job card it opened', () =>
+  assertFails(updateDoc(doc(reception, `garages/${GARAGE}/jobs/j-gate`), {
+    status: 'Completed',
+  })));
+
+await check('the reception phone cannot edit a client after the fact', () =>
+  assertFails(updateDoc(doc(reception, `garages/${GARAGE}/clients/c-gate`), {
+    phone: '+000',
+  })));
+
+await check('the reception phone cannot delete a vehicle', () =>
+  assertFails(deleteDoc(doc(reception, `garages/${GARAGE}/vehicles/v-gate`))));
+
+// The stock phone has no business opening customer files.
+await check('the stock phone cannot open a client file', () =>
+  assertFails(setDoc(doc(stockPhone, `garages/${GARAGE}/clients/c-sneak`), {
+    name: 'Nope', phone: '', email: '', vehicleIds: [], createdAt: 'now',
+  })));
+
+await check('the stock phone cannot open a job card', () =>
+  assertFails(setDoc(doc(stockPhone, `garages/${GARAGE}/jobs/j-sneak`), {
+    vehicleId: 'v-gate', description: 'Nope', status: 'Pending',
+  })));
+
+// Staff keep everything they had before these collections got their own rule.
+await check('staff may still edit a job card', () =>
+  assertSucceeds(updateDoc(doc(tech, `garages/${GARAGE}/jobs/j-gate`), {
+    status: 'In Progress',
+  })));
+
+await check('staff may still delete a vehicle', () =>
+  assertSucceeds(deleteDoc(doc(tech, `garages/${GARAGE}/vehicles/v-gate`))));
+
+await check("a phone cannot touch another garage's clients", () =>
+  assertFails(setDoc(doc(reception, `garages/${OTHER}/clients/c-x`), {
+    name: 'Nope', phone: '', email: '', vehicleIds: [], createdAt: 'now',
+  })));
 
 // ---- crash reports ---------------------------------------------------------
 // Anyone may file one: a phone that crashes before it ever pairs is exactly
