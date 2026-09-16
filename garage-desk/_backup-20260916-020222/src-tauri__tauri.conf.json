@@ -27,22 +27,11 @@
   "bundle": {
     "active": true,
     "targets": ["nsis"],
-    "publisher": "VAF Ubwenge Tech",
-    "copyright": "Copyright (c) VAF Ubwenge Tech",
-    "shortDescription": "Reception & Stock Management",
-    "longDescription": "C & V Smart Garage - offline-first reception and stock management for the garage front desk.",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.ico"
-    ],
-    "windows": {
-      "nsis": {
-        "installMode": "perMachine",
-        "languages": ["English"],
-        "displayLanguageSelector": false
-      }
-    }
+    ]
   }
 }

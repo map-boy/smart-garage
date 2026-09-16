@@ -150,23 +150,3 @@ tbody tr:hover { background: #f8fafc; }
 }
 
 .qty-btn:hover { background: var(--bg); }
-
-/* ---- stock groups ---- */
-.group-block { margin-top: 18px; }
-.group-header {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 8px; padding: 6px 0; border-bottom: 1px solid #eee;
-}
-.group-toggle {
-  display: flex; align-items: center; gap: 8px;
-  background: none; border: none; cursor: pointer;
-  font-size: 15px; font-weight: 600; padding: 2px 0; color: inherit;
-}
-.group-caret { font-size: 12px; opacity: 0.6; }
-.group-count {
-  font-size: 12px; font-weight: 500; opacity: 0.6;
-  background: #f1f1f1; border-radius: 10px; padding: 1px 8px;
-}
-.group-actions { display: flex; gap: 4px; }
-.group-empty { font-size: 13px; opacity: 0.55; margin: 8px 0 0 20px; }
-.group-select { padding: 2px 6px; font-size: 13px; min-width: 120px; }

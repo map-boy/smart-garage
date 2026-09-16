@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+﻿import { useEffect, useRef, useState, useCallback } from 'react';
 import { collection, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import wandaaSoundUrl from '../../data/wandaa.wav';
 
-export type NotificationKind = 'arrival' | 'enquiry';
+export type NotificationKind = 'arrival' | 'enquiry' | 'client' | 'stock';
 
 export interface ClientNotification {
   id: string;
@@ -59,6 +59,8 @@ export function useClientNotifications() {
   const { profile } = useAuth();
   const isInitialLoad = useRef(true);
   const firstEnquiryLoad = useRef(true);
+  const isInitialClients = useRef(true);
+  const isInitialStock = useRef(true);
   const [notifications, setNotifications] = useState<ClientNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -71,6 +73,8 @@ export function useClientNotifications() {
 
     isInitialLoad.current = true;
     firstEnquiryLoad.current = true;
+    isInitialClients.current = true;
+    isInitialStock.current = true;
 
     const raise = (n: ClientNotification) => {
       playChime();
@@ -144,9 +148,51 @@ export function useClientNotifications() {
       });
     });
 
+    const clientsQuery = collection(db, 'garages', profile.garageId, 'clients');
+    const unsubClients = onSnapshot(clientsQuery, (snapshot) => {
+      if (isInitialClients.current) {
+        isInitialClients.current = false;
+        return;
+      }
+      snapshot.docChanges().forEach((change) => {
+        if (change.type !== 'added') return;
+        const c = change.doc.data() as { name?: string; vehicle_plate?: string; issue?: string };
+        raise({
+          id: change.doc.id,
+          kind: 'client',
+          title: c.name ? `New client: ${c.name}` : 'New client added',
+          body: [c.vehicle_plate, c.issue].filter(Boolean).join(' \u00b7 ') || 'Added at reception',
+          isNewClient: true,
+          receivedAt: Date.now(),
+        });
+      });
+    });
+
+    const stockQuery = collection(db, 'garages', profile.garageId, 'stock');
+    const unsubStock = onSnapshot(stockQuery, (snapshot) => {
+      if (isInitialStock.current) {
+        isInitialStock.current = false;
+        return;
+      }
+      snapshot.docChanges().forEach((change) => {
+        if (change.type !== 'added') return;
+        const s = change.doc.data() as { name?: string; qty?: number };
+        raise({
+          id: change.doc.id,
+          kind: 'stock',
+          title: s.name ? `New stock item: ${s.name}` : 'New stock item added',
+          body: typeof s.qty === 'number' ? `Qty: ${s.qty}` : 'Added at stock',
+          isNewClient: false,
+          receivedAt: Date.now(),
+        });
+      });
+    });
+
     return () => {
       unsubArrivals();
       unsubEnquiries();
+      unsubClients();
+      unsubStock();
     };
   }, [profile?.garageId]);
 

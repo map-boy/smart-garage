@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api/core";
+﻿import { invoke } from "@tauri-apps/api/core";
 
 export interface Client {
   id: string;
@@ -12,40 +12,19 @@ export interface Client {
   synced: boolean;
 }
 
-export interface StockGroup {
-  id: string;
-  name: string;
-  created_at: string;
-  synced: boolean;
-}
-
 export interface StockItem {
   id: string;
   name: string;
   qty: number;
   unit_price: number;
-  group_id: string | null;
-  group_name: string;
+  category: string;
   updated_at: string;
   synced: boolean;
 }
 
-export interface StockMovement {
-  id: string;
-  part_id: string;
-  part_name: string;
-  delta: number;
-  qty_after: number;
-  reason: string;
-  created_at: string;
-  synced: boolean;
-}
-
-export type SyncTable = "clients" | "stock_items" | "stock_groups" | "stock_movements";
-
 export interface QueueRow {
   id: string;
-  table_name: SyncTable;
+  table_name: "clients" | "stock_items";
   row_id: string;
   op: "create" | "update" | "delete";
   payload: string;
@@ -91,33 +70,13 @@ export function listClients(): Promise<Client[]> {
   return invoke("list_clients");
 }
 
-/* ---- stock groups ---- */
-
-export function listStockGroups(): Promise<StockGroup[]> {
-  return invoke("list_stock_groups");
-}
-
-export function addStockGroup(name: string): Promise<StockGroup> {
-  return invoke("add_stock_group", { name });
-}
-
-export function renameStockGroup(id: string, name: string): Promise<StockGroup> {
-  return invoke("rename_stock_group", { id, name });
-}
-
-export function deleteStockGroup(id: string): Promise<void> {
-  return invoke("delete_stock_group", { id });
-}
-
-/* ---- stock items ---- */
-
 export function addStockItem(
   name: string,
   qty: number,
   unit_price: number,
-  group_id: string | null
+  category: string
 ): Promise<StockItem> {
-  return invoke("add_stock_item", { name, qty, unitPrice: unit_price, groupId: group_id });
+  return invoke("add_stock_item", { name, qty, unitPrice: unit_price, category });
 }
 
 export function deleteStockItem(id: string): Promise<void> {
@@ -128,19 +87,9 @@ export function updateStockQty(id: string, delta: number): Promise<StockItem> {
   return invoke("update_stock_qty", { id, delta });
 }
 
-export function setStockItemGroup(id: string, group_id: string): Promise<StockItem> {
-  return invoke("set_stock_item_group", { id, groupId: group_id });
-}
-
 export function listStock(): Promise<StockItem[]> {
   return invoke("list_stock");
 }
-
-export function listStockMovements(): Promise<StockMovement[]> {
-  return invoke("list_stock_movements");
-}
-
-/* ---- sync queue ---- */
 
 export function queuePending(): Promise<QueueRow[]> {
   return invoke("queue_pending");

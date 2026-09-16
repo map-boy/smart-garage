@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   verifyLogin,
   addClient,
@@ -7,17 +7,11 @@ import {
   addStockItem,
   updateStockQty,
   deleteStockItem,
-  setStockItemGroup,
   listStock,
-  listStockGroups,
-  addStockGroup,
-  renameStockGroup,
-  deleteStockGroup,
   checkInternet,
   logCrash,
   type Client,
   type StockItem,
-  type StockGroup,
 } from "./db";
 import { flushSyncQueue } from "./sync";
 
@@ -138,21 +132,13 @@ function ReceptionScreen() {
 
 function StockScreen() {
   const [items, setItems] = useState<StockItem[]>([]);
-  const [groups, setGroups] = useState<StockGroup[]>([]);
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [name, setName] = useState("");
   const [qty, setQty] = useState("");
   const [price, setPrice] = useState("");
-  const [groupId, setGroupId] = useState("");
-  const [newGroup, setNewGroup] = useState("");
+  const [category, setCategory] = useState("General");
   const [online, setOnline] = useState<boolean | null>(null);
 
-  const refresh = async () => {
-    const [g, i] = await Promise.all([listStockGroups(), listStock()]);
-    setGroups(g);
-    setItems(i);
-    setGroupId((cur) => (cur && g.some((x) => x.id === cur) ? cur : (g[0]?.id ?? "")));
-  };
+  const refresh = async () => setItems(await listStock());
 
   useEffect(() => {
     refresh();
@@ -161,71 +147,16 @@ function StockScreen() {
     return () => clearInterval(id);
   }, []);
 
-  const fail = (err: unknown) =>
-    logCrash("stock", err instanceof Error ? err.message : String(err));
-
   const submit = async () => {
     if (!name || !qty) return;
     try {
-      await addStockItem(name, parseInt(qty, 10), parseFloat(price || "0"), groupId || null);
+      await addStockItem(name, parseInt(qty, 10), parseFloat(price || "0"), category || "General");
       setName(""); setQty(""); setPrice("");
       await refresh();
       flushSyncQueue();
-    } catch (err) { fail(err); }
-  };
-
-  const createGroup = async () => {
-    const n = newGroup.trim();
-    if (!n) return;
-    try {
-      const g = await addStockGroup(n);
-      setNewGroup("");
-      await refresh();
-      setGroupId(g.id);
-      flushSyncQueue();
     } catch (err) {
-      fail(err);
-      alert("Could not create that group.");
+      logCrash("stock", err instanceof Error ? err.message : String(err));
     }
-  };
-
-  const rename = async (g: StockGroup) => {
-    const next = window.prompt(`Rename "${g.name}" to:`, g.name);
-    if (next === null) return;
-    const trimmed = next.trim();
-    if (!trimmed || trimmed === g.name) return;
-    try {
-      await renameStockGroup(g.id, trimmed);
-      await refresh();
-      flushSyncQueue();
-    } catch (err) {
-      fail(err);
-      alert("Could not rename that group.");
-    }
-  };
-
-  const removeGroup = async (g: StockGroup) => {
-    const count = items.filter((i) => i.group_id === g.id).length;
-    const msg = count
-      ? `Delete group "${g.name}"? Its ${count} item(s) will move to General.`
-      : `Delete group "${g.name}"?`;
-    if (!window.confirm(msg)) return;
-    try {
-      await deleteStockGroup(g.id);
-      await refresh();
-      flushSyncQueue();
-    } catch (err) {
-      fail(err);
-      alert("That group could not be removed.");
-    }
-  };
-
-  const move = async (itemId: string, targetGroupId: string) => {
-    try {
-      await setStockItemGroup(itemId, targetGroupId);
-      await refresh();
-      flushSyncQueue();
-    } catch (err) { fail(err); }
   };
 
   const adjust = async (id: string, delta: number, currentQty: number) => {
@@ -241,7 +172,9 @@ function StockScreen() {
       await updateStockQty(id, delta);
       await refresh();
       flushSyncQueue();
-    } catch (err) { fail(err); }
+    } catch (err) {
+      logCrash("stock", err instanceof Error ? err.message : String(err));
+    }
   };
 
   const remove = async (id: string, itemName: string) => {
@@ -250,51 +183,16 @@ function StockScreen() {
       await deleteStockItem(id);
       await refresh();
       flushSyncQueue();
-    } catch (err) { fail(err); }
+    } catch (err) {
+      logCrash("stock", err instanceof Error ? err.message : String(err));
+    }
   };
 
-  const toggle = (id: string) =>
-    setCollapsed((c) => ({ ...c, [id]: !c[id] }));
-
-  const orphans = items.filter(
-    (i) => !i.group_id || !groups.some((g) => g.id === i.group_id)
-  );
-
-  const renderRows = (rows: StockItem[]) => (
-    <table>
-      <thead>
-        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Group</th><th>Synced</th><th>Adjust</th><th></th></tr>
-      </thead>
-      <tbody>
-        {rows.map((it) => (
-          <tr key={it.id}>
-            <td>{it.name}</td>
-            <td>{it.qty}</td>
-            <td>{it.unit_price}</td>
-            <td>
-              <select
-                className="input-field group-select"
-                value={it.group_id ?? ""}
-                onChange={(e) => move(it.id, e.target.value)}
-              >
-                {groups.map((g) => (
-                  <option key={g.id} value={g.id}>{g.name}</option>
-                ))}
-              </select>
-            </td>
-            <td className={it.synced ? "pill-yes" : "pill-pending"}>{it.synced ? "Yes" : "Pending"}</td>
-            <td>
-              <button className="qty-btn" onClick={() => adjust(it.id, -1, it.qty)}>-1</button>
-              <button className="qty-btn" onClick={() => adjust(it.id, 1, it.qty)}>+1</button>
-            </td>
-            <td>
-              <button className="qty-btn" onClick={() => remove(it.id, it.name)} style={{ color: "#c00" }}>Delete</button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+  const groups = items.reduce<Record<string, StockItem[]>>((acc, it) => {
+    const key = it.category || "General";
+    (acc[key] ||= []).push(it);
+    return acc;
+  }, {});
 
   return (
     <div className="page">
@@ -306,65 +204,36 @@ function StockScreen() {
           </span>
         )}
       </div>
-
       <div className="form-row">
         <input className="input-field" placeholder="Item name" value={name} onChange={(e) => setName(e.target.value)} />
         <input className="input-field" placeholder="Quantity" value={qty} onChange={(e) => setQty(e.target.value)} />
         <input className="input-field" placeholder="Unit price" value={price} onChange={(e) => setPrice(e.target.value)} />
-        <select className="input-field" value={groupId} onChange={(e) => setGroupId(e.target.value)}>
-          {groups.map((g) => (
-            <option key={g.id} value={g.id}>{g.name}</option>
-          ))}
-        </select>
+        <input className="input-field" placeholder="Category (e.g. Cleaning tools)" value={category} onChange={(e) => setCategory(e.target.value)} />
         <button className="btn" onClick={submit}>Add Item</button>
       </div>
-
-      <div className="form-row">
-        <input
-          className="input-field"
-          placeholder="New group (e.g. Car Wash)"
-          value={newGroup}
-          onChange={(e) => setNewGroup(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && createGroup()}
-        />
-        <button className="btn btn-secondary" onClick={createGroup}>Add Group</button>
-      </div>
-
-      {groups.map((g) => {
-        const rows = items.filter((i) => i.group_id === g.id);
-        const isShut = !!collapsed[g.id];
-        return (
-          <div key={g.id} className="group-block">
-            <div className="group-header">
-              <button className="group-toggle" onClick={() => toggle(g.id)}>
-                <span className="group-caret">{isShut ? "\u25B8" : "\u25BE"}</span>
-                {g.name}
-                <span className="group-count">{rows.length}</span>
-              </button>
-              <span className="group-actions">
-                <button className="qty-btn" onClick={() => rename(g)}>Rename</button>
-                {g.name !== "General" && (
-                  <button className="qty-btn" onClick={() => removeGroup(g)} style={{ color: "#c00" }}>Delete</button>
-                )}
-              </span>
-            </div>
-            {!isShut && (rows.length ? renderRows(rows) : <p className="group-empty">Nothing in this group yet.</p>)}
-          </div>
-        );
-      })}
-
-      {orphans.length > 0 && (
-        <div className="group-block">
-          <div className="group-header">
-            <button className="group-toggle" onClick={() => toggle("__orphans")}>
-              <span className="group-caret">{collapsed["__orphans"] ? "\u25B8" : "\u25BE"}</span>
-              Ungrouped
-              <span className="group-count">{orphans.length}</span>
-            </button>
-          </div>
-          {!collapsed["__orphans"] && renderRows(orphans)}
+      {Object.entries(groups).map(([groupName, groupItems]) => (
+        <div key={groupName} style={{ marginTop: 16 }}>
+          <h4 style={{ margin: "8px 0" }}>{groupName}</h4>
+          <table>
+            <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Synced</th><th>Adjust</th><th></th></tr></thead>
+            <tbody>
+              {groupItems.map((it) => (
+                <tr key={it.id}>
+                  <td>{it.name}</td><td>{it.qty}</td><td>{it.unit_price}</td>
+                  <td className={it.synced ? "pill-yes" : "pill-pending"}>{it.synced ? "Yes" : "Pending"}</td>
+                  <td>
+                    <button className="qty-btn" onClick={() => adjust(it.id, -1, it.qty)}>-1</button>
+                    <button className="qty-btn" onClick={() => adjust(it.id, 1, it.qty)}>+1</button>
+                  </td>
+                  <td>
+                    <button className="qty-btn" onClick={() => remove(it.id, it.name)} style={{ color: "#c00" }}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
+      ))}
     </div>
   );
 }

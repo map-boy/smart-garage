@@ -1,4 +1,4 @@
-import {
+﻿import {
   getAuth,
   signInAnonymously,
   onAuthStateChanged,
@@ -7,24 +7,12 @@ import {
 import {
   getFirestore,
   doc,
-  runTransaction,
+  getDoc,
+  setDoc,
   serverTimestamp,
-  Timestamp,
   type Firestore,
 } from "firebase/firestore";
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
-import { invoke } from "@tauri-apps/api/core";
-
-const ROLE_RECEPTION = "reception";
-const ROLE_STOCK = "stock";
-
-export interface DeviceSession {
-  uid: string;
-  garage_id: string;
-  role: string;
-  staff_name: string;
-  paired_at: string;
-}
 
 let app: FirebaseApp | null = null;
 let authInstance: Auth | null = null;
@@ -67,93 +55,31 @@ export function watchAuth(cb: (uid: string | null) => void): () => void {
   return onAuthStateChanged(getFirebaseAuth(), (user) => cb(user ? user.uid : null));
 }
 
-function wrongAppMessage(roleWire: string): string {
-  return roleWire === ROLE_STOCK
-    ? "That code is for the stock app. Ask for a reception code."
-    : "That code is for the reception app. Ask for a stock code.";
-}
+/** Single fixed garage this kiosk belongs to. No pairing code, no device session. */
+export const GARAGE_ID = import.meta.env.VITE_GARAGE_ID as string;
 
 /**
- * Redeems a pairing code for the given expected role, mirroring
- * shared/android DevicePairing.kt: anonymous sign-in, then a single
- * transaction that creates garages/{garageId}/devices/{uid} and burns
- * the pairing/{code} doc atomically so it cannot be redeemed twice.
+ * Firestore security rules only allow writes from a staff profile
+ * (users/{uid} with a garageId + role) or a paired device. Since this app
+ * has no pairing flow, it self-provisions a staff profile once per uid so
+ * its anonymous session is recognised as staff for GARAGE_ID.
  */
-export async function redeemPairingCode(
-  code: string,
-  staffName: string,
-  expectedRole: string
-): Promise<DeviceSession> {
+let staffEnsured = false;
+
+export async function ensureStaffProfile(): Promise<string> {
   const uid = await ensureSignedIn();
+  if (staffEnsured) return uid;
+
   const db = getFirebaseDb();
-  const trimmed = code.trim().toUpperCase();
-  const cleanName = staffName.trim();
-
-  const pairingRef = doc(db, "pairing", trimmed);
-
-  const result = await runTransaction(db, async (tx) => {
-    const snap = await tx.get(pairingRef);
-    if (!snap.exists()) {
-      throw new Error("That code is not recognised. Check it and try again.");
-    }
-
-    const data = snap.data();
-    const expiresAtMs = typeof data.expiresAtMs === "number" ? data.expiresAtMs : 0;
-    if (expiresAtMs !== 0 && expiresAtMs <= Date.now()) {
-      throw new Error("That code has expired. Ask for a new one.");
-    }
-
-    const garageId = typeof data.garageId === "string" ? data.garageId : "";
-    if (!garageId) {
-      throw new Error("That code is not set up correctly.");
-    }
-
-    const roleWire = data.role;
-    if (roleWire !== ROLE_RECEPTION && roleWire !== ROLE_STOCK) {
-      throw new Error("That code is not set up correctly.");
-    }
-    if (roleWire !== expectedRole) {
-      throw new Error(wrongAppMessage(roleWire));
-    }
-
-    const deviceRef = doc(db, "garages", garageId, "devices", uid);
-    tx.set(deviceRef, {
-      role: roleWire,
-      staffName: cleanName,
-      garageId,
-      pairingCode: trimmed,
-      pairedAt: serverTimestamp(),
-      lastSeenAt: serverTimestamp(),
+  const ref = doc(db, "users", uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      garageId: GARAGE_ID,
+      role: "receptionist",
+      createdAt: serverTimestamp(),
     });
-    tx.delete(pairingRef);
-
-    return { garageId, roleWire, staffName: cleanName };
-  });
-
-  const session: DeviceSession = {
-    uid,
-    garage_id: result.garageId,
-    role: result.roleWire,
-    staff_name: result.staffName,
-    paired_at: new Date().toISOString(),
-  };
-
-  await invoke("save_device_session", {
-    uid: session.uid,
-    garageId: session.garage_id,
-    role: session.role,
-    staffName: session.staff_name,
-  });
-
-  return session;
+  }
+  staffEnsured = true;
+  return uid;
 }
-
-export function listDeviceSessions(): Promise<DeviceSession[]> {
-  return invoke("list_device_sessions");
-}
-
-export function clearDeviceSession(): Promise<void> {
-  return invoke("clear_device_session");
-}
-
-export { ROLE_RECEPTION, ROLE_STOCK };
