@@ -84,6 +84,58 @@ jobs:
         # secret cannot break CI.
         run: ./gradlew --no-daemon --stacktrace assembleRelease
 
+  desk:
+    timeout-minutes: 30
+    name: build garage-desk
+    runs-on: ubuntu-latest
+    # The reception/stock app was only ever compiled by the release workflow,
+    # so a commit that broke it stayed broken on main until someone cut a
+    # release - which is exactly what happened once already. This checks both
+    # halves on every push, on Linux, without building a Windows installer:
+    # the installer is a packaging step, the compile is what regresses.
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: garage-desk/package-lock.json
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: garage-desk/src-tauri
+
+      # Tauri's Linux build needs GTK and WebKit headers even for `cargo
+      # check`, because the crate graph pulls them in through tauri's build
+      # script rather than only at link time.
+      - name: System libraries for Tauri
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev \
+            libayatana-appindicator3-dev librsvg2-dev
+
+      - name: Install
+        working-directory: garage-desk
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck frontend
+        working-directory: garage-desk
+        run: npx tsc --noEmit
+
+      - name: Build frontend
+        working-directory: garage-desk
+        # Vite needs the env file to exist; real values only matter at runtime.
+        run: |
+          : > .env
+          npm run build
+
+      - name: Check Rust
+        working-directory: garage-desk/src-tauri
+        run: cargo check --locked --all-targets
+
   electron:
     timeout-minutes: 30
     name: package desktop installer

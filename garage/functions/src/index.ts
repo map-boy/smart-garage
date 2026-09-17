@@ -1,167 +1,42 @@
 import {setGlobalOptions} from "firebase-functions";
-import {onCall, HttpsError} from "firebase-functions/https";
 import {onDocumentCreated} from "firebase-functions/firestore";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
-import PDFDocument from "pdfkit";
 
 if (!admin.apps.length) {
   admin.initializeApp();
 }
 setGlobalOptions({maxInstances: 10});
 
-// The OpenWA/WhatsApp gateway and the Azure VM that hosted it are gone.
-// Everything that only existed to drive them was removed; what is left is
-// invoice PDF generation, which never depended on either.
-
-// ---- Caller authorization ----
-// Every callable here touches a garage's Storage path, so the caller has to
-// prove they belong to that garage. `users/{uid}` is the same document the
-// Firestore rules read for `isManagerOf()`, so a caller that passes here is
-// exactly a caller the rules would also accept.
-async function assertGarageMember(
-  auth: {uid: string} | undefined,
-  garageId: string
-): Promise<void> {
-  if (!auth) {
-    throw new HttpsError("unauthenticated", "Sign in first.");
-  }
-  const snap = await admin.firestore().collection("users").doc(auth.uid).get();
-  if (!snap.exists || snap.data()?.garageId !== garageId) {
-    throw new HttpsError(
-      "permission-denied",
-      "You do not have access to this garage."
-    );
-  }
+// One trigger, no callables.
+//
+// The OpenWA/WhatsApp gateway and the Azure VM that hosted it were removed
+// earlier. Invoice PDF generation went with this change: getInvoicePdfUrl had
+// no caller in any app, and a signed-URL endpoint nobody calls is a liability
+// rather than a feature. Bring it back from git history if invoicing needs it.
+/** Plates are typed by hand at a desk and on a phone; compare them bare. */
+function normalisePlate(raw: unknown): string {
+  return String(raw ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
-// ---- Invoice PDF ----
-async function generateInvoicePdf(
-  garageName: string,
-  clientName: string,
-  clientEmail: string,
-  invoiceNumber: string,
-  vehiclePlate: string,
-  vehicleMakeModel: string,
-  vehicleYear: number | undefined,
-  lineItems: any[],
-  laborCost: number,
-  taxRate: number,
-  currency: string
-): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({margin: 50});
-    const chunks: Buffer[] = [];
-    doc.on("data", (chunk) => chunks.push(chunk));
-    doc.on("end", () => resolve(Buffer.concat(chunks)));
-    doc.on("error", reject);
-
-    const subtotal = (lineItems || []).reduce(
-      (acc, item) => acc + (item.qty || 0) * (item.unitCost || 0), 0
-    ) + (laborCost || 0);
-    const total = subtotal;
-
-    doc.fontSize(20).text(garageName, {align: "center"});
-    doc.moveDown();
-    doc.fontSize(14).text(`Invoice #${invoiceNumber}`, {align: "center"});
-    doc.fontSize(10).fillColor("green").text("PAID", {align: "center"});
-    doc.fillColor("black");
-    doc.moveDown();
-
-    doc.fontSize(12).text(`Bill to: ${clientName}`);
-    if (clientEmail) {
-      doc.fontSize(10).fillColor("gray").text(clientEmail);
-      doc.fillColor("black");
-    }
-    doc.moveDown();
-
-    if (vehiclePlate || vehicleMakeModel) {
-      doc.fontSize(11).text("Vehicle:", {underline: true});
-      doc.fontSize(10).text(`Registration: ${vehiclePlate || "N/A"}`);
-      doc.fontSize(10).text(`Make/Model: ${vehicleMakeModel || "N/A"}`);
-      if (vehicleYear) {
-        doc.fontSize(10).text(`Year: ${vehicleYear}`);
-      }
-      doc.moveDown();
-    }
-
-    doc.fontSize(11).text("Items:", {underline: true});
-    doc.moveDown(0.5);
-    for (const item of lineItems || []) {
-      const lineTotal = (item.qty || 0) * (item.unitCost || 0);
-      doc.fontSize(10).text(
-        `${item.description || "Item"}  x${item.qty}  -  ${lineTotal.toLocaleString()} ${currency}`
-      );
-    }
-    if (laborCost) {
-      doc.fontSize(10).text(`Labor Charges  -  ${laborCost.toLocaleString()} ${currency}`);
-    }
-
-    doc.moveDown();
-    doc.fontSize(10).text(`Parts & Materials: ${(subtotal - (laborCost || 0)).toLocaleString()} ${currency}`, {align: "right"});
-    if (laborCost) doc.fontSize(10).text(`Labour: ${laborCost.toLocaleString()} ${currency}`, {align: "right"});
-    doc.fontSize(13).text(`Total Spent: ${total.toLocaleString()} ${currency}`, {align: "right"});
-
-    doc.end();
-  });
-}
-async function uploadInvoicePdfAndGetUrl(
-  pdfBuffer: Buffer,
-  garageId: string,
-  invoiceId: string
-): Promise<string> {
-  const bucket = admin.storage().bucket();
-  const filePath = `invoices/${garageId}/${invoiceId}.pdf`;
-  const file = bucket.file(filePath);
-
-  await file.save(pdfBuffer, {
-    contentType: "application/pdf",
-    metadata: {cacheControl: "private, max-age=0"},
-  });
-
-  const [url] = await file.getSignedUrl({
-    action: "read",
-    expires: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year
-  });
-
-  return url;
-}
-
-export const getInvoicePdfUrl = onCall(
-  {timeoutSeconds: 60},
-  async (request) => {
-    const {
-      garageId, invoiceId, garageName, clientName, clientEmail, vehiclePlate,
-      vehicleMakeModel, vehicleYear, lineItems, laborCost, taxRate, currency,
-    } = request.data;
-    if (!garageId || !invoiceId) {
-      throw new HttpsError("invalid-argument", "garageId and invoiceId are required");
-    }
-    await assertGarageMember(request.auth, garageId);
-    try {
-      const pdfBuffer = await generateInvoicePdf(
-        garageName || "",
-        clientName || "",
-        clientEmail || "",
-        invoiceId,
-        vehiclePlate || "",
-        vehicleMakeModel || "",
-        vehicleYear,
-        lineItems || [],
-        laborCost || 0,
-        taxRate || 0,
-        currency || "RWF"
-      );
-      const url = await uploadInvoicePdfAndGetUrl(pdfBuffer, garageId, invoiceId);
-      return {url};
-    } catch (error: any) {
-      logger.error("getInvoicePdfUrl failed", error);
-      throw new HttpsError("internal", error.message || "Failed to generate invoice PDF");
-    }
+/**
+ * Returns the id of the first document matching any of the given field
+ * equality checks, trying them in order. Firestore cannot OR across different
+ * fields in one query, and a document written before a field existed can only
+ * be found by the older one.
+ */
+async function firstMatch(
+  coll: admin.firestore.CollectionReference,
+  candidates: [string, string][]
+): Promise<string | null> {
+  for (const [field, value] of candidates) {
+    if (!value) continue;
+    const found = await coll.where(field, "==", value).limit(1).get();
+    if (!found.empty) return found.docs[0].id;
   }
-);
+  return null;
+}
 
-// ---- Auto job cards from reception visits ----
 // A visit from garage-desk carries free-text name/phone/plate, not the
 // clientId/vehicleId a job card needs - the desk has never seen this
 // garage's Firestore client/vehicle records. This resolves both, creating
@@ -204,15 +79,26 @@ export const onVisitCreated = onDocumentCreated(
     }
 
     let vehicleId: string;
-    const vehicleMatch = plate
-      ? await garageRef.collection("vehicles").where("plate", "==", plate).limit(1).get()
+    // Match on the normalised key first. The desk and the reception phone
+    // both let a plate be typed by hand, so "RAB 123 C" and "RAB123C" reach
+    // Firestore as different strings for the same car; keying on the plate
+    // exactly as typed quietly opened a second vehicle, and then a second
+    // history, for a car already on file. The literal plate is still tried
+    // as a fallback for vehicles created before plateKey existed.
+    const plateKey = normalisePlate(plate);
+    const vehicleMatch = plateKey
+      ? await firstMatch(garageRef.collection("vehicles"), [
+        ["plateKey", plateKey],
+        ["plate", plate],
+      ])
       : null;
-    if (vehicleMatch && !vehicleMatch.empty) {
-      vehicleId = vehicleMatch.docs[0].id;
+    if (vehicleMatch) {
+      vehicleId = vehicleMatch;
     } else {
       const vehicleRef = garageRef.collection("vehicles").doc();
       await vehicleRef.set({
         plate,
+        plateKey,
         make: "",
         model: visit.vehicleModel || "",
         year: "",
@@ -230,6 +116,10 @@ export const onVisitCreated = onDocumentCreated(
     const jobRef = garageRef.collection("jobs").doc();
     await jobRef.set({
       vehicleId,
+      clientId,
+      // Denormalised so the boss's notification and job list can say which car
+      // without a second read per card.
+      plate,
       technicianName: "",
       description: visit.issue || "",
       status: "Pending",
@@ -241,5 +131,12 @@ export const onVisitCreated = onDocumentCreated(
     });
 
     await snap.ref.update({jobId: jobRef.id});
+
+    // `firebase functions:log --only onVisitCreated` is the first place anyone
+    // looks when a check-in does not show up on the boss's screen, so say what
+    // was resolved rather than only that the run finished.
+    logger.info("Visit turned into a job card", {
+      garageId, visitId, clientId, vehicleId, jobId: jobRef.id,
+    });
   }
 );
