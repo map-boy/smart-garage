@@ -669,6 +669,24 @@ async fn check_internet() -> bool {
     }
 }
 
+#[tauri::command]
+fn export_report(kind: String, date: String, db: State<Db>) -> Result<String, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    let like_len: i64 = if kind == "monthly" { 7 } else { 10 };
+    let mut vstmt = conn.prepare("SELECT name, phone, vehicle_plate, vehicle_model, location, issue, visit_date FROM visits WHERE substr(visit_date,1,?1)=?2 ORDER BY visit_date").map_err(|e| e.to_string())?;
+    let visits: Vec<(String,String,String,String,String,String,String)> = vstmt.query_map(rusqlite::params![like_len, date], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?))).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
+    let mut mstmt = conn.prepare("SELECT part_name, delta, qty_after, reason, created_at FROM stock_movements WHERE substr(created_at,1,?1)=?2 ORDER BY created_at").map_err(|e| e.to_string())?;
+    let moves: Vec<(String,i64,i64,String,String)> = mstmt.query_map(rusqlite::params![like_len, date], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?))).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
+    let mut csv = String::from("RECEPTION VISITS\nName,Phone,Plate,Model,Location,Issue,Visit Date\n");
+    for v in &visits { csv.push_str(&format!("{},{},{},{},{},{},{}\n", v.0,v.1,v.2,v.3,v.4,v.5,v.6)); }
+    csv.push_str("\nSTOCK MOVEMENTS\nPart,Delta,Qty After,Reason,Date\n");
+    for m in &moves { csv.push_str(&format!("{},{},{},{},{}\n", m.0,m.1,m.2,m.3,m.4)); }
+    let desktop = match std::env::var("USERPROFILE") { Ok(up) => std::path::PathBuf::from(up).join("Desktop"), Err(_) => std::path::PathBuf::from(".") };
+    let fname = format!("{}_report_{}.csv", kind, date.replace("-", ""));
+    let out_path = desktop.join(fname);
+    std::fs::write(&out_path, csv).map_err(|e| e.to_string())?;
+    Ok(out_path.to_string_lossy().to_string())
+}
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
@@ -703,7 +721,8 @@ fn main() {
             queue_mark_synced,
             log_crash,
             list_crash_logs,
-            check_internet
+            check_internet,
+            export_report
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

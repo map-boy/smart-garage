@@ -231,3 +231,7 @@ export function listCrashLogs(): Promise<CrashLog[]> {
 export function checkInternet(): Promise<boolean> {
   return invoke("check_internet");
 }
+export function exportReport(kind: string, date: string): Promise<string> {
+  return invoke("export_report", { kind, date });
+}
+

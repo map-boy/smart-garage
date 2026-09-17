@@ -23,6 +23,7 @@ import {
   type StockGroup,
 } from "./db";
 import { flushSyncQueue } from "./sync";
+import { exportReport } from "./db";
 
 function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
   const [password, setPassword] = useState("");
@@ -171,6 +172,26 @@ function ReceptionScreen() {
     <div className="page">
       <div className="page-header">
         <h3>Reception</h3>
+        <button
+          className="input-field"
+          style={{ marginLeft: 12, cursor: "pointer" }}
+          onClick={async () => {
+            const d = new Date();
+            const day = d.toISOString().slice(0, 10);
+            const path = await exportReport("daily", day);
+            alert("Saved: " + path);
+          }}
+        >Export Daily</button>
+        <button
+          className="input-field"
+          style={{ marginLeft: 8, cursor: "pointer" }}
+          onClick={async () => {
+            const d = new Date();
+            const month = d.toISOString().slice(0, 7);
+            const path = await exportReport("monthly", month);
+            alert("Saved: " + path);
+          }}
+        >Export Monthly</button>
         {online !== null && (
           <span className={`status-badge ${online ? "status-online" : "status-offline"}`}>
             {online ? "Online" : "Offline - saved locally"}
