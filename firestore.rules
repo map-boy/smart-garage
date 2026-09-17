@@ -171,8 +171,16 @@ service cloud.firestore {
                     && request.auth.uid == userId
                     && request.resource.data.garageId is string
                     && request.resource.data.role is string
-                    // A self-made profile may never mint a BOSS.
-                    && request.resource.data.role != 'BOSS';
+                    // A self-made profile may only ever be a floor role.
+                    // Blocking BOSS alone was not enough: 'owner' and
+                    // 'manager' both satisfy isManagerOf(), so anyone who
+                    // learned a garage id could mint one for themselves and
+                    // then delete that garage's devices, invoices and
+                    // enquiries. Promotion happens from an existing manager
+                    // account, never from a fresh anonymous session.
+                    && request.resource.data.role in [
+                         'receptionist', 'store_keeper', 'technician', 'cashier'
+                       ];
       // Role and garage are identity, not preferences. Changing either is
       // privilege escalation, so both are pinned to their stored values.
       allow update: if isSignedIn()

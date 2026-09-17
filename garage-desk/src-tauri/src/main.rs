@@ -25,6 +25,21 @@ struct Client {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
+struct Visit {
+    id: String,
+    client_id: String,
+    name: String,
+    phone: String,
+    vehicle_plate: String,
+    vehicle_model: String,
+    location: String,
+    issue: String,
+    visit_date: String,
+    created_at: String,
+    synced: bool,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
 struct StockGroup {
     id: String,
     name: String,
@@ -36,7 +51,7 @@ struct StockGroup {
 struct StockItem {
     id: String,
     name: String,
-    qty: i64,
+    qty: f64,
     unit_price: f64,
     group_id: Option<String>,
     group_name: String,
@@ -49,8 +64,8 @@ struct StockMovement {
     id: String,
     part_id: String,
     part_name: String,
-    delta: i64,
-    qty_after: i64,
+    delta: f64,
+    qty_after: f64,
     reason: String,
     created_at: String,
     synced: bool,
@@ -80,6 +95,11 @@ fn init_db(conn: &Connection) {
         "CREATE TABLE IF NOT EXISTS clients (
             id TEXT PRIMARY KEY, name TEXT, phone TEXT, vehicle_plate TEXT,
             issue TEXT, created_at TEXT, synced INTEGER DEFAULT 0
+        );
+        CREATE TABLE IF NOT EXISTS visits (
+            id TEXT PRIMARY KEY, client_id TEXT, name TEXT, phone TEXT,
+            vehicle_plate TEXT, vehicle_model TEXT, location TEXT, issue TEXT,
+            visit_date TEXT, created_at TEXT, synced INTEGER DEFAULT 0
         );
         CREATE TABLE IF NOT EXISTS stock_groups (
             id TEXT PRIMARY KEY, name TEXT NOT NULL UNIQUE,
@@ -163,7 +183,7 @@ fn enqueue(conn: &Connection, table_name: &str, row_id: &str, op: &str, payload:
 /// Every quantity change leaves a row here. This is what the boss dashboard
 /// reads from garages/{garageId}/stockMovements - append-only by rule, so a
 /// mistake is corrected with another movement, never by editing this one.
-fn record_movement(conn: &Connection, item: &StockItem, delta: i64, reason: &str) {
+fn record_movement(conn: &Connection, item: &StockItem, delta: f64, reason: &str) {
     let id = Uuid::new_v4().to_string();
     let created = Utc::now().to_rfc3339();
     conn.execute(
@@ -240,6 +260,116 @@ fn delete_client(db: State<Db>, id: String) -> Result<(), String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
     conn.execute("DELETE FROM clients WHERE id = ?1", params![id]).map_err(|e| e.to_string())?;
     enqueue(&conn, "clients", &id, "delete", "{}");
+    Ok(())
+}
+
+#[tauri::command]
+fn add_visit(
+    db: State<Db>,
+    client_id: Option<String>,
+    name: String,
+    phone: String,
+    vehicle_plate: String,
+    vehicle_model: String,
+    location: String,
+    issue: String,
+    visit_date: Option<String>,
+) -> Result<Visit, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+
+    let cid = match client_id.filter(|c| !c.trim().is_empty()) {
+        Some(c) => c,
+        None => {
+            let id = Uuid::new_v4().to_string();
+            let created = Utc::now().to_rfc3339();
+            conn.execute(
+                "INSERT INTO clients (id, name, phone, vehicle_plate, vehicle_model, location, issue, created_at, synced) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 0)",
+                params![id, name, phone, vehicle_plate, vehicle_model, location, issue, created],
+            ).map_err(|e| e.to_string())?;
+            let payload = serde_json::json!({
+                "id": id, "name": name, "phone": phone, "vehicle_plate": vehicle_plate,
+                "vehicle_model": vehicle_model, "location": location, "issue": issue,
+                "created_at": created, "synced": false
+            }).to_string();
+            enqueue(&conn, "clients", &id, "create", &payload);
+            id
+        }
+    };
+
+    let visit = Visit {
+        id: Uuid::new_v4().to_string(),
+        client_id: cid,
+        name, phone, vehicle_plate, vehicle_model, location, issue,
+        visit_date: visit_date
+            .filter(|d| !d.trim().is_empty())
+            .unwrap_or_else(|| chrono::Local::now().format("%Y-%m-%d").to_string()),
+        created_at: Utc::now().to_rfc3339(),
+        synced: false,
+    };
+    conn.execute(
+        "INSERT INTO visits (id, client_id, name, phone, vehicle_plate, vehicle_model, location, issue, visit_date, created_at, synced)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, 0)",
+        params![visit.id, visit.client_id, visit.name, visit.phone, visit.vehicle_plate, visit.vehicle_model, visit.location, visit.issue, visit.visit_date, visit.created_at],
+    ).map_err(|e| e.to_string())?;
+    let payload = serde_json::to_string(&visit).map_err(|e| e.to_string())?;
+    enqueue(&conn, "visits", &visit.id, "create", &payload);
+    Ok(visit)
+}
+
+#[tauri::command]
+fn update_visit(
+    db: State<Db>,
+    id: String,
+    name: String,
+    phone: String,
+    vehicle_plate: String,
+    vehicle_model: String,
+    location: String,
+    visit_date: String,
+) -> Result<Visit, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    conn.execute(
+        "UPDATE visits SET name = ?1, phone = ?2, vehicle_plate = ?3, vehicle_model = ?4, location = ?5, visit_date = ?6, synced = 0 WHERE id = ?7",
+        params![name, phone, vehicle_plate, vehicle_model, location, visit_date, id],
+    ).map_err(|e| e.to_string())?;
+    let visit = conn.query_row(
+        "SELECT id, client_id, name, phone, vehicle_plate, vehicle_model, location, issue, visit_date, created_at, synced FROM visits WHERE id = ?1",
+        params![id],
+        |r| Ok(Visit {
+            id: r.get(0)?, client_id: r.get(1)?, name: r.get(2)?, phone: r.get(3)?,
+            vehicle_plate: r.get(4)?, vehicle_model: r.get(5)?, location: r.get(6)?,
+            issue: r.get(7)?, visit_date: r.get(8)?, created_at: r.get(9)?,
+            synced: r.get::<_, i64>(10)? != 0,
+        }),
+    ).map_err(|e| e.to_string())?;
+    let payload = serde_json::to_string(&visit).map_err(|e| e.to_string())?;
+    enqueue(&conn, "visits", &visit.id, "update", &payload);
+    Ok(visit)
+}
+
+#[tauri::command]
+fn list_visits(db: State<Db>) -> Result<Vec<Visit>, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    let mut stmt = conn.prepare(
+        "SELECT id, client_id, name, phone, vehicle_plate, vehicle_model, location, issue, visit_date, created_at, synced
+         FROM visits ORDER BY visit_date DESC, created_at DESC"
+    ).map_err(|e| e.to_string())?;
+    let rows = stmt.query_map([], |r| {
+        Ok(Visit {
+            id: r.get(0)?, client_id: r.get(1)?, name: r.get(2)?, phone: r.get(3)?,
+            vehicle_plate: r.get(4)?, vehicle_model: r.get(5)?, location: r.get(6)?,
+            issue: r.get(7)?, visit_date: r.get(8)?, created_at: r.get(9)?,
+            synced: r.get::<_, i64>(10)? != 0,
+        })
+    }).map_err(|e| e.to_string())?;
+    rows.collect::<Result<Vec<_>, _>>().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn delete_visit(db: State<Db>, id: String) -> Result<(), String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    conn.execute("DELETE FROM visits WHERE id = ?1", params![id]).map_err(|e| e.to_string())?;
+    enqueue(&conn, "visits", &id, "delete", "{}");
     Ok(())
 }
 
@@ -357,7 +487,7 @@ fn delete_stock_group(db: State<Db>, id: String) -> Result<(), String> {
 // ---- stock items --------------------------------------------------------
 
 #[tauri::command]
-fn add_stock_item(db: State<Db>, name: String, qty: i64, unit_price: f64, group_id: Option<String>) -> Result<StockItem, String> {
+fn add_stock_item(db: State<Db>, name: String, qty: f64, unit_price: f64, group_id: Option<String>) -> Result<StockItem, String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
     let gid = match group_id.filter(|g| !g.trim().is_empty()) {
         Some(g) => g,
@@ -382,26 +512,26 @@ fn add_stock_item(db: State<Db>, name: String, qty: i64, unit_price: f64, group_
     ).map_err(|e| e.to_string())?;
     let payload = serde_json::to_string(&item).map_err(|e| e.to_string())?;
     enqueue(&conn, "stock_items", &item.id, "create", &payload);
-    if item.qty != 0 {
+    if item.qty != 0.0 {
         record_movement(&conn, &item, item.qty, "opening balance");
     }
     Ok(item)
 }
 
 #[tauri::command]
-fn update_stock_qty(db: State<Db>, id: String, delta: i64) -> Result<StockItem, String> {
+fn update_stock_qty(db: State<Db>, id: String, delta: f64) -> Result<StockItem, String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
     conn.execute(
         "UPDATE stock_items SET qty = qty + ?1, updated_at = ?2, synced = 0 WHERE id = ?3",
         params![delta, Utc::now().to_rfc3339(), id],
     ).map_err(|e| e.to_string())?;
     let item = read_item(&conn, &id)?;
-    if item.qty < 0 {
+    if item.qty < 0.0 {
         log_crash_internal(&conn, "stock", &format!("Negative stock for item {}", item.id));
     }
     let payload = serde_json::to_string(&item).map_err(|e| e.to_string())?;
     enqueue(&conn, "stock_items", &item.id, "update", &payload);
-    record_movement(&conn, &item, delta, if delta >= 0 { "added" } else { "taken out" });
+    record_movement(&conn, &item, delta, if delta >= 0.0 { "added" } else { "taken out" });
     Ok(item)
 }
 
@@ -444,8 +574,8 @@ fn list_stock(db: State<Db>) -> Result<Vec<StockItem>, String> {
 fn delete_stock_item(db: State<Db>, id: String) -> Result<(), String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
     if let Ok(item) = read_item(&conn, &id) {
-        if item.qty != 0 {
-            let zeroed = StockItem { qty: 0, ..item.clone() };
+        if item.qty != 0.0 {
+            let zeroed = StockItem { qty: 0.0, ..item.clone() };
             record_movement(&conn, &zeroed, -item.qty, "item removed");
         }
     }
@@ -492,7 +622,7 @@ fn queue_mark_synced(db: State<Db>, queue_id: String, table_name: String, row_id
     conn.execute("DELETE FROM sync_queue WHERE id = ?1", params![queue_id]).map_err(|e| e.to_string())?;
     // The table name is interpolated into SQL, so it is checked against a fixed
     // list rather than trusted from the caller.
-    const ALLOWED: [&str; 4] = ["clients", "stock_items", "stock_groups", "stock_movements"];
+    const ALLOWED: [&str; 5] = ["clients", "stock_items", "stock_groups", "stock_movements", "visits"];
     if ALLOWED.contains(&table_name.as_str()) {
         conn.execute(
             &format!("UPDATE {} SET synced = 1 WHERE id = ?1", table_name),
@@ -530,7 +660,7 @@ fn list_crash_logs(db: State<Db>) -> Result<Vec<CrashLog>, String> {
 async fn check_internet() -> bool {
     match reqwest::Client::new()
         .get("https://firestore.googleapis.com")
-        .timeout(std::time::Duration::from_secs(4))
+        .timeout(std::time::Duration::from_millis(1500))
         .send()
         .await
     {
@@ -555,6 +685,10 @@ fn main() {
             add_client,
             list_clients,
             delete_client,
+            add_visit,
+            update_visit,
+            list_visits,
+            delete_visit,
             list_stock_groups,
             add_stock_group,
             rename_stock_group,

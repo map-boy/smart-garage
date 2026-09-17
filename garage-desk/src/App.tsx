@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import {
   verifyLogin,
-  addClient,
   listClients,
-  deleteClient,
+  addVisit,
+  listVisits,
+  deleteVisit,
+  updateVisit,
   addStockItem,
   updateStockQty,
   deleteStockItem,
@@ -16,6 +18,7 @@ import {
   checkInternet,
   logCrash,
   type Client,
+  type Visit,
   type StockItem,
   type StockGroup,
 } from "./db";
@@ -57,16 +60,26 @@ function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
 }
 
 function ReceptionScreen() {
+  const [visits, setVisits] = useState<Visit[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
+  const [collapsedDates, setCollapsedDates] = useState<Record<string, boolean>>({});
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [plate, setPlate] = useState("");
   const [model, setModel] = useState("");
   const [location, setLocation] = useState("");
-  const [issue, setIssue] = useState("");
+  const [visitDate, setVisitDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [online, setOnline] = useState<boolean | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState<Visit | null>(null);
 
-  const refresh = async () => setClients(await listClients());
+  const refresh = async () => {
+    const [v, c] = await Promise.all([listVisits(), listClients()]);
+    setVisits(v);
+    setClients(c);
+  };
 
   useEffect(() => {
     refresh();
@@ -75,11 +88,27 @@ function ReceptionScreen() {
     return () => clearInterval(id);
   }, []);
 
+  const suggestions = name.trim().length
+    ? clients.filter((c) => c.name.toLowerCase().includes(name.trim().toLowerCase())).slice(0, 6)
+    : [];
+
+  const pickClient = (c: Client) => {
+    setSelectedClientId(c.id);
+    setName(c.name);
+    setPhone(c.phone);
+    setPlate(c.vehicle_plate);
+    setModel(c.vehicle_model);
+    setLocation(c.location);
+    setShowSuggestions(false);
+  };
+
   const submit = async () => {
     if (!name || !plate) return;
     try {
-      await addClient(name, phone, plate, model, location, issue);
-      setName(""); setPhone(""); setPlate(""); setModel(""); setLocation(""); setIssue("");
+      await addVisit(selectedClientId, name, phone, plate, model, location, "", visitDate);
+      setName(""); setPhone(""); setPlate(""); setModel(""); setLocation("");
+      setVisitDate(new Date().toISOString().slice(0, 10));
+      setSelectedClientId(null);
       await refresh();
       flushSyncQueue();
     } catch (err) {
@@ -88,15 +117,55 @@ function ReceptionScreen() {
   };
 
   const remove = async (id: string, clientName: string) => {
-    if (!window.confirm(`Delete "${clientName}"? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete ${clientName}'s visit? This cannot be undone.`)) return;
     try {
-      await deleteClient(id);
+      await deleteVisit(id);
       await refresh();
       flushSyncQueue();
     } catch (err) {
       logCrash("reception", err instanceof Error ? err.message : String(err));
     }
   };
+
+  const startEdit = (v: Visit) => {
+    setEditingId(v.id);
+    setEditDraft({ ...v });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditDraft(null);
+  };
+
+  const saveEdit = async () => {
+    if (!editDraft) return;
+    try {
+      await updateVisit(
+        editDraft.id,
+        editDraft.name,
+        editDraft.phone,
+        editDraft.vehicle_plate,
+        editDraft.vehicle_model,
+        editDraft.location,
+        editDraft.visit_date
+      );
+      setEditingId(null);
+      setEditDraft(null);
+      await refresh();
+      flushSyncQueue();
+    } catch (err) {
+      logCrash("reception", err instanceof Error ? err.message : String(err));
+    }
+  };
+
+  const toggleDate = (date: string) =>
+    setCollapsedDates((c) => ({ ...c, [date]: !c[date] }));
+
+  const grouped: Record<string, Visit[]> = {};
+  for (const v of visits) {
+    (grouped[v.visit_date] ??= []).push(v);
+  }
+  const dates = Object.keys(grouped).sort((a, b) => (a < b ? 1 : -1));
 
   return (
     <div className="page">
@@ -109,29 +178,86 @@ function ReceptionScreen() {
         )}
       </div>
       <div className="form-row">
-        <input className="input-field" placeholder="Client name" value={name} onChange={(e) => setName(e.target.value)} />
+        <div style={{ position: "relative" }}>
+          <input
+            className="input-field"
+            placeholder="Client name"
+            value={name}
+            onChange={(e) => { setName(e.target.value); setSelectedClientId(null); setShowSuggestions(true); }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+          />
+          {showSuggestions && suggestions.length > 0 && (
+            <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "#fff", border: "1px solid #ccc", zIndex: 10, maxHeight: 180, overflowY: "auto" }}>
+              {suggestions.map((c) => (
+                <div key={c.id} style={{ padding: "6px 10px", cursor: "pointer" }} onMouseDown={() => pickClient(c)}>
+                  {c.name} {c.vehicle_plate ? `- ${c.vehicle_plate}` : ""}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <input className="input-field" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
         <input className="input-field" placeholder="Vehicle plate" value={plate} onChange={(e) => setPlate(e.target.value)} />
         <input className="input-field" placeholder="Vehicle model" value={model} onChange={(e) => setModel(e.target.value)} />
         <input className="input-field" placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
-        <input className="input-field" placeholder="Issue" value={issue} onChange={(e) => setIssue(e.target.value)} />
-        <button className="btn" onClick={submit}>Add Client</button>
+        <input className="input-field" type="date" value={visitDate} onChange={(e) => setVisitDate(e.target.value)} />
+        <button className="btn" onClick={submit}>{selectedClientId ? "Mark as came" : "Add Client"}</button>
       </div>
-      <table>
-        <thead><tr><th>Name</th><th>Phone</th><th>Plate</th><th>Model</th><th>Location</th><th>Issue</th><th>Synced</th><th></th></tr></thead>
-        <tbody>
-          {clients.map((c) => (
-            <tr key={c.id}>
-              <td>{c.name}</td><td>{c.phone}</td><td>{c.vehicle_plate}</td>
-              <td>{c.vehicle_model}</td><td>{c.location}</td><td>{c.issue}</td>
-              <td className={c.synced ? "pill-yes" : "pill-pending"}>{c.synced ? "Yes" : "Pending"}</td>
-              <td>
-                <button className="qty-btn" onClick={() => remove(c.id, c.name)} style={{ color: "#c00" }}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      {dates.map((date) => {
+        const rows = grouped[date];
+        const isShut = !!collapsedDates[date];
+        return (
+          <div key={date} className="group-block">
+            <div className="group-header">
+              <button className="group-toggle" onClick={() => toggleDate(date)}>
+                <span className="group-caret">{isShut ? "\u25B8" : "\u25BE"}</span>
+                {date}
+                <span className="group-count">{rows.length}</span>
+              </button>
+            </div>
+            {!isShut && (
+              <table>
+                <thead><tr><th>Name</th><th>Phone</th><th>Plate</th><th>Model</th><th>Location</th><th>Date</th><th>Synced</th><th></th></tr></thead>
+                <tbody>
+                  {rows.map((v) => {
+                    const isEditing = editingId === v.id;
+                    if (isEditing && editDraft) {
+                      return (
+                        <tr key={v.id}>
+                          <td><input className="input-field" value={editDraft.name} onChange={(e) => setEditDraft({ ...editDraft, name: e.target.value })} /></td>
+                          <td><input className="input-field" value={editDraft.phone} onChange={(e) => setEditDraft({ ...editDraft, phone: e.target.value })} /></td>
+                          <td><input className="input-field" value={editDraft.vehicle_plate} onChange={(e) => setEditDraft({ ...editDraft, vehicle_plate: e.target.value })} /></td>
+                          <td><input className="input-field" value={editDraft.vehicle_model} onChange={(e) => setEditDraft({ ...editDraft, vehicle_model: e.target.value })} /></td>
+                          <td><input className="input-field" value={editDraft.location} onChange={(e) => setEditDraft({ ...editDraft, location: e.target.value })} /></td>
+                          <td><input className="input-field" type="date" value={editDraft.visit_date} onChange={(e) => setEditDraft({ ...editDraft, visit_date: e.target.value })} /></td>
+                          <td className={v.synced ? "pill-yes" : "pill-pending"}>{v.synced ? "Yes" : "Pending"}</td>
+                          <td>
+                            <button className="qty-btn" onClick={saveEdit}>Save</button>
+                            <button className="qty-btn" onClick={cancelEdit}>Cancel</button>
+                          </td>
+                        </tr>
+                      );
+                    }
+                    return (
+                      <tr key={v.id}>
+                        <td>{v.name}</td><td>{v.phone}</td><td>{v.vehicle_plate}</td>
+                        <td>{v.vehicle_model}</td><td>{v.location}</td><td>{v.visit_date}</td>
+                        <td className={v.synced ? "pill-yes" : "pill-pending"}>{v.synced ? "Yes" : "Pending"}</td>
+                        <td>
+                          <button className="qty-btn" onClick={() => startEdit(v)}>Edit</button>
+                          <button className="qty-btn" onClick={() => remove(v.id, v.name)} style={{ color: "#c00" }}>Delete</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -140,6 +266,7 @@ function StockScreen() {
   const [items, setItems] = useState<StockItem[]>([]);
   const [groups, setGroups] = useState<StockGroup[]>([]);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [takeAmounts, setTakeAmounts] = useState<Record<string, string>>({});
   const [name, setName] = useState("");
   const [qty, setQty] = useState("");
   const [price, setPrice] = useState("");
@@ -165,9 +292,14 @@ function StockScreen() {
     logCrash("stock", err instanceof Error ? err.message : String(err));
 
   const submit = async () => {
-    if (!name || !qty) return;
+    const qtyNum = parseFloat(qty);
+    const priceNum = parseFloat(price || "0");
+    if (!name.trim() || !Number.isFinite(qtyNum) || qtyNum < 0 || !Number.isFinite(priceNum)) {
+      alert("Enter a valid item name and a whole-number quantity.");
+      return;
+    }
     try {
-      await addStockItem(name, parseInt(qty, 10), parseFloat(price || "0"), groupId || null);
+      await addStockItem(name.trim(), qtyNum, priceNum, groupId || null);
       setName(""); setQty(""); setPrice("");
       await refresh();
       flushSyncQueue();
@@ -269,7 +401,7 @@ function StockScreen() {
         {rows.map((it) => (
           <tr key={it.id}>
             <td>{it.name}</td>
-            <td>{it.qty}</td>
+            <td>{Number(it.qty.toFixed(2))}</td>
             <td>{it.unit_price}</td>
             <td>
               <select
@@ -284,8 +416,30 @@ function StockScreen() {
             </td>
             <td className={it.synced ? "pill-yes" : "pill-pending"}>{it.synced ? "Yes" : "Pending"}</td>
             <td>
-              <button className="qty-btn" onClick={() => adjust(it.id, -1, it.qty)}>-1</button>
               <button className="qty-btn" onClick={() => adjust(it.id, 1, it.qty)}>+1</button>
+              <input
+                className="input-field qty-take-input"
+                type="number"
+                step="any"
+                min="0"
+                placeholder="amount"
+                value={takeAmounts[it.id] ?? ""}
+                onChange={(e) => setTakeAmounts((m) => ({ ...m, [it.id]: e.target.value }))}
+              />
+              <button
+                className="qty-btn"
+                onClick={() => {
+                  const amt = parseFloat(takeAmounts[it.id] ?? "");
+                  if (!Number.isFinite(amt) || amt <= 0) {
+                    alert("Enter a valid amount to take out.");
+                    return;
+                  }
+                  adjust(it.id, -amt, it.qty);
+                  setTakeAmounts((m) => ({ ...m, [it.id]: "" }));
+                }}
+              >
+                Take out
+              </button>
             </td>
             <td>
               <button className="qty-btn" onClick={() => remove(it.id, it.name)} style={{ color: "#c00" }}>Delete</button>

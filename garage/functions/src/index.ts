@@ -1,5 +1,6 @@
 import {setGlobalOptions} from "firebase-functions";
 import {onCall, HttpsError} from "firebase-functions/https";
+import {onDocumentCreated} from "firebase-functions/firestore";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import PDFDocument from "pdfkit";
@@ -157,5 +158,88 @@ export const getInvoicePdfUrl = onCall(
       logger.error("getInvoicePdfUrl failed", error);
       throw new HttpsError("internal", error.message || "Failed to generate invoice PDF");
     }
+  }
+);
+
+// ---- Auto job cards from reception visits ----
+// A visit from garage-desk carries free-text name/phone/plate, not the
+// clientId/vehicleId a job card needs - the desk has never seen this
+// garage's Firestore client/vehicle records. This resolves both, creating
+// them if this phone or plate has not been seen before, then opens the job.
+//
+// `jobId` is written back onto the visit once done, so a retried delivery
+// of this trigger (Cloud Functions v2 can redeliver on error) finds it and
+// skips, instead of opening a second job for the same visit.
+export const onVisitCreated = onDocumentCreated(
+  "garages/{garageId}/visits/{visitId}",
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+    const visit = snap.data() as Record<string, any>;
+    if (visit.jobId) return;
+
+    const {garageId, visitId} = event.params;
+    const db = admin.firestore();
+    const garageRef = db.collection("garages").doc(garageId);
+    const nowIso = new Date().toISOString();
+    const phone = String(visit.phone || "").trim();
+    const plate = String(visit.vehiclePlate || "").trim();
+
+    let clientId: string;
+    const clientMatch = phone
+      ? await garageRef.collection("clients").where("phone", "==", phone).limit(1).get()
+      : null;
+    if (clientMatch && !clientMatch.empty) {
+      clientId = clientMatch.docs[0].id;
+    } else {
+      const clientRef = garageRef.collection("clients").doc();
+      await clientRef.set({
+        name: visit.name || "",
+        email: "",
+        phone,
+        vehicleIds: [],
+        createdAt: visit.createdAt || nowIso,
+      });
+      clientId = clientRef.id;
+    }
+
+    let vehicleId: string;
+    const vehicleMatch = plate
+      ? await garageRef.collection("vehicles").where("plate", "==", plate).limit(1).get()
+      : null;
+    if (vehicleMatch && !vehicleMatch.empty) {
+      vehicleId = vehicleMatch.docs[0].id;
+    } else {
+      const vehicleRef = garageRef.collection("vehicles").doc();
+      await vehicleRef.set({
+        plate,
+        make: "",
+        model: visit.vehicleModel || "",
+        year: "",
+        color: "",
+        clientId,
+        mileage: "",
+        fuelType: "Petrol",
+      });
+      vehicleId = vehicleRef.id;
+      await garageRef.collection("clients").doc(clientId).update({
+        vehicleIds: admin.firestore.FieldValue.arrayUnion(vehicleId),
+      });
+    }
+
+    const jobRef = garageRef.collection("jobs").doc();
+    await jobRef.set({
+      vehicleId,
+      technicianName: "",
+      description: visit.issue || "",
+      status: "Pending",
+      partsUsed: [],
+      laborCost: 0,
+      startedAt: visit.createdAt || nowIso,
+      source: "garage-desk",
+      visitId,
+    });
+
+    await snap.ref.update({jobId: jobRef.id});
   }
 );

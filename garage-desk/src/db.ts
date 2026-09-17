@@ -12,6 +12,20 @@ export interface Client {
   synced: boolean;
 }
 
+export interface Visit {
+  id: string;
+  client_id: string;
+  name: string;
+  phone: string;
+  vehicle_plate: string;
+  vehicle_model: string;
+  location: string;
+  issue: string;
+  visit_date: string;
+  created_at: string;
+  synced: boolean;
+}
+
 export interface StockGroup {
   id: string;
   name: string;
@@ -41,7 +55,7 @@ export interface StockMovement {
   synced: boolean;
 }
 
-export type SyncTable = "clients" | "stock_items" | "stock_groups" | "stock_movements";
+export type SyncTable = "clients" | "stock_items" | "stock_groups" | "stock_movements" | "visits";
 
 export interface QueueRow {
   id: string;
@@ -89,6 +103,58 @@ export function deleteClient(id: string): Promise<void> {
 
 export function listClients(): Promise<Client[]> {
   return invoke("list_clients");
+}
+
+/* ---- visits ---- */
+
+export function addVisit(
+  client_id: string | null,
+  name: string,
+  phone: string,
+  vehicle_plate: string,
+  vehicle_model: string,
+  location: string,
+  issue: string,
+  visit_date: string | null
+): Promise<Visit> {
+  return invoke("add_visit", {
+    clientId: client_id,
+    name,
+    phone,
+    vehiclePlate: vehicle_plate,
+    vehicleModel: vehicle_model,
+    location,
+    issue,
+    visitDate: visit_date,
+  });
+}
+
+export function updateVisit(
+  id: string,
+  name: string,
+  phone: string,
+  vehicle_plate: string,
+  vehicle_model: string,
+  location: string,
+  visit_date: string
+): Promise<Visit> {
+  return invoke("update_visit", {
+    id,
+    name,
+    phone,
+    vehiclePlate: vehicle_plate,
+    vehicleModel: vehicle_model,
+    location,
+    visitDate: visit_date,
+  });
+}
+
+export function listVisits(): Promise<Visit[]> {
+  return invoke("list_visits");
+}
+
+export function deleteVisit(id: string): Promise<void> {
+  return invoke("delete_visit", { id });
 }
 
 /* ---- stock groups ---- */

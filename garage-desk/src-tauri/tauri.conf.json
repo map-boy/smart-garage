@@ -1,48 +1,55 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
-  "productName": "C & V Smart Garage",
-  "version": "1.0.0",
-  "identifier": "com.vafubwenge.cvsmartgarage",
-  "build": {
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
-    "devUrl": "http://localhost:1420",
-    "frontendDist": "../dist"
-  },
-  "app": {
-    "windows": [
-      {
-        "title": "C & V Smart Garage",
-        "width": 1280,
-        "height": 820,
-        "minWidth": 1024,
-        "minHeight": 700,
-        "resizable": true
-      }
-    ],
-    "security": {
-      "csp": null
-    }
-  },
-  "bundle": {
-    "active": true,
-    "targets": ["nsis"],
-    "publisher": "VAF Ubwenge Tech",
-    "copyright": "Copyright (c) VAF Ubwenge Tech",
-    "shortDescription": "Reception & Stock Management",
-    "longDescription": "C & V Smart Garage - offline-first reception and stock management for the garage front desk.",
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.ico"
-    ],
-    "windows": {
-      "nsis": {
-        "installMode": "perMachine",
-        "languages": ["English"],
-        "displayLanguageSelector": false
-      }
-    }
-  }
+    "$schema":  "https://schema.tauri.app/config/2",
+    "productName":  "C \u0026 V Smart Garage",
+    "version":  "1.0.0",
+    "identifier":  "com.vafubwenge.cvsmartgarage",
+    "build":  {
+                  "beforeDevCommand":  "npm run dev",
+                  "beforeBuildCommand":  "npm run build",
+                  "devUrl":  "http://localhost:1420",
+                  "frontendDist":  "../dist"
+              },
+    "app":  {
+                "windows":  [
+                                {
+                                    "title":  "C \u0026 V Smart Garage",
+                                    "width":  1280,
+                                    "height":  820,
+                                    "minWidth":  1024,
+                                    "minHeight":  700,
+                                    "resizable":  true
+                                }
+                            ],
+                "security":  {
+                                 "csp":  null
+                             }
+            },
+    "bundle":  {
+                   "active":  true,
+                   "targets":  [
+                                   "nsis"
+                               ],
+                   "publisher":  "VAF Ubwenge Tech",
+                   "copyright":  "Copyright (c) VAF Ubwenge Tech",
+                   "shortDescription":  "Reception \u0026 Stock Management",
+                   "longDescription":  "C \u0026 V Smart Garage - offline-first reception and stock management for the garage front desk.",
+                   "icon":  [
+                                "icons/32x32.png",
+                                "icons/128x128.png",
+                                "icons/128x128@2x.png",
+                                "icons/icon.ico"
+                            ],
+                   "windows":  {
+                                   "nsis":  {
+                                                "installMode":  "perMachine",
+                                                "languages":  [
+                                                                  "English"
+                                                              ],
+                                                "displayLanguageSelector":  false
+                                            },
+                                   "webviewInstallMode":  {
+                                                              "type":  "offlineInstaller"
+                                                          }
+                               }
+               }
 }

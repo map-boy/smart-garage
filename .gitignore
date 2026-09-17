@@ -1,4 +1,4 @@
-﻿node_modules/
+node_modules/
 dist/
 build/
 .env
@@ -7,3 +7,12 @@ build/
 firestore-debug.log
 firebase-debug.log
 ui-debug.log
+
+# Local safety copies written by the apply scripts. Never committed: they are
+# whole duplicates of the tree and git already holds the history.
+_backup-*/
+_step*-backup-*/
+**/_backup-*/
+build-log.txt
+build-output.txt
+dist-share/

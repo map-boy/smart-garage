@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { collection, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
@@ -78,7 +78,13 @@ export function useClientNotifications() {
 
     const raise = (n: ClientNotification) => {
       playChime();
-      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      // Inside the Electron shell the renderer runs on file://, where the web
+      // Notification API resolves but never shows anything. The bridge hands
+      // it to the main process, which is also the only path that still works
+      // once the window is minimised - the case this whole feature exists for.
+      if (window.electronAPI) {
+        window.electronAPI.notify(n.title, n.body);
+      } else if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
         new Notification(n.title, { body: n.body });
       }
       setNotifications((prev) => [n, ...prev].slice(0, MAX_STORED));
@@ -156,32 +162,56 @@ export function useClientNotifications() {
       }
       snapshot.docChanges().forEach((change) => {
         if (change.type !== 'added') return;
-        const c = change.doc.data() as { name?: string; vehicle_plate?: string; issue?: string };
+        const c = change.doc.data() as { name?: string; vehiclePlate?: string; issue?: string };
         raise({
           id: change.doc.id,
           kind: 'client',
           title: c.name ? `New client: ${c.name}` : 'New client added',
-          body: [c.vehicle_plate, c.issue].filter(Boolean).join(' \u00b7 ') || 'Added at reception',
+          body: [c.vehiclePlate, c.issue].filter(Boolean).join(' \u00b7 ') || 'Added at reception',
           isNewClient: true,
           receivedAt: Date.now(),
         });
       });
     });
 
-    const stockQuery = collection(db, 'garages', profile.garageId, 'stock');
-    const unsubStock = onSnapshot(stockQuery, (snapshot) => {
+    // The ledger, not the parts list. A part's quantity changing is a modify,
+    // not an add, so watching /stock only ever caught brand new items and
+    // stayed silent for every +1 and -1 the store keeper made. Every change,
+    // from either surface, writes a line here.
+    //
+    // Only lines stamped by the desk raise anything. Without that filter the
+    // boss's own issue-part click would chime back at them a second later.
+    const movementsQuery = query(
+      collection(db, 'garages', profile.garageId, 'stockMovements'),
+      orderBy('atLocal', 'desc'),
+      limit(WATCH_WINDOW),
+    );
+    const unsubStock = onSnapshot(movementsQuery, (snapshot) => {
       if (isInitialStock.current) {
         isInitialStock.current = false;
         return;
       }
       snapshot.docChanges().forEach((change) => {
         if (change.type !== 'added') return;
-        const s = change.doc.data() as { name?: string; qty?: number };
+        const m = change.doc.data() as {
+          partName?: string;
+          delta?: number;
+          balanceAfter?: number;
+          note?: string;
+          source?: string;
+        };
+        if (m.source !== 'garage-desk') return;
+        const delta = typeof m.delta === 'number' ? m.delta : 0;
+        const part = m.partName || 'A part';
         raise({
           id: change.doc.id,
           kind: 'stock',
-          title: s.name ? `New stock item: ${s.name}` : 'New stock item added',
-          body: typeof s.qty === 'number' ? `Qty: ${s.qty}` : 'Added at stock',
+          title: delta >= 0 ? `Stock in: ${part}` : `Stock out: ${part}`,
+          body: [
+            `${delta >= 0 ? '+' : ''}${delta}`,
+            typeof m.balanceAfter === 'number' ? `now ${m.balanceAfter}` : null,
+            m.note,
+          ].filter(Boolean).join(' \u00b7 '),
           isNewClient: false,
           receivedAt: Date.now(),
         });
@@ -195,6 +225,11 @@ export function useClientNotifications() {
       unsubStock();
     };
   }, [profile?.garageId]);
+
+  // Keeps the taskbar and tray showing the same number as the bell.
+  useEffect(() => {
+    window.electronAPI?.setBadge(unreadCount);
+  }, [unreadCount]);
 
   const markAllRead = useCallback(() => setUnreadCount(0), []);
   const dismiss = useCallback((id: string) => {
