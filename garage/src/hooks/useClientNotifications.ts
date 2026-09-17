@@ -4,7 +4,7 @@ import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import wandaaSoundUrl from '../../data/wandaa.wav';
 
-export type NotificationKind = 'arrival' | 'enquiry' | 'client' | 'stock';
+export type NotificationKind = 'arrival' | 'enquiry' | 'client' | 'stock' | 'job';
 
 export interface ClientNotification {
   id: string;
@@ -61,6 +61,7 @@ export function useClientNotifications() {
   const firstEnquiryLoad = useRef(true);
   const isInitialClients = useRef(true);
   const isInitialStock = useRef(true);
+  const isInitialJobs = useRef(true);
   const [notifications, setNotifications] = useState<ClientNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -75,6 +76,7 @@ export function useClientNotifications() {
     firstEnquiryLoad.current = true;
     isInitialClients.current = true;
     isInitialStock.current = true;
+    isInitialJobs.current = true;
 
     const raise = (n: ClientNotification) => {
       playChime();
@@ -154,7 +156,14 @@ export function useClientNotifications() {
       });
     });
 
-    const clientsQuery = collection(db, 'garages', profile.garageId, 'clients');
+    // Capped like every other listener here. Unbounded, this downloaded and
+    // held every client the garage has ever had, growing forever, to detect
+    // the handful added since the app opened.
+    const clientsQuery = query(
+      collection(db, 'garages', profile.garageId, 'clients'),
+      orderBy('createdAt', 'desc'),
+      limit(WATCH_WINDOW),
+    );
     const unsubClients = onSnapshot(clientsQuery, (snapshot) => {
       if (isInitialClients.current) {
         isInitialClients.current = false;
@@ -218,11 +227,52 @@ export function useClientNotifications() {
       });
     });
 
+    // A visit typed at the desk becomes a job card, opened by the
+    // onVisitCreated Cloud Function rather than by anyone clicking here. That
+    // is the record the workshop actually works from, and until now it was
+    // the one thing that could appear with nobody being told.
+    //
+    // Only cards the desk caused raise anything: the boss creating a job card
+    // on this very screen should not be chimed at a second later.
+    const jobsQuery = query(
+      collection(db, 'garages', profile.garageId, 'jobs'),
+      orderBy('startedAt', 'desc'),
+      limit(WATCH_WINDOW),
+    );
+    const unsubJobs = onSnapshot(jobsQuery, (snapshot) => {
+      if (isInitialJobs.current) {
+        isInitialJobs.current = false;
+        return;
+      }
+      snapshot.docChanges().forEach((change) => {
+        if (change.type !== 'added') return;
+        const j = change.doc.data() as {
+          description?: string;
+          plate?: string;
+          technicianName?: string;
+          source?: string;
+        };
+        if (j.source !== 'garage-desk') return;
+        raise({
+          id: change.doc.id,
+          kind: 'job',
+          title: j.plate ? `Job card opened: ${j.plate}` : 'Job card opened',
+          body: [
+            j.description || 'No work described yet',
+            j.technicianName ? `for ${j.technicianName}` : 'no technician yet',
+          ].filter(Boolean).join(' \u00b7 '),
+          isNewClient: false,
+          receivedAt: Date.now(),
+        });
+      });
+    });
+
     return () => {
       unsubArrivals();
       unsubEnquiries();
       unsubClients();
       unsubStock();
+      unsubJobs();
     };
   }, [profile?.garageId]);
 

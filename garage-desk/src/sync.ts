@@ -30,6 +30,11 @@ const REMOTE_COLLECTION: Record<SyncTable, string> = {
  * records why in plain words, so the translation happens here rather than
  * changing what the Rust side writes into its own SQLite.
  */
+/** Plates are typed by hand; compare them with the spacing taken out. */
+function normalisePlate(raw: unknown): string {
+  return String(raw ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
 const MOVEMENT_REASON: Record<string, string> = {
   "opening balance": "received",
   "added": "received",
@@ -109,8 +114,17 @@ function toRemote(table: SyncTable, d: Record<string, any>): Record<string, any>
         name: d.name,
         phone: d.phone ?? "",
         vehiclePlate: d.vehicle_plate ?? "",
+        // Normalised alongside the plate as typed. The admin app and the
+        // reception phone both key vehicles on this, so "RAB 123 C" at the
+        // desk and "RAB123C" on a phone stay one car rather than two.
+        vehiclePlateKey: normalisePlate(d.vehicle_plate),
         vehicleModel: d.vehicle_model ?? "",
         location: d.location ?? "",
+        // What the client actually came in for. The desk has always stored
+        // this and the Cloud Function has always read it, but it was missing
+        // from this payload - so every job card opened from a visit arrived
+        // with an empty description and the workshop had to ring the desk.
+        issue: d.issue ?? "",
         visitDate: d.visit_date,
         createdAt: d.created_at,
         source: "garage-desk",
