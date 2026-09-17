@@ -16,3 +16,9 @@ _step*-backup-*/
 build-log.txt
 build-output.txt
 dist-share/
+# built installers/binaries - never commit
+*.exe
+*.dll
+*.zip
+dist-share/
+_ship-stage/
