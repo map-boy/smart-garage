@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Sparkles, Armchair, Brush, Wrench, Zap, Disc, Phone, MapPin, Clock, Percent,
   ArrowRight, MessageCircle, Mail, ChevronDown, Navigation, Send,
@@ -6,7 +6,6 @@ import {
 import type { SiteContent } from "./types";
 import { DEFAULT_CONTENT } from "./content";
 import { subscribeContent } from "./contentSource";
-import { AdminPanel } from "./admin/AdminPanel";
 import { RequestPanel } from "./components/RequestPanel";
 import { Sections } from "./components/Sections";
 import { telHref, waHref } from "./enquiries";
@@ -16,12 +15,9 @@ const ICONS: Record<string, typeof Wrench> = { Sparkles, Armchair, Brush, Wrench
 
 export function App() {
   const [c, setC] = useState<SiteContent>(DEFAULT_CONTENT);
-  const [showAdmin, setShowAdmin] = useState(false);
   const [heroIndex, setHeroIndex] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [openService, setOpenService] = useState<string | null>(null);
-  const clickCount = useRef(0);
-  const clickTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => subscribeContent(setC), []);
   useEffect(() => { applySeo(c); }, [c]);
@@ -33,12 +29,6 @@ export function App() {
     return () => window.clearInterval(id);
   }, [c.hero.backgroundUrls, c.hero.backgroundUrl]);
 
-  function handleLogoClick() {
-    clickCount.current += 1;
-    window.clearTimeout(clickTimer.current);
-    clickTimer.current = window.setTimeout(() => { clickCount.current = 0; }, 4000);
-    if (clickCount.current >= 20) { clickCount.current = 0; setShowAdmin(true); }
-  }
 
   const firstPhone = c.contact.phone.split("|")[0].trim();
   const money = (n: number, cur: string) => `${n.toLocaleString()} ${cur}`;
@@ -61,7 +51,7 @@ export function App() {
       </div></div>
 
       <nav className="nav"><div className="wrap">
-        <div className="logo" onClick={handleLogoClick}>
+        <div className="logo">
           {c.brand.logoUrl
             ? <img src={c.brand.logoUrl} alt={c.brand.name} className="logo-img" />
             : <>{c.brand.name.slice(0, 3)}<span>{c.brand.name.slice(3)}</span></>}
@@ -237,7 +227,6 @@ export function App() {
         <MessageCircle size={24} />
       </a>
 
-      {showAdmin && <AdminPanel onClose={() => setShowAdmin(false)} />}
     </>
   );
 }

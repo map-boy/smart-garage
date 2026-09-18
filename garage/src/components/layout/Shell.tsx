@@ -11,6 +11,7 @@ import {
   Bell,
   BarChart3,
   Camera,
+  Globe,
   Settings,
   Menu,
   Wrench,
@@ -32,6 +33,7 @@ const menuItems = [
   { id: 'reminders', label: 'Reminders', icon: Bell, path: '/reminders' },
   { id: 'reports', label: 'Reports', icon: BarChart3, path: '/reports' },
   { id: 'monitoring', label: 'CCTV Monitoring', icon: Camera, path: '/monitoring' },
+  { id: 'website', label: 'Website', icon: Globe, path: '/website' },
   { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
 ];
 

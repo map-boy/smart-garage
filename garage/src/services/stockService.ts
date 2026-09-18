@@ -1,5 +1,5 @@
 import {
-  collection, doc, increment, serverTimestamp, setDoc, updateDoc, writeBatch,
+  collection, doc, increment, serverTimestamp, setDoc, writeBatch,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { Part } from '../types';
@@ -48,6 +48,13 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
+/** Missing or malformed prices count as zero rather than poisoning a total. */
+function unitCostOf(part: { unitCost?: number }): number {
+  return typeof part.unitCost === 'number' && Number.isFinite(part.unitCost)
+    ? part.unitCost
+    : 0;
+}
+
 /**
  * Applies a delta and records why.
  *
@@ -59,7 +66,7 @@ function nowIso(): string {
  */
 export function applyStockDelta(
   garageId: string,
-  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'>,
+  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number },
   delta: number,
   reason: MovementReason,
   ctx: MovementContext,
@@ -73,6 +80,12 @@ export function applyStockDelta(
   batch.update(partRef, { quantity: increment(delta), updatedAt: nowIso() });
   batch.set(moveRef, {
     partId: part.id,
+    // What this movement was worth, stamped at the time it happened.
+    // Without it, any spend or consumption figure has to join back to the
+    // part's price today - which silently rewrites last year's numbers every
+    // time a supplier changes their rates.
+    unitCost: unitCostOf(part),
+    lineValue: Math.abs(delta) * unitCostOf(part),
     // Copied, not referenced. A part renamed next year must not rewrite what
     // this line says happened today.
     partName: part.name,
@@ -97,7 +110,7 @@ export function applyStockDelta(
 /** A part leaving the store for a vehicle. */
 export function issuePart(
   garageId: string,
-  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'>,
+  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number },
   qty: number,
   ctx: MovementContext,
 ): void {
@@ -107,7 +120,7 @@ export function issuePart(
 /** New stock arriving from a supplier. */
 export function receivePart(
   garageId: string,
-  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'>,
+  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number },
   qty: number,
   ctx: MovementContext,
 ): void {
@@ -123,7 +136,7 @@ export function receivePart(
  */
 export function adjustToCount(
   garageId: string,
-  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'>,
+  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number },
   countedQty: number,
   ctx: MovementContext,
 ): void {
@@ -171,6 +184,8 @@ export function seedPart(garageId: string, part: Part, byName: string): void {
       partId: id,
       partName: part.name,
       partNumber: part.partNumber,
+      unitCost: unitCostOf(part),
+      lineValue: Math.abs(part.quantity) * unitCostOf(part),
       delta: part.quantity,
       balanceAfter: part.quantity,
       reason: 'received' as MovementReason,
@@ -183,16 +198,4 @@ export function seedPart(garageId: string, part: Part, byName: string): void {
     });
   }
   void batch.commit();
-}
-
-/** Marked unused rather than deleted, so the ledger keeps pointing somewhere. */
-export function updatePartQuantityOnly(
-  garageId: string,
-  partId: string,
-  delta: number,
-): void {
-  void updateDoc(doc(db, 'garages', garageId, 'stock', partId), {
-    quantity: increment(delta),
-    updatedAt: nowIso(),
-  });
 }
