@@ -60,6 +60,19 @@ function toRemote(table: SyncTable, d: Record<string, any>): Record<string, any>
         groupId: d.group_id ?? null,
         groupName: d.group_name ?? "General",
         updatedAt: d.updated_at,
+        // When this item came into the store and when it left. Both are typed
+        // by a person here rather than inferred from the ledger, which is why
+        // they travel as their own fields: the admin app stamps its own
+        // firstReceivedAt/lastIssuedAt as stock moves, and those answer a
+        // different question - the last time any quantity shifted, not the
+        // date the storekeeper says this batch arrived or went.
+        //
+        // `left_at` is null for anything still on the shelf, and null is sent
+        // deliberately: clearing the date at the desk has to clear it in the
+        // admin app too, which omitting the key under { merge: true } would
+        // not do.
+        enteredAt: d.entered_at ?? null,
+        leftAt: d.left_at ?? null,
         source: "garage-desk",
       };
 
