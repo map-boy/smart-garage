@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { collection, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { db, OperationType, handleFirestoreError } from '../lib/firebase';
-import { useAuth } from '../context/AuthContext';
+import { useMemo } from 'react';
 import { useInvoices } from './useInvoices';
 import { useStock } from './useStock';
+import { useStockLedger } from './useStockLedger';
 
 /**
  * What the garage took in, what it spent, and what it has left on the shelf.
@@ -32,24 +30,6 @@ export const PERIOD_LABEL: Record<Period, string> = {
   all: 'All time',
 };
 
-interface MovementRow {
-  id: string;
-  partId?: string;
-  partName?: string;
-  delta?: number;
-  reason?: string;
-  unitCost?: number;
-  lineValue?: number;
-  atLocal?: string;
-}
-
-/**
- * The ledger is append-only and grows forever, so it is read newest-first and
- * capped. A garage that outruns this window needs aggregation on the server,
- * not a bigger download onto the boss's laptop.
- */
-const LEDGER_WINDOW = 1000;
-
 function periodStart(period: Period): number {
   const now = new Date();
   switch (period) {
@@ -71,47 +51,16 @@ function timeOf(iso?: string): number {
 }
 
 export function useFinance(period: Period) {
-  const { profile } = useAuth();
   const { invoices } = useInvoices();
   const { stock } = useStock();
-  const [movements, setMovements] = useState<MovementRow[]>([]);
-  const [ledgerError, setLedgerError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!profile?.garageId) return;
-    const q = query(
-      collection(db, 'garages', profile.garageId, 'stockMovements'),
-      orderBy('atLocal', 'desc'),
-      limit(LEDGER_WINDOW),
-    );
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        setLedgerError(null);
-        setMovements(snap.docs.map((d) => ({ id: d.id, ...(d.data() as MovementRow) })));
-      },
-      (err) => {
-        try {
-          handleFirestoreError(err, OperationType.LIST, 'stockMovements');
-        } catch {
-          /* logged above */
-        }
-        setLedgerError(
-          (err as { code?: string })?.code === 'permission-denied'
-            ? 'This account cannot read the stock ledger, so spend and usage are blank.'
-            : `Could not load the stock ledger: ${(err as Error).message}`
-        );
-      },
-    );
-    return () => unsub();
-  }, [profile?.garageId]);
+  const { movements, error: ledgerError, capped } = useStockLedger();
 
   return useMemo(() => {
     const from = periodStart(period);
     const priceById = new Map(stock.map((p) => [p.id, p.unitCost ?? 0]));
 
     let estimatedLines = 0;
-    const valueOf = (m: MovementRow): number => {
+    const valueOf = (m: (typeof movements)[number]): number => {
       if (typeof m.lineValue === 'number' && Number.isFinite(m.lineValue)) {
         return m.lineValue;
       }
@@ -195,9 +144,15 @@ export function useFinance(period: Period) {
       grossProfit: income - partsConsumed,
       topUsed,
       movementsCounted: inWindow.length,
+      /**
+       * The lines behind the figures above, handed back so the page can export
+       * exactly what it is showing - and without opening a second listener on
+       * the same query for the same answers.
+       */
+      movementsInPeriod: inWindow,
       estimatedLines,
-      ledgerCapped: movements.length >= LEDGER_WINDOW,
+      ledgerCapped: capped,
       ledgerError,
     };
-  }, [movements, invoices, stock, period, ledgerError]);
+  }, [movements, invoices, stock, period, ledgerError, capped]);
 }

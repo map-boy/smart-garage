@@ -10,10 +10,12 @@ import { generateId, formatCurrency } from '../lib/utils';
 import { settingsService } from '../services/settingsService';
 import { Part } from '../types';
 import { SyncBadge } from '../components/ui/SyncBadge';
+import { useStockLedger } from '../hooks/useStockLedger';
 
 export function StockPage() {
   const currency = settingsService.get().currency;
   const { stock, addPart, updatePart, deletePart, setCount, oversoldParts, error } = useStock();
+  const { history, capped: ledgerCapped } = useStockLedger();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -149,7 +151,7 @@ export function StockPage() {
           </div>
         </div>
 
-        <Table headers={['Part Details', 'Quantity', 'Unit Cost', 'Supplier', 'Status', 'Actions']}>
+        <Table headers={['Part Details', 'Quantity', 'Came in', 'Last used', 'Unit Cost', 'Supplier', 'Status', 'Actions']}>
           {filtered.map((p) => (
             <TableRow key={p.id}>
               <TableCell>
@@ -163,6 +165,17 @@ export function StockPage() {
               <TableCell className={'font-mono text-xs ' + (p.quantity < 0 ? 'text-rose-600 font-bold' : '')}>
                 {p.quantity}
               </TableCell>
+              <StockDateCell
+                stamped={p.firstReceivedAt}
+                seen={history.get(p.id)?.firstInSeen}
+                capped={ledgerCapped}
+              />
+              <StockDateCell
+                stamped={p.lastIssuedAt}
+                seen={history.get(p.id)?.lastOutSeen}
+                capped={ledgerCapped}
+                emptyLabel="Never used"
+              />
               <TableCell className="font-bold">{formatCurrency(p.unitCost)}</TableCell>
               <TableCell className="text-sm text-gray-600">{p.supplier}</TableCell>
               <TableCell>
@@ -278,4 +291,28 @@ export function StockPage() {
   );
 }
 
-
+/**
+ * A date the part carries, or the best the ledger can offer.
+ *
+ * The two are not the same claim. A stamped date is exact. A date worked out
+ * from the ledger is only "the oldest one still in the window", so when that
+ * window is full it is marked, rather than presenting a guess as a fact.
+ */
+function StockDateCell({ stamped, seen, capped, emptyLabel = 'Not yet' }: {
+  stamped?: string;
+  seen?: string;
+  capped: boolean;
+  emptyLabel?: string;
+}) {
+  const value = stamped ?? seen;
+  if (!value) {
+    return <TableCell className="text-xs text-gray-300">{emptyLabel}</TableCell>;
+  }
+  const approximate = !stamped && capped;
+  return (
+    <TableCell className="text-xs text-gray-600 whitespace-nowrap">
+      {approximate && <span className="text-gray-400">on or before </span>}
+      {new Date(value).toLocaleDateString()}
+    </TableCell>
+  );
+}
