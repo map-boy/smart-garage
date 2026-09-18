@@ -56,6 +56,8 @@ struct StockItem {
     group_id: Option<String>,
     group_name: String,
     updated_at: String,
+    entered_at: String,
+    left_at: Option<String>,
     synced: bool,
 }
 
@@ -126,6 +128,9 @@ fn init_db(conn: &Connection) {
     // has them, which is how this project has always done migrations.
     conn.execute("ALTER TABLE stock_items ADD COLUMN category TEXT DEFAULT 'General'", []).ok();
     conn.execute("ALTER TABLE stock_items ADD COLUMN group_id TEXT REFERENCES stock_groups(id)", []).ok();
+    conn.execute("ALTER TABLE stock_items ADD COLUMN entered_at TEXT", []).ok();
+    conn.execute("ALTER TABLE stock_items ADD COLUMN left_at TEXT", []).ok();
+    conn.execute("UPDATE stock_items SET entered_at = COALESCE(entered_at, updated_at) WHERE entered_at IS NULL", []).ok();
     conn.execute("ALTER TABLE clients ADD COLUMN vehicle_model TEXT DEFAULT ''", []).ok();
     conn.execute("ALTER TABLE clients ADD COLUMN location TEXT DEFAULT ''", []).ok();
 
@@ -206,14 +211,15 @@ fn record_movement(conn: &Connection, item: &StockItem, delta: f64, reason: &str
 fn read_item(conn: &Connection, id: &str) -> Result<StockItem, String> {
     conn.query_row(
         "SELECT i.id, i.name, i.qty, i.unit_price, i.group_id,
-                COALESCE(g.name, 'General'), i.updated_at, i.synced
+                COALESCE(g.name, 'General'), i.updated_at, i.entered_at, i.left_at, i.synced
          FROM stock_items i LEFT JOIN stock_groups g ON g.id = i.group_id
          WHERE i.id = ?1",
         params![id],
         |r| Ok(StockItem {
             id: r.get(0)?, name: r.get(1)?, qty: r.get(2)?, unit_price: r.get(3)?,
             group_id: r.get(4)?, group_name: r.get(5)?, updated_at: r.get(6)?,
-            synced: r.get::<_, i64>(7)? != 0,
+            entered_at: r.get(7)?, left_at: r.get(8)?,
+            synced: r.get::<_, i64>(9)? != 0,
         }),
     ).map_err(|e| e.to_string())
 }
@@ -487,7 +493,7 @@ fn delete_stock_group(db: State<Db>, id: String) -> Result<(), String> {
 // ---- stock items --------------------------------------------------------
 
 #[tauri::command]
-fn add_stock_item(db: State<Db>, name: String, qty: f64, unit_price: f64, group_id: Option<String>) -> Result<StockItem, String> {
+fn add_stock_item(db: State<Db>, name: String, qty: f64, unit_price: f64, group_id: Option<String>, entered_at: Option<String>) -> Result<StockItem, String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
     let gid = match group_id.filter(|g| !g.trim().is_empty()) {
         Some(g) => g,
@@ -497,18 +503,22 @@ fn add_stock_item(db: State<Db>, name: String, qty: f64, unit_price: f64, group_
         "SELECT name FROM stock_groups WHERE id = ?1", params![gid], |r| r.get(0),
     ).unwrap_or_else(|_| DEFAULT_GROUP.to_string());
 
+    let now = Utc::now().to_rfc3339();
+    let entered = entered_at.filter(|d| !d.trim().is_empty()).unwrap_or_else(|| now.clone());
     let item = StockItem {
         id: Uuid::new_v4().to_string(),
         name, qty, unit_price,
         group_id: Some(gid.clone()),
         group_name: group_name.clone(),
-        updated_at: Utc::now().to_rfc3339(),
+        updated_at: now.clone(),
+        entered_at: entered,
+        left_at: None,
         synced: false,
     };
     conn.execute(
-        "INSERT INTO stock_items (id, name, qty, unit_price, category, group_id, updated_at, synced)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0)",
-        params![item.id, item.name, item.qty, item.unit_price, group_name, gid, item.updated_at],
+        "INSERT INTO stock_items (id, name, qty, unit_price, category, group_id, updated_at, entered_at, synced)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 0)",
+        params![item.id, item.name, item.qty, item.unit_price, group_name, gid, item.updated_at, item.entered_at],
     ).map_err(|e| e.to_string())?;
     let payload = serde_json::to_string(&item).map_err(|e| e.to_string())?;
     enqueue(&conn, "stock_items", &item.id, "create", &payload);
@@ -521,10 +531,20 @@ fn add_stock_item(db: State<Db>, name: String, qty: f64, unit_price: f64, group_
 #[tauri::command]
 fn update_stock_qty(db: State<Db>, id: String, delta: f64) -> Result<StockItem, String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
+    let now = Utc::now().to_rfc3339();
     conn.execute(
         "UPDATE stock_items SET qty = qty + ?1, updated_at = ?2, synced = 0 WHERE id = ?3",
-        params![delta, Utc::now().to_rfc3339(), id],
+        params![delta, now, id],
     ).map_err(|e| e.to_string())?;
+
+    let peek = read_item(&conn, &id)?;
+    if peek.qty <= 0.0 && peek.left_at.is_none() {
+        conn.execute("UPDATE stock_items SET left_at = ?1 WHERE id = ?2", params![now, id]).ok();
+    }
+    if peek.qty > 0.0 && peek.left_at.is_some() {
+        conn.execute("UPDATE stock_items SET left_at = NULL, entered_at = ?1 WHERE id = ?2", params![now, id]).ok();
+    }
+
     let item = read_item(&conn, &id)?;
     if item.qty < 0.0 {
         log_crash_internal(&conn, "stock", &format!("Negative stock for item {}", item.id));
@@ -532,6 +552,59 @@ fn update_stock_qty(db: State<Db>, id: String, delta: f64) -> Result<StockItem, 
     let payload = serde_json::to_string(&item).map_err(|e| e.to_string())?;
     enqueue(&conn, "stock_items", &item.id, "update", &payload);
     record_movement(&conn, &item, delta, if delta >= 0.0 { "added" } else { "taken out" });
+    Ok(item)
+}
+
+#[tauri::command]
+fn update_stock_item(
+    db: State<Db>,
+    id: String,
+    name: String,
+    qty: f64,
+    unit_price: f64,
+    group_id: Option<String>,
+    entered_at: String,
+    left_at: Option<String>,
+) -> Result<StockItem, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    let old = read_item(&conn, &id)?;
+    let gid = match group_id.filter(|g| !g.trim().is_empty()) {
+        Some(g) => g,
+        None => old.group_id.clone().unwrap_or_else(|| ensure_group(&conn, DEFAULT_GROUP)),
+    };
+    let group_name: String = conn.query_row(
+        "SELECT name FROM stock_groups WHERE id = ?1", params![gid], |r| r.get(0),
+    ).unwrap_or_else(|_| DEFAULT_GROUP.to_string());
+    let now = Utc::now().to_rfc3339();
+    let left = left_at.filter(|d| !d.trim().is_empty());
+
+    conn.execute(
+        "UPDATE stock_items SET name = ?1, qty = ?2, unit_price = ?3, group_id = ?4, category = ?5, entered_at = ?6, left_at = ?7, updated_at = ?8, synced = 0 WHERE id = ?9",
+        params![name, qty, unit_price, gid, group_name, entered_at, left, now, id],
+    ).map_err(|e| e.to_string())?;
+
+    let item = read_item(&conn, &id)?;
+    let payload = serde_json::to_string(&item).map_err(|e| e.to_string())?;
+    enqueue(&conn, "stock_items", &item.id, "update", &payload);
+
+    let delta = qty - old.qty;
+    if delta != 0.0 {
+        record_movement(&conn, &item, delta, "edited");
+    }
+    Ok(item)
+}
+
+#[tauri::command]
+fn update_stock_dates(db: State<Db>, id: String, entered_at: String, left_at: Option<String>) -> Result<StockItem, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    let left = left_at.filter(|d| !d.trim().is_empty());
+    conn.execute(
+        "UPDATE stock_items SET entered_at = ?1, left_at = ?2, synced = 0 WHERE id = ?3",
+        params![entered_at, left, id],
+    ).map_err(|e| e.to_string())?;
+    let item = read_item(&conn, &id)?;
+    let payload = serde_json::to_string(&item).map_err(|e| e.to_string())?;
+    enqueue(&conn, "stock_items", &item.id, "update", &payload);
     Ok(item)
 }
 
@@ -556,7 +629,7 @@ fn list_stock(db: State<Db>) -> Result<Vec<StockItem>, String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
     let mut stmt = conn.prepare(
         "SELECT i.id, i.name, i.qty, i.unit_price, i.group_id,
-                COALESCE(g.name, 'General') AS gname, i.updated_at, i.synced
+                COALESCE(g.name, 'General') AS gname, i.updated_at, i.entered_at, i.left_at, i.synced
          FROM stock_items i LEFT JOIN stock_groups g ON g.id = i.group_id
          ORDER BY gname ASC, i.name ASC"
     ).map_err(|e| e.to_string())?;
@@ -564,7 +637,8 @@ fn list_stock(db: State<Db>) -> Result<Vec<StockItem>, String> {
         Ok(StockItem {
             id: r.get(0)?, name: r.get(1)?, qty: r.get(2)?, unit_price: r.get(3)?,
             group_id: r.get(4)?, group_name: r.get(5)?, updated_at: r.get(6)?,
-            synced: r.get::<_, i64>(7)? != 0,
+            entered_at: r.get(7)?, left_at: r.get(8)?,
+            synced: r.get::<_, i64>(9)? != 0,
         })
     }).map_err(|e| e.to_string())?;
     rows.collect::<Result<Vec<_>, _>>().map_err(|e| e.to_string())
@@ -714,6 +788,8 @@ fn main() {
             add_stock_item,
             update_stock_qty,
             set_stock_item_group,
+            update_stock_dates,
+            update_stock_item,
             list_stock,
             delete_stock_item,
             list_stock_movements,

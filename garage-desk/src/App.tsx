@@ -10,6 +10,7 @@ import {
   updateStockQty,
   deleteStockItem,
   setStockItemGroup,
+  updateStockItem,
   listStock,
   listStockGroups,
   addStockGroup,
@@ -293,6 +294,9 @@ function StockScreen() {
   const [price, setPrice] = useState("");
   const [groupId, setGroupId] = useState("");
   const [newGroup, setNewGroup] = useState("");
+  const [enteredDate, setEnteredDate] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState({ name: "", qty: "", price: "", groupId: "", entered: "", left: "" });
   const [online, setOnline] = useState<boolean | null>(null);
 
   const refresh = async () => {
@@ -316,12 +320,13 @@ function StockScreen() {
     const qtyNum = parseFloat(qty);
     const priceNum = parseFloat(price || "0");
     if (!name.trim() || !Number.isFinite(qtyNum) || qtyNum < 0 || !Number.isFinite(priceNum)) {
-      alert("Enter a valid item name and a whole-number quantity.");
+      alert("Enter a valid item name and quantity (fractions like 2.5 are fine).");
       return;
     }
     try {
-      await addStockItem(name.trim(), qtyNum, priceNum, groupId || null);
-      setName(""); setQty(""); setPrice("");
+      const enteredIso = enteredDate ? new Date(enteredDate + "T00:00:00").toISOString() : null;
+      await addStockItem(name.trim(), qtyNum, priceNum, groupId || null, enteredIso);
+      setName(""); setQty(""); setPrice(""); setEnteredDate("");
       await refresh();
       flushSyncQueue();
     } catch (err) { fail(err); }
@@ -406,6 +411,45 @@ function StockScreen() {
     } catch (err) { fail(err); }
   };
 
+  const startEdit = (it: StockItem) => {
+    setEditDraft({
+      name: it.name,
+      qty: String(it.qty),
+      price: String(it.unit_price),
+      groupId: it.group_id ?? "",
+      entered: it.entered_at ? it.entered_at.slice(0, 10) : "",
+      left: it.left_at ? it.left_at.slice(0, 10) : "",
+    });
+    setEditingId(it.id);
+  };
+
+  const saveEdit = async (it: StockItem) => {
+    const qtyNum = parseFloat(editDraft.qty);
+    const priceNum = parseFloat(editDraft.price || "0");
+    if (!editDraft.name.trim() || !Number.isFinite(qtyNum) || qtyNum < 0 || !Number.isFinite(priceNum)) {
+      alert("Enter a valid item name and quantity (fractions like 2.5 are fine).");
+      return;
+    }
+    const entered = editDraft.entered
+      ? new Date(editDraft.entered + "T00:00:00").toISOString()
+      : it.entered_at;
+    const left = editDraft.left ? new Date(editDraft.left + "T00:00:00").toISOString() : null;
+    try {
+      await updateStockItem(
+        it.id,
+        editDraft.name.trim(),
+        qtyNum,
+        priceNum,
+        editDraft.groupId || null,
+        entered,
+        left
+      );
+      setEditingId(null);
+      await refresh();
+      flushSyncQueue();
+    } catch (err) { fail(err); }
+  };
+
   const toggle = (id: string) =>
     setCollapsed((c) => ({ ...c, [id]: !c[id] }));
 
@@ -416,57 +460,93 @@ function StockScreen() {
   const renderRows = (rows: StockItem[]) => (
     <table>
       <thead>
-        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Group</th><th>Synced</th><th>Adjust</th><th></th></tr>
+        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Group</th><th>Entered</th><th>Left</th><th>Synced</th><th>Adjust</th><th></th></tr>
       </thead>
       <tbody>
-        {rows.map((it) => (
-          <tr key={it.id}>
-            <td>{it.name}</td>
-            <td>{Number(it.qty.toFixed(2))}</td>
-            <td>{it.unit_price}</td>
-            <td>
-              <select
-                className="input-field group-select"
-                value={it.group_id ?? ""}
-                onChange={(e) => move(it.id, e.target.value)}
-              >
-                {groups.map((g) => (
-                  <option key={g.id} value={g.id}>{g.name}</option>
-                ))}
-              </select>
-            </td>
-            <td className={it.synced ? "pill-yes" : "pill-pending"}>{it.synced ? "Yes" : "Pending"}</td>
-            <td>
-              <button className="qty-btn" onClick={() => adjust(it.id, 1, it.qty)}>+1</button>
-              <input
-                className="input-field qty-take-input"
-                type="number"
-                step="any"
-                min="0"
-                placeholder="amount"
-                value={takeAmounts[it.id] ?? ""}
-                onChange={(e) => setTakeAmounts((m) => ({ ...m, [it.id]: e.target.value }))}
-              />
-              <button
-                className="qty-btn"
-                onClick={() => {
-                  const amt = parseFloat(takeAmounts[it.id] ?? "");
-                  if (!Number.isFinite(amt) || amt <= 0) {
-                    alert("Enter a valid amount to take out.");
-                    return;
-                  }
-                  adjust(it.id, -amt, it.qty);
-                  setTakeAmounts((m) => ({ ...m, [it.id]: "" }));
-                }}
-              >
-                Take out
-              </button>
-            </td>
-            <td>
-              <button className="qty-btn" onClick={() => remove(it.id, it.name)} style={{ color: "#c00" }}>Delete</button>
-            </td>
-          </tr>
-        ))}
+        {rows.map((it) => {
+          if (editingId === it.id) {
+            return (
+              <tr key={it.id}>
+                <td><input className="input-field" value={editDraft.name} onChange={(e) => setEditDraft((d) => ({ ...d, name: e.target.value }))} /></td>
+                <td><input className="input-field" type="number" step="any" value={editDraft.qty} onChange={(e) => setEditDraft((d) => ({ ...d, qty: e.target.value }))} /></td>
+                <td><input className="input-field" type="number" step="any" value={editDraft.price} onChange={(e) => setEditDraft((d) => ({ ...d, price: e.target.value }))} /></td>
+                <td>
+                  <select className="input-field group-select" value={editDraft.groupId} onChange={(e) => setEditDraft((d) => ({ ...d, groupId: e.target.value }))}>
+                    {groups.map((g) => (
+                      <option key={g.id} value={g.id}>{g.name}</option>
+                    ))}
+                  </select>
+                </td>
+                <td><input className="input-field" type="date" value={editDraft.entered} onChange={(e) => setEditDraft((d) => ({ ...d, entered: e.target.value }))} /></td>
+                <td><input className="input-field" type="date" value={editDraft.left} onChange={(e) => setEditDraft((d) => ({ ...d, left: e.target.value }))} /></td>
+                <td className={it.synced ? "pill-yes" : "pill-pending"}>{it.synced ? "Yes" : "Pending"}</td>
+                <td colSpan={2}>
+                  <button className="qty-btn" onClick={() => saveEdit(it)}>Save</button>
+                  <button className="qty-btn" onClick={() => setEditingId(null)}>Cancel</button>
+                </td>
+              </tr>
+            );
+          }
+          return (
+            <tr key={it.id}>
+              <td>{it.name}</td>
+              <td>{Number(it.qty.toFixed(2))}</td>
+              <td>{it.unit_price}</td>
+              <td>
+                <select
+                  className="input-field group-select"
+                  value={it.group_id ?? ""}
+                  onChange={(e) => move(it.id, e.target.value)}
+                >
+                  {groups.map((g) => (
+                    <option key={g.id} value={g.id}>{g.name}</option>
+                  ))}
+                </select>
+              </td>
+              <td>{it.entered_at ? new Date(it.entered_at).toLocaleDateString() : "-"}</td>
+              <td>{it.left_at ? new Date(it.left_at).toLocaleDateString() : "-"}</td>
+              <td className={it.synced ? "pill-yes" : "pill-pending"}>{it.synced ? "Yes" : "Pending"}</td>
+              <td>
+                <input
+                  className="input-field qty-take-input"
+                  type="number"
+                  step="any"
+                  placeholder="amount"
+                  value={takeAmounts[it.id] ?? ""}
+                  onChange={(e) => setTakeAmounts((m) => ({ ...m, [it.id]: e.target.value }))}
+                />
+                <button
+                  className="qty-btn"
+                  onClick={() => {
+                    const amt = parseFloat(takeAmounts[it.id] ?? "");
+                    if (!Number.isFinite(amt) || amt <= 0) {
+                      alert("Enter a valid amount first.");
+                      return;
+                    }
+                    adjust(it.id, amt, it.qty);
+                    setTakeAmounts((m) => ({ ...m, [it.id]: "" }));
+                  }}
+                >+</button>
+                <button
+                  className="qty-btn"
+                  onClick={() => {
+                    const amt = parseFloat(takeAmounts[it.id] ?? "");
+                    if (!Number.isFinite(amt) || amt <= 0) {
+                      alert("Enter a valid amount first.");
+                      return;
+                    }
+                    adjust(it.id, -amt, it.qty);
+                    setTakeAmounts((m) => ({ ...m, [it.id]: "" }));
+                  }}
+                >-</button>
+              </td>
+              <td>
+                <button className="qty-btn" onClick={() => startEdit(it)}>Edit</button>
+                <button className="qty-btn" onClick={() => remove(it.id, it.name)} style={{ color: "#c00" }}>Delete</button>
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
@@ -486,6 +566,7 @@ function StockScreen() {
         <input className="input-field" placeholder="Item name" value={name} onChange={(e) => setName(e.target.value)} />
         <input className="input-field" placeholder="Quantity" value={qty} onChange={(e) => setQty(e.target.value)} />
         <input className="input-field" placeholder="Unit price" value={price} onChange={(e) => setPrice(e.target.value)} />
+        <input className="input-field" type="date" title="Entered date (leave blank for today)" value={enteredDate} onChange={(e) => setEnteredDate(e.target.value)} />
         <select className="input-field" value={groupId} onChange={(e) => setGroupId(e.target.value)}>
           {groups.map((g) => (
             <option key={g.id} value={g.id}>{g.name}</option>

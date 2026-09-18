@@ -41,6 +41,8 @@ export interface StockItem {
   group_id: string | null;
   group_name: string;
   updated_at: string;
+  entered_at: string;
+  left_at: string | null;
   synced: boolean;
 }
 
@@ -181,9 +183,33 @@ export function addStockItem(
   name: string,
   qty: number,
   unit_price: number,
-  group_id: string | null
+  group_id: string | null,
+  entered_at: string | null = null
 ): Promise<StockItem> {
-  return invoke("add_stock_item", { name, qty, unitPrice: unit_price, groupId: group_id });
+  return invoke("add_stock_item", { name, qty, unitPrice: unit_price, groupId: group_id, enteredAt: entered_at });
+}
+
+export function updateStockDates(
+  id: string,
+  entered_at: string,
+  left_at: string | null
+): Promise<StockItem> {
+  return invoke("update_stock_dates", { id, enteredAt: entered_at, leftAt: left_at });
+}
+
+export function updateStockItem(
+  id: string,
+  name: string,
+  qty: number,
+  unit_price: number,
+  group_id: string | null,
+  entered_at: string,
+  left_at: string | null
+): Promise<StockItem> {
+  return invoke("update_stock_item", {
+    id, name, qty, unitPrice: unit_price, groupId: group_id,
+    enteredAt: entered_at, leftAt: left_at,
+  });
 }
 
 export function deleteStockItem(id: string): Promise<void> {
