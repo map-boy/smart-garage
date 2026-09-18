@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import {
-  AlertTriangle, ArrowDownRight, ArrowUpRight, Download, Package,
-  PiggyBank, TrendingUp, Wrench,
+  AlertTriangle, ArrowDownRight, ArrowUpRight, CalendarDays, CalendarRange,
+  Download, FileSpreadsheet, Package, PiggyBank, TrendingUp, Wrench,
 } from 'lucide-react';
 import { useReports } from '../hooks/useReports';
 import { useFinance, PERIOD_LABEL, type Period } from '../hooks/useFinance';
+import { buildStockCsv, buildMovementsCsv, downloadCsv } from '../lib/stockExport';
+import { LEDGER_WINDOW } from '../hooks/useStockLedger';
 import { RevenueBarChart } from '../components/charts/RevenueBarChart';
 import { TechnicianChart } from '../components/charts/TechnicianChart';
 import { formatCurrency } from '../lib/utils';
@@ -16,6 +18,12 @@ export function ReportsPage() {
   const [period, setPeriod] = useState<Period>('month');
   const { getMonthlyRevenue, getTechnicianWorkload, getJobStats } = useReports();
   const money = useFinance(period);
+  // Exporting the period on screen, not the whole ledger: a spreadsheet that
+  // disagrees with the figures above it is worse than no spreadsheet.
+  const rows = money.movementsInPeriod;
+  const today = new Date().toISOString().slice(0, 10);
+  const exportStock = (grain: 'daily' | 'monthly') =>
+    downloadCsv(`stock-${grain}-${period}-${today}.csv`, buildStockCsv(rows, grain));
 
   const jobStats = getJobStats();
   const revenueData = getMonthlyRevenue();
@@ -60,6 +68,39 @@ export function ReportsPage() {
           {money.ledgerError}
         </div>
       )}
+
+      {/* Exports live next to the figures they come from, so the number on
+          screen and the number in the spreadsheet are the same read of the
+          same ledger rather than two trips to the database. */}
+      <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm print:hidden">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex-1 min-w-[220px]">
+            <h3 className="text-sm font-bold text-gray-900">Export the stock book</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Opens in Excel. One row per part per day, or per part per month.
+              {rows.length > 0 && ` Covering ${rows.length} movements in ${PERIOD_LABEL[period].toLowerCase()}.`}
+            </p>
+          </div>
+          <Button variant="outline" disabled={rows.length === 0}
+            onClick={() => exportStock('daily')}>
+            <CalendarDays className="w-4 h-4 mr-2" /> Daily CSV
+          </Button>
+          <Button variant="outline" disabled={rows.length === 0}
+            onClick={() => exportStock('monthly')}>
+            <CalendarRange className="w-4 h-4 mr-2" /> Monthly CSV
+          </Button>
+          <Button variant="ghost" disabled={rows.length === 0}
+            onClick={() => downloadCsv(`stock-movements-${period}-${today}.csv`, buildMovementsCsv(rows))}>
+            <FileSpreadsheet className="w-4 h-4 mr-2" /> Every movement
+          </Button>
+        </div>
+        {rows.length === 0 && (
+          <p className="text-xs text-gray-400 mt-2">
+            Nothing moved in or out of the store in this period, so there is nothing
+            to export. Pick a longer period above.
+          </p>
+        )}
+      </div>
 
       {/* ---- the four numbers the boss actually asks for ---- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -127,8 +168,8 @@ export function ReportsPage() {
             </>
           )}
           {money.ledgerCapped && (
-            <> Only the most recent 1,000 movements are read, so a longer period may be
-            missing older lines.</>
+            <> Only the most recent {LEDGER_WINDOW.toLocaleString()} movements are read,
+            so a longer period may be missing older lines.</>
           )}
         </p>
       )}

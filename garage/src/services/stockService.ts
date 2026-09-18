@@ -66,7 +66,7 @@ function unitCostOf(part: { unitCost?: number }): number {
  */
 export function applyStockDelta(
   garageId: string,
-  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number },
+  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number; firstReceivedAt?: string },
   delta: number,
   reason: MovementReason,
   ctx: MovementContext,
@@ -77,7 +77,19 @@ export function applyStockDelta(
   const partRef = doc(db, 'garages', garageId, 'stock', part.id);
   const moveRef = doc(collection(db, 'garages', garageId, 'stockMovements'));
 
-  batch.update(partRef, { quantity: increment(delta), updatedAt: nowIso() });
+  // The dates the boss asks about - when did this come in, when did it last go
+  // out - are stamped here rather than derived later. `firstReceivedAt` is only
+  // written when the part has none, so the original arrival survives every
+  // restock after it.
+  const stamps: Record<string, string> = { updatedAt: nowIso() };
+  if (delta > 0) {
+    stamps.lastReceivedAt = nowIso();
+    if (!part.firstReceivedAt) stamps.firstReceivedAt = nowIso();
+  } else {
+    stamps.lastIssuedAt = nowIso();
+  }
+
+  batch.update(partRef, { quantity: increment(delta), ...stamps });
   batch.set(moveRef, {
     partId: part.id,
     // What this movement was worth, stamped at the time it happened.
@@ -110,7 +122,7 @@ export function applyStockDelta(
 /** A part leaving the store for a vehicle. */
 export function issuePart(
   garageId: string,
-  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number },
+  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number; firstReceivedAt?: string },
   qty: number,
   ctx: MovementContext,
 ): void {
@@ -120,7 +132,7 @@ export function issuePart(
 /** New stock arriving from a supplier. */
 export function receivePart(
   garageId: string,
-  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number },
+  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number; firstReceivedAt?: string },
   qty: number,
   ctx: MovementContext,
 ): void {
@@ -136,7 +148,7 @@ export function receivePart(
  */
 export function adjustToCount(
   garageId: string,
-  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number },
+  part: Pick<Part, 'id' | 'name' | 'partNumber' | 'quantity'> & { unitCost?: number; firstReceivedAt?: string },
   countedQty: number,
   ctx: MovementContext,
 ): void {
@@ -145,7 +157,6 @@ export function adjustToCount(
   applyStockDelta(garageId, part, delta, 'count_adjustment', ctx);
 }
 
-/** Creating or editing the part itself. Never touches quantity. */
 /**
  * Saves the describable fields of a part. Never the quantity.
  *
@@ -178,7 +189,11 @@ export function isLow(part: Part): boolean {
 export function seedPart(garageId: string, part: Part, byName: string): void {
   const batch = writeBatch(db);
   const { id, ...rest } = part;
-  batch.set(doc(db, 'garages', garageId, 'stock', id), { ...rest, updatedAt: nowIso() });
+  batch.set(doc(db, 'garages', garageId, 'stock', id), {
+    ...rest,
+    updatedAt: nowIso(),
+    ...(part.quantity ? { firstReceivedAt: nowIso(), lastReceivedAt: nowIso() } : {}),
+  });
   if (part.quantity) {
     batch.set(doc(collection(db, 'garages', garageId, 'stockMovements')), {
       partId: id,
