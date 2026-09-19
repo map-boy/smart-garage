@@ -25,9 +25,7 @@ import {
   query,
   setDoc,
 } from 'firebase/firestore';
-import { listAll, ref } from 'firebase/storage';
 import { db, auth } from '../lib/firebase';
-import { storage } from '../lib/storage';
 
 export type CheckStatus = 'ok' | 'warn' | 'fail' | 'skip';
 
@@ -218,43 +216,6 @@ async function checkScopedWrite(garageId: string): Promise<CheckResult> {
   }
 }
 
-async function checkStorage(garageId: string): Promise<CheckResult> {
-  try {
-    const result = await withTimeout(listAll(ref(storage, `invoices/${garageId}`)), 8_000);
-    return {
-      id: 'storage',
-      label: 'File storage reachable',
-      status: 'ok',
-      detail: `Listed invoices/${garageId}: ${result.items.length} file(s).`,
-    };
-  } catch (e) {
-    const code = errorCode(e);
-    if (code === 'storage/unauthorized') {
-      return {
-        id: 'storage',
-        label: 'File storage reachable',
-        status: 'fail',
-        detail: `Storage rules rejected listing invoices/${garageId}.`,
-        hint: 'Invoice PDFs will fail to save. This is a Storage rules problem.',
-      };
-    }
-    if (code === 'storage/object-not-found') {
-      return {
-        id: 'storage',
-        label: 'File storage reachable',
-        status: 'ok',
-        detail: 'Storage answered. Nothing stored for this garage yet.',
-      };
-    }
-    return {
-      id: 'storage',
-      label: 'File storage reachable',
-      status: 'warn',
-      detail: `Could not reach Storage (${code || errorMessage(e)}).`,
-    };
-  }
-}
-
 /** How long since each paired phone last said anything. */
 async function checkDeviceHeartbeats(garageId: string): Promise<CheckResult[]> {
   try {
@@ -408,7 +369,6 @@ export async function runAllChecks(
   onResult(await checkIdentity());
   onResult(await checkFirestoreReachable(garageId));
   onResult(await checkScopedWrite(garageId));
-  onResult(await checkStorage(garageId));
   for (const r of await checkDeviceHeartbeats(garageId)) onResult(r);
   onResult(await checkPendingWrites(garageId));
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Shell from './components/layout/Shell';
@@ -10,14 +10,9 @@ import { JobCardDetailPage } from './pages/JobCardDetailPage';
 import { ArchivePage } from './pages/ArchivePage';
 import { StockPage } from './pages/StockPage';
 import { ClientsPage } from './pages/ClientsPage';
-import { InvoicesPage } from './pages/InvoicesPage';
-import { InvoiceDetailPage } from './pages/InvoiceDetailPage';
-import { RemindersPage } from './pages/RemindersPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SettingsPage } from './pages/SettingsPage';
-import { CameraPage } from './pages/CameraPage';
 import { TechnicianPage } from './pages/TechnicianPage';
-import { WebsitePage } from './pages/WebsitePage';
 import { useClientNotifications } from './hooks/useClientNotifications';
 import { NotificationToasts } from './components/ui/NotificationToasts';
 
@@ -50,14 +45,9 @@ function AppRoutes() {
         <Route path="/jobs/:id" element={<JobCardDetailPage />} />
         <Route path="/inventory" element={<StockPage />} />
         <Route path="/customers" element={<ClientsPage />} />
-        <Route path="/invoices" element={<InvoicesPage />} />
-        <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
         <Route path="/archive" element={<ArchivePage />} />
-        <Route path="/reminders" element={<RemindersPage />} />
         <Route path="/reports" element={<ReportsPage />} />
-        <Route path="/monitoring" element={<CameraPage />} />
         <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/website" element={<WebsitePage />} />
         <Route path="/technician" element={<TechnicianPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

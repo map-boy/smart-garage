@@ -1,19 +1,17 @@
-import React from 'react';
-import { Database, HardDrive, Lock, LogOut, Stethoscope, Wrench } from 'lucide-react';
+﻿import React from 'react';
+import { Database, Lock, LogOut, Stethoscope, Wrench } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { DataBrowser } from '../technician/DataBrowser';
-import { StorageBrowser } from '../technician/StorageBrowser';
 import { DiagnosticsPanel } from '../technician/DiagnosticsPanel';
 import { listGarageIds } from '../technician/dataAccess';
 import { isUnlocked, lock, unlock, unlockedUntil } from '../technician/session';
 
-type Tab = 'diagnostics' | 'data' | 'storage';
+type Tab = 'diagnostics' | 'data';
 
 const TABS: { id: Tab; label: string; icon: typeof Database }[] = [
   { id: 'diagnostics', label: 'Diagnostics', icon: Stethoscope },
   { id: 'data', label: 'Data', icon: Database },
-  { id: 'storage', label: 'Files', icon: HardDrive },
 ];
 
 /**
@@ -134,7 +132,7 @@ export function TechnicianPage() {
           ))}
         </div>
 
-        {tab !== 'storage' && (
+        {(
           <label className="flex items-center gap-2 text-xs text-slate-500">
             Garage
             {garageIds.length > 1 ? (
@@ -159,7 +157,7 @@ export function TechnicianPage() {
         )}
       </div>
 
-      {!garageId && tab !== 'storage' ? (
+      {!garageId ? (
         <p className="text-sm text-slate-500">
           Enter the garage id to work on. It is the document id under{' '}
           <span className="font-mono">garages/</span>.
@@ -168,7 +166,6 @@ export function TechnicianPage() {
         <>
           {tab === 'diagnostics' && <DiagnosticsPanel garageId={garageId} />}
           {tab === 'data' && <DataBrowser garageId={garageId} />}
-          {tab === 'storage' && <StorageBrowser />}
         </>
       )}
     </div>

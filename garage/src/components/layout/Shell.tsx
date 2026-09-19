@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -28,12 +28,8 @@ const menuItems = [
   { id: 'vehicles', label: 'Vehicles', icon: Car, path: '/vehicles' },
   { id: 'inventory', label: 'Inventory', icon: Package, path: '/inventory' },
   { id: 'jobs', label: 'Job Cards', icon: ClipboardList, path: '/jobs' },
-  { id: 'invoices', label: 'Invoices', icon: FileText, path: '/invoices' },
   { id: 'archive', label: 'Archive', icon: Archive, path: '/archive' },
-  { id: 'reminders', label: 'Reminders', icon: Bell, path: '/reminders' },
   { id: 'reports', label: 'Reports', icon: BarChart3, path: '/reports' },
-  { id: 'monitoring', label: 'CCTV Monitoring', icon: Camera, path: '/monitoring' },
-  { id: 'website', label: 'Website', icon: Globe, path: '/website' },
   { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
 ];
 

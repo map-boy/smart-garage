@@ -2,7 +2,6 @@
 import { useVehicles } from '../hooks/useVehicles';
 import { useJobs } from '../hooks/useJobs';
 import { useInvoices } from '../hooks/useInvoices';
-import { useReminders } from '../hooks/useReminders';
 import { useReports } from '../hooks/useReports';
 import { RevenueBarChart } from '../components/charts/RevenueBarChart';
 import { JobStatusBadge } from '../components/jobs/JobStatusBadge';
@@ -16,7 +15,6 @@ export function DashboardPage() {
   const { vehicles } = useVehicles();
   const { jobs } = useJobs();
   const { invoices } = useInvoices();
-  const { reminders } = useReminders();
   const { getMonthlyRevenue, getInventoryStatus } = useReports();
 
   const inventoryStatus = getInventoryStatus();
@@ -43,15 +41,9 @@ export function DashboardPage() {
     { label: 'Revenue (MTD)', value: formatCurrency(currentMonthRevenue), change: revenueChangeLabel, color: 'text-gray-900', status: 'success' },
     { label: 'Active Jobs', value: activeJobsCount, change: `${activeTechnicians} technician${activeTechnicians === 1 ? '' : 's'} assigned`, color: 'text-amber-600', status: 'warning' },
     { label: 'Stock Alerts', value: inventoryStatus.lowStock, change: 'Items below reorder point', color: 'text-red-500', status: 'danger' },
-    { label: 'Pending Invoices', value: unpaidInvoicesCount, change: `Review ${unpaidInvoicesCount} unpaid bills`, color: 'text-gray-900', isLink: true, path: '/invoices' },
   ];
 
   const recentJobs = jobs.slice(-5).reverse();
-  const upcomingReminders = [...reminders]
-    .filter(r => !r.isDone)
-    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-    .slice(0, 3);
-
   return (
     <div className="space-y-6">
       {/* TOP STATS */}
@@ -60,11 +52,7 @@ export function DashboardPage() {
           <div key={i} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[110px]">
             <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.1em] mb-1">{stat.label}</div>
             <div className={cn("text-2xl font-black tracking-tighter shrink-0", stat.color)}>{stat.value}</div>
-            {stat.isLink ? (
-              <Link to={stat.path || '/'} className="text-amber-500 text-[10px] font-bold underline uppercase tracking-tight hover:text-amber-600 transition-colors shrink-0">{stat.change}</Link>
-            ) : (
               <div className={cn("text-[10px] font-bold tracking-tight shrink-0", stat.status === 'success' ? 'text-emerald-500' : 'text-gray-400')}>{stat.change}</div>
-            )}
           </div>
         ))}
       </div>
@@ -150,39 +138,12 @@ export function DashboardPage() {
                 <div className="text-right">
                     <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Avg Turnaround</div>
                     <div className="text-xl font-black text-gray-900 tracking-tighter">
-                      {avgTurnaroundHours !== null ? `${avgTurnaroundHours.toFixed(1)}h` : '—'}
+                      {avgTurnaroundHours !== null ? `${avgTurnaroundHours.toFixed(1)}h` : 'â€”'}
                     </div>
                 </div>
             </div>
           </div>
 
-          {/* SERVICE REMINDERS LIST (COMPACT) */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-[180px] shrink-0">
-            <h2 className="font-bold text-gray-700 mb-4 tracking-tight flex items-center justify-between shrink-0 font-sans">
-              Service Reminders
-              <span className="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline" onClick={() => navigate('/reminders')}>VIEW ALL</span>
-            </h2>
-            <div className="space-y-4 overflow-y-auto flex-1 pr-2">
-              {upcomingReminders.length === 0 && (
-                <div className="flex items-center gap-2 text-gray-400 text-xs italic">
-                  <Bell className="w-4 h-4" /> No pending reminders
-                </div>
-              )}
-              {upcomingReminders.map((rem) => {
-                const vehicle = vehicles.find(v => v.id === rem.vehicleId);
-                const isOverdue = new Date(rem.dueDate) < new Date();
-                return (
-                  <div key={rem.id} className="flex items-start space-x-3">
-                    <div className={cn("mt-1.5 w-2 h-2 rounded-full ring-4", isOverdue ? "bg-red-500 ring-red-50" : "bg-amber-500 ring-amber-50")} />
-                    <div>
-                      <div className="text-[11px] font-bold text-gray-900 uppercase tracking-tight">{rem.type}</div>
-                      <div className="text-[10px] text-gray-400 font-medium">{vehicle?.plate || 'Unknown vehicle'} • {formatDate(rem.dueDate)}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
         </div>
       </div>
     </div>

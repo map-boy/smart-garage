@@ -1,10 +1,9 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useJobs } from '../hooks/useJobs';
 import { useVehicles } from '../hooks/useVehicles';
 import { useClients } from '../hooks/useClients';
 import { useStock } from '../hooks/useStock';
-import { useInvoices } from '../hooks/useInvoices';
 import { JobStatusBadge } from '../components/jobs/JobStatusBadge';
 import { PartsUsedTable } from '../components/jobs/PartsUsedTable';
 import { JobFreeServices } from '../components/jobs/JobFreeServices';
@@ -18,14 +17,13 @@ import {
   Calendar, 
   Settings, 
   Plus, 
-  FileCheck,
   CheckCircle2,
   Trash2
 } from 'lucide-react';
 import { formatCurrency, formatDate, generateId } from '../lib/utils';
 import { JOB_STATUSES } from '../lib/constants';
 import { settingsService } from '../services/settingsService';
-import { JobStatus, Invoice } from '../types';
+import { JobStatus } from '../types';
 
 export function JobCardDetailPage() {
   const { id } = useParams();
@@ -34,7 +32,6 @@ export function JobCardDetailPage() {
   const { vehicles } = useVehicles();
   const { clients } = useClients();
   const { stock, issue, receive } = useStock();
-  const { addInvoice, invoices } = useInvoices();
 
   const [isAddPartOpen, setIsAddPartOpen] = useState(false);
   const [selectedPartId, setSelectedPartId] = useState('');
@@ -43,7 +40,6 @@ export function JobCardDetailPage() {
   const job = useMemo(() => jobs.find(j => j.id === id), [jobs, id]);
   const vehicle = useMemo(() => vehicles.find(v => v.id === job?.vehicleId), [vehicles, job]);
   const client = useMemo(() => clients.find(c => c.id === vehicle?.clientId), [clients, vehicle]);
-  const jobInvoice = useMemo(() => invoices.find(inv => inv.jobId === id), [invoices, id]);
 
   if (!job) return <div>Job Not Found</div>;
 
@@ -73,36 +69,6 @@ export function JobCardDetailPage() {
     setIsAddPartOpen(false);
     setSelectedPartId('');
     setPartQty(1);
-  };
-
-  const handleGenerateInvoice = () => {
-    if (jobInvoice) {
-      navigate(`/invoices/${jobInvoice.id}`);
-      return;
-    }
-
-    const lineItems = job.partsUsed.map(item => {
-      const p = stock.find(part => part.id === item.partId);
-      return {
-        description: p?.name || 'Part',
-        qty: item.quantity,
-        unitCost: p?.unitCost || 0
-      };
-    });
-
-    const newInvoice: Invoice = {
-      id: `INV-${generateId()}`,
-      jobId: job.id,
-      clientId: client?.id || '',
-      lineItems: [...lineItems, ...(job.freeServices ?? []).map(f => ({ description: f.description, qty: 1, unitCost: f.cost || 0, isFree: true }))],
-      laborCost: job.technicianPaidMonthly ? 0 : job.laborCost,
-      taxRate: 0,
-      status: 'Unpaid',
-      issuedAt: new Date().toISOString()
-    };
-
-    addInvoice(newInvoice);
-    navigate(`/invoices/${newInvoice.id}`);
   };
 
   const handleUpdatePartQty = (partId: string, newQty: number) => {
@@ -270,17 +236,6 @@ export function JobCardDetailPage() {
               </div>
             </div>
 
-            <Button 
-              className="w-full mt-6 bg-white text-blue-600 hover:bg-blue-50"
-              onClick={handleGenerateInvoice}
-              disabled={job.status !== 'Completed' && !jobInvoice}
-            >
-              {jobInvoice ? <FileCheck className="w-4 h-4 mr-2" /> : <Settings className="w-4 h-4 mr-2" />}
-              {jobInvoice ? 'View Invoice' : 'Generate Invoice'}
-            </Button>
-            {job.status !== 'Completed' && !jobInvoice && (
-              <p className="text-[10px] text-blue-200 mt-2 text-center italic">Job must be marked "Completed" to invoice</p>
-            )}
           </div>
         </div>
       </div>
