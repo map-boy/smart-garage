@@ -10,6 +10,7 @@ import { generateId } from '../lib/utils';
 import { FUEL_TYPES } from '../lib/constants';
 import { Vehicle } from '../types';
 import { SyncBadge } from '../components/ui/SyncBadge';
+import { VisitsByDate } from '../components/VisitsByDate';
 
 export function VehiclesPage() {
   const { vehicles, addVehicle, updateVehicle, deleteVehicle } = useVehicles();
@@ -76,6 +77,8 @@ export function VehiclesPage() {
           <Plus className="w-4 h-4 mr-2" /> New Vehicle
         </Button>
       </div>
+
+      <VisitsByDate />
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
         <div className="p-4 border-b border-gray-50">
@@ -236,3 +239,4 @@ export function VehiclesPage() {
     </div>
   );
 }
+
