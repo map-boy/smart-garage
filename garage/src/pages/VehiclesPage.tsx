@@ -80,66 +80,6 @@ export function VehiclesPage() {
 
       <VisitsByDate />
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-        <div className="p-4 border-b border-gray-50">
-          <div className="flex items-center bg-gray-50 rounded-xl px-4 py-2 max-w-sm">
-            <Search className="w-4 h-4 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Search plate, make or model..." 
-              className="bg-transparent border-none focus:ring-0 text-sm w-full ml-3 outline-hidden"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <Table headers={['Plate #', 'Vehicle Details', 'Owner', 'Mileage', 'Fuel', 'Actions']}>
-          {filtered.map((v) => {
-            const owner = clients.find(c => c.id === v.clientId);
-            return (
-              <TableRow key={v.id}>
-                <TableCell className="font-black text-blue-600 tracking-tighter">
-                  {v.plate} <SyncBadge pending={v._pending} />
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center">
-                      <Car className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-gray-900 leading-tight">{v.make} {v.model}</p>
-                      <p className="text-xs text-gray-500 font-medium">{v.year} • {v.color}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <User className="w-3.5 h-3.5 text-gray-400" />
-                    {owner?.name || 'Unknown'}
-                  </div>
-                </TableCell>
-                <TableCell className="font-mono text-xs">{v.mileage.toLocaleString()} km</TableCell>
-                <TableCell>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-gray-100 text-gray-600">
-                    {v.fuelType}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(v)}>
-                      <Edit className="w-4 h-4 text-gray-400" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => { setSelectedVehicle(v); setIsDeleteOpen(true); }}>
-                      <Trash2 className="w-4 h-4 text-rose-400" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </Table>
-      </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Vehicle Information">
         <form onSubmit={handleSave} className="space-y-4">

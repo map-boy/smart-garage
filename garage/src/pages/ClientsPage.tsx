@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useClients } from '../hooks/useClients';
 import { Table, TableRow, TableCell } from '../components/ui/Table';
 import { Button } from '../components/ui/Button';
@@ -8,9 +8,15 @@ import { Plus, Search, Mail, Phone, Trash2, Edit } from 'lucide-react';
 import { generateId } from '../lib/utils';
 import { Client } from '../types';
 import { SyncBadge } from '../components/ui/SyncBadge';
+import { useVisits, type Visit } from '../hooks/useVisits';
+import { useGarageCollection } from '../hooks/useGarageCollection';
+import type { Vehicle } from '../types/vehicle.types';
 
 export function ClientsPage() {
   const { clients, addClient, updateClient, deleteClient, error } = useClients();
+  const { visits } = useVisits();
+  const { items: vehicles } = useGarageCollection<Vehicle>('vehicles');
+  const [newestFirst, setNewestFirst] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -20,11 +26,58 @@ export function ClientsPage() {
   // Defensive on every field: these records are also written by the phone
   // apps and by older builds, and one client with no email used to throw
   // inside this filter and blank the entire page rather than hide a row.
+  // One row per client, joined with what the reception desk recorded.
+  // Visits live in their own collection, so the vehicle and the last visit
+  // date are worked out here, at read time. Nothing is written back.
+  const rows = useMemo(() => {
+    type VisitRow = Visit & { clientId?: string | null };
+    const key = (s?: string) => (s ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const allVisits = visits as VisitRow[];
+    const list = clients.map((client) => {
+      const own = client as Client & { vehiclePlate?: string; vehicleModel?: string };
+      const ownKey = key(own.vehiclePlate);
+      const mine = allVisits
+        .filter((v) => v.clientId === client.id || (ownKey !== '' && key(v.vehiclePlate) === ownKey))
+        .sort((a, b) => (b.visitDate ?? '').localeCompare(a.visitDate ?? ''));
+      const cars = new Map<string, { plate: string; model: string }>();
+      const addCar = (plate?: string, model?: string) => {
+        const k = key(plate);
+        if (!k) return;
+        const clean = (model ?? '').trim();
+        const seen = cars.get(k);
+        if (!seen) cars.set(k, { plate: (plate ?? '').trim(), model: clean });
+        else if (!seen.model && clean) seen.model = clean;
+      };
+      mine.forEach((v) => addCar(v.vehiclePlate, v.vehicleModel));
+      vehicles.filter((v) => v.clientId === client.id).forEach((v) => addCar(v.plate, `${v.make ?? ''} ${v.model ?? ''}`));
+      addCar(own.vehiclePlate, own.vehicleModel);
+      const first = Array.from(cars.values())[0];
+      return {
+        client,
+        plate: first?.plate ?? '',
+        model: first?.model ?? '',
+        extra: Math.max(cars.size - 1, 0),
+        lastVisit: mine[0]?.visitDate || (client.createdAt ?? '').slice(0, 10),
+      };
+    });
+    const byName = (a: { client: Client }, b: { client: Client }) => (a.client.name ?? '').localeCompare(b.client.name ?? '');
+    list.sort((a, b) => {
+      if (!a.lastVisit && !b.lastVisit) return byName(a, b);
+      if (!a.lastVisit) return 1;
+      if (!b.lastVisit) return -1;
+      const diff = a.lastVisit.localeCompare(b.lastVisit);
+      return (newestFirst ? -diff : diff) || byName(a, b);
+    });
+    return list;
+  }, [clients, visits, vehicles, newestFirst]);
+
   const needle = searchTerm.toLowerCase();
-  const filtered = clients.filter(c =>
+  const filtered = rows.filter(({ client: c, plate, model }) =>
     (c.name ?? '').toLowerCase().includes(needle) ||
     (c.email ?? '').toLowerCase().includes(needle) ||
-    (c.phone ?? '').includes(searchTerm)
+    (c.phone ?? '').includes(searchTerm) ||
+    plate.toLowerCase().includes(needle) ||
+    model.toLowerCase().includes(needle)
   );
 
   const handleOpenAdd = () => {
@@ -87,11 +140,22 @@ export function ClientsPage() {
           </div>
         </div>
 
-        <Table headers={['Client Name', 'Email', 'Phone', 'Joined', 'Actions']}>
-          {filtered.map((client) => (
+        <div className="px-4 py-2 border-b border-gray-50 flex items-center justify-between text-xs text-gray-500">
+          <span>Sorted by last visit, {newestFirst ? 'newest first' : 'oldest first'}</span>
+          <button type="button" onClick={() => setNewestFirst(v => !v)} className="font-bold text-blue-600 hover:underline">
+            {newestFirst ? 'Show oldest first' : 'Show newest first'}
+          </button>
+        </div>
+        <Table headers={['Client / Vehicle', 'Email', 'Phone', 'Last visit', 'Actions']}>
+          {filtered.map(({ client, plate, model, lastVisit, extra }) => (
             <TableRow key={client.id}>
               <TableCell className="font-bold text-gray-900">
                 {client.name} <SyncBadge pending={client._pending} />
+                <div className="text-[11px] font-medium text-gray-500 mt-0.5">
+                  {plate
+                    ? `${plate}${model ? ' - ' + model : ''}${extra > 0 ? ' (+' + extra + ' more)' : ''}`
+                    : <span className="font-bold text-amber-600">No vehicle recorded</span>}
+                </div>
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
@@ -106,7 +170,7 @@ export function ClientsPage() {
                 </div>
               </TableCell>
               <TableCell className="text-xs font-mono text-gray-500">
-                {new Date(client.createdAt).toLocaleDateString()}
+                {lastVisit ? lastVisit.slice(0, 10) : '-'}
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-1">

@@ -105,7 +105,10 @@ function ReceptionScreen() {
   };
 
   const submit = async () => {
-    if (!name || !plate) return;
+    if (!name.trim() || !plate.trim() || !model.trim()) {
+      window.alert("Please fill in the client name, the vehicle plate and the vehicle model before saving.");
+      return;
+    }
     try {
       await addVisit(selectedClientId, name, phone, plate, model, location, "", visitDate);
       setName(""); setPhone(""); setPlate(""); setModel(""); setLocation("");

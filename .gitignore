@@ -22,3 +22,9 @@ dist-share/
 *.zip
 dist-share/
 _ship-stage/
+
+backups/
+
+.env.openwa
+
+garage/_attic/

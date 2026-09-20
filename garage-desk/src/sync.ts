@@ -6,6 +6,12 @@ import {
   serverTimestamp,
   increment,
   writeBatch,
+  arrayUnion,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  limit,
 } from "firebase/firestore";
 import { getFirebaseDb, ensureStaffProfile, GARAGE_ID } from "./pairing";
 import {
@@ -148,6 +154,17 @@ function toRemote(table: SyncTable, d: Record<string, any>): Record<string, any>
   }
 }
 
+type Db = ReturnType<typeof getFirebaseDb>;
+
+/** A vehicle already on file for this plate (phone-made and older ones included), or null. */
+async function findVehicleId(db: Db, plate: string, plateKey: string): Promise<string | null> {
+  const vehicles = collection(db, "garages", GARAGE_ID, "vehicles");
+  const byKey = await getDocs(query(vehicles, where("plateKey", "==", plateKey), limit(1)));
+  if (!byKey.empty) return byKey.docs[0].id;
+  const byPlate = await getDocs(query(vehicles, where("plate", "==", plate), limit(1)));
+  return byPlate.empty ? null : byPlate.docs[0].id;
+}
+
 async function pushRow(row: QueueRow): Promise<void> {
   const db = getFirebaseDb();
   const collName = REMOTE_COLLECTION[row.table_name];
@@ -195,6 +212,73 @@ async function pushRow(row: QueueRow): Promise<void> {
       { merge: true }
     );
     return;
+  }
+
+  // A new visit brings its vehicle and job card with it, in one batch.
+  // This used to be left to the onVisitCreated Cloud Function, which only runs
+  // on a billed project. Every id is derived from the plate or the visit, so a
+  // retried sync, or two desks booking in the same car, lands on the same
+  // records instead of duplicating them. The job carries verified: false until
+  // the boss confirms it in the admin app.
+  if (row.table_name === "visits" && row.op === "create") {
+    const plate = String(raw.vehicle_plate ?? "").trim().toUpperCase();
+    const plateKey = normalisePlate(plate);
+    if (plateKey) {
+      const batch = writeBatch(db);
+      const clientId = String(raw.client_id ?? "").trim();
+
+      let vehicleId = await findVehicleId(db, plate, plateKey);
+      if (!vehicleId) {
+        vehicleId = `v_${plateKey}`;
+        batch.set(
+          doc(db, "garages", GARAGE_ID, "vehicles", vehicleId),
+          {
+            plate,
+            plateKey,
+            make: "",
+            model: raw.vehicle_model ?? "",
+            year: "",
+            color: "",
+            clientId,
+            mileage: "",
+            fuelType: "Petrol",
+          },
+          { merge: true }
+        );
+        if (clientId) {
+          batch.set(
+            doc(db, "garages", GARAGE_ID, "clients", clientId),
+            { vehicleIds: arrayUnion(vehicleId) },
+            { merge: true }
+          );
+        }
+      }
+
+      const jobId = `job_${row.row_id}`;
+      const jobRef = doc(db, "garages", GARAGE_ID, "jobs", jobId);
+      // Never rewrite a job that already exists: a retry after a lost
+      // acknowledgement must not reset one the workshop has since moved on.
+      if (!(await getDoc(jobRef)).exists()) {
+        batch.set(jobRef, {
+          vehicleId,
+          clientId: clientId || null,
+          plate,
+          technicianName: "",
+          description: raw.issue ?? "",
+          status: "Pending",
+          partsUsed: [],
+          laborCost: 0,
+          startedAt: raw.created_at,
+          source: "garage-desk",
+          visitId: row.row_id,
+          verified: false,
+        });
+      }
+
+      batch.set(ref, { ...data, vehicleId, jobId, syncedAt: serverTimestamp() }, { merge: true });
+      await batch.commit();
+      return;
+    }
   }
 
   await setDoc(ref, { ...data, syncedAt: serverTimestamp() }, { merge: true });

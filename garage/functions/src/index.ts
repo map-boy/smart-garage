@@ -60,11 +60,22 @@ export const onVisitCreated = onDocumentCreated(
     const phone = String(visit.phone || "").trim();
     const plate = String(visit.vehiclePlate || "").trim();
 
+    // The desk already made this client and put its id on the visit.
+    // Use it when it exists: matching on phone alone opened a second,
+    // phone-less copy of anyone booked in without a number, and merged
+    // people who share one.
+    const deskClientId = String(visit.clientId || "").trim();
+    const deskClient = deskClientId
+      ? await garageRef.collection("clients").doc(deskClientId).get()
+      : null;
+
     let clientId: string;
-    const clientMatch = phone
+    const clientMatch = !deskClient?.exists && phone
       ? await garageRef.collection("clients").where("phone", "==", phone).limit(1).get()
       : null;
-    if (clientMatch && !clientMatch.empty) {
+    if (deskClient?.exists) {
+      clientId = deskClient.id;
+    } else if (clientMatch && !clientMatch.empty) {
       clientId = clientMatch.docs[0].id;
     } else {
       const clientRef = garageRef.collection("clients").doc();

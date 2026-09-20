@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useJobs } from '../hooks/useJobs';
 import { useVehicles } from '../hooks/useVehicles';
@@ -181,7 +181,7 @@ export function JobCardDetailPage() {
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Customer</h3>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold">
-                  {client?.name.charAt(0)}
+                  {(client?.name ?? '').charAt(0).toUpperCase() || '?'}
                 </div>
                 <div>
                   <p className="font-bold text-gray-900">{client?.name || 'Walk-in'}</p>
