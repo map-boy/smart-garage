@@ -28,3 +28,7 @@ backups/
 .env.openwa
 
 garage/_attic/
+
+service-account.json
+
+garage-management-6f1eb-firebase-adminsdk-*.json

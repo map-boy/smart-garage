@@ -1,0 +1,20 @@
+﻿const { initializeApp, cert } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
+initializeApp({ credential: cert(require("./service-account.json")) });
+const g = getFirestore().collection("garages").doc("garage-aimable-001");
+(async () => {
+  const [cs, vs] = await Promise.all([g.collection("clients").get(), g.collection("vehicles").get()]);
+  const clientIds = new Set(cs.docs.map(d => d.id));
+  const imp = cs.docs.filter(d => d.data().source === "excel-import");
+  const impVeh = vs.docs.filter(d => d.data().visitCount !== undefined);
+  const orphans = vs.docs.filter(d => d.data().clientId && !clientIds.has(d.data().clientId));
+  const missingVeh = cs.docs.flatMap(d => (d.data().vehicleIds || []).filter(v => !vs.docs.some(x => x.id === v)).map(v => `${d.id}:${v}`));
+  console.log(`clients total: ${cs.size} | excel-import clients: ${imp.length} (expected 183)`);
+  console.log(`vehicles total: ${vs.size} | vehicles with visit dates: ${impVeh.length} (expected 319)`);
+  console.log(`orphan vehicles (clientId not found): ${orphans.length}`);
+  console.log(`client.vehicleIds pointing to missing vehicles: ${missingVeh.length}`);
+  console.log("\nSAMPLE CLIENTS:");
+  imp.slice(0, 3).forEach(d => console.log(JSON.stringify(d.data())));
+  console.log("\nSAMPLE VEHICLES:");
+  impVeh.slice(0, 3).forEach(d => console.log(d.id, JSON.stringify(d.data())));
+})().catch(e => console.error(e));

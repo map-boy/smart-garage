@@ -261,3 +261,13 @@ export function exportReport(kind: string, date: string): Promise<string> {
   return invoke("export_report", { kind, date });
 }
 
+/* ---- remote pull (merge Firestore data into the local db, already marked synced) ---- */
+
+export function upsertRemoteClients(rows: Client[]): Promise<number> {
+  return invoke("upsert_remote_clients", { rows });
+}
+
+export function upsertRemoteVisits(rows: Visit[]): Promise<number> {
+  return invoke("upsert_remote_visits", { rows });
+}
+

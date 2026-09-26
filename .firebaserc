@@ -1,1 +1,8 @@
-﻿{"projects": {"default": "garage-management-6f1eb"}}
+{
+  "projects": {
+    "default": "garage-management-6f1eb",
+    "prod": "garage-management-6f1eb"
+  },
+  "targets": {},
+  "etags": {}
+}

@@ -1,0 +1,8013 @@
+{
+ "vehicles": [
+  {
+   "id": "v_RAG408P",
+   "data": {
+    "clientId": "eeb52c3f-5c8c-45d3-ba0f-d46b4b2ab569",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG408P",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 408P",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAK244H",
+   "data": {
+    "clientId": "662e5f97-4b93-47b9-98b4-325804fade51",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK244H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAK 244H",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAG869G",
+   "data": {
+    "clientId": "f20c7bd5-1aaf-4779-b106-718cf92b1c94",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG869G",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 869G",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAG363V",
+   "data": {
+    "clientId": "e87b7c8e-f8f2-4f4d-840e-588a510e2b27",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG363V",
+    "year": "",
+    "model": "Touareg",
+    "plate": "RAG 363V",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAG367N",
+   "data": {
+    "clientId": "076b6b73-e686-413c-aba7-e560e3c9f806",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG367N",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 367N",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAK242H",
+   "data": {
+    "clientId": "4a05667a-8183-4f21-a752-64b499006b7f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK242H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAK 242H",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAG353B",
+   "data": {
+    "clientId": "c344d408-81d6-4bc3-b48b-64826f1cf570",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG353B",
+    "year": "",
+    "model": "Touareg",
+    "plate": "RAG 353B",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAE661K",
+   "data": {
+    "clientId": "6aca009c-9f63-4077-84a2-9917ebd39d72",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE661K",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 661K",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAD268Z",
+   "data": {
+    "clientId": "63850802-0f74-44c4-8c79-7d96b566c310",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD268Z",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAD 268Z",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAG438H",
+   "data": {
+    "clientId": "d8d833fd-c95d-4451-9957-bb5283310c98",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG438H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 438H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-10",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD277Z",
+   "data": {
+    "clientId": "02840307-3e9b-4c31-a2e5-3e07bcbba45c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD277Z",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAD 277Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-03",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE802B",
+   "data": {
+    "clientId": "a094e819-3ef3-422c-81bf-a551b0e8680b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE802B",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 802B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD062U",
+   "data": {
+    "clientId": "cd3c8e21-de57-44af-b2f3-c94d9776be35",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD062U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 062U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-07",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-04",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG368N",
+   "data": {
+    "clientId": "c00bb5af-e63a-4f1f-b22e-c152373e0b12",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG368N",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 368N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-13",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE162A",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE162A",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 162A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG407P",
+   "data": {
+    "clientId": "7ec75839-23b0-4e70-8f92-b15f72b042e8",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG407P",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 407P",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-09",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-05",
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG384N",
+   "data": {
+    "clientId": "68d2c73e-9b70-4ca0-a9b8-30a33d71cbcb",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG384N",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 384N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-14",
+    "visitCount": 10,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-13",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG364B",
+   "data": {
+    "clientId": "d8c0eb58-8f04-4a36-a9e7-a7a2d56a3a51",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG364B",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 364B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-06",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF893C",
+   "data": {
+    "clientId": "b7b3d61a-ca29-478f-9d48-a7abb1a2696a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF893C",
+    "year": "",
+    "model": "VIRTUS",
+    "plate": "RAF 893C",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAE845U",
+   "data": {
+    "clientId": "88b62cd5-0fc6-40e9-aaa0-c32db3ab8785",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE845U",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 845U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-15",
+    "visitCount": 9,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-11",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE351U",
+   "data": {
+    "clientId": "a8d97ad5-9abd-4fcd-af09-c29564a4207a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE351U",
+    "year": "",
+    "model": "V",
+    "plate": "RAE 351U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD331Z",
+   "data": {
+    "clientId": "2661d5b6-1bc5-4a5d-a5df-4be37b6cf84b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD331Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 331Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-13",
+    "visitCount": 9,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-12",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG393C",
+   "data": {
+    "clientId": "57f1e791-9e88-4c62-a34d-953f637d2f06",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG393C",
+    "year": "",
+    "model": "V",
+    "plate": "RAG 393C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG442H",
+   "data": {
+    "clientId": "1604951a-9b14-468d-9b64-f5a5eb4c9457",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG442H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 442H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF659B",
+   "data": {
+    "clientId": "7c1065cd-6b3a-4f5e-a150-655377cefecd",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF659B",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 659B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-07",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG449E",
+   "data": {
+    "clientId": "cf726693-b826-4ea0-905c-8241b254bef6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG449E",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 449E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-14",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-03",
+     "2026-09-06",
+     "2026-09-08",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE954U",
+   "data": {
+    "clientId": "8f7cefb2-a790-444c-a82f-5b6eda4c38e3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE954U",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 954U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-15",
+    "visitCount": 8,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-11",
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG246I",
+   "data": {
+    "clientId": "70df0f33-5953-4470-89ca-04f4933efa42",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG246I",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 246I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF866U",
+   "data": {
+    "clientId": "05ab0bf5-614c-4f70-87b6-19a8a98f42d4",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF866U",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAF 866U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-09",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-07",
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG249I",
+   "data": {
+    "clientId": "ec624763-525b-41d6-9fca-b2ff23dd6fde",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG249I",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 249I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE874C",
+   "data": {
+    "clientId": "a216bfc2-2d20-40b5-8a54-8895e6817264",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE874C",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 874C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG361B",
+   "data": {
+    "clientId": "2cde4ccb-bc10-442e-9b94-6e204c4ddb7f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG361B",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 361B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG083A",
+   "data": {
+    "clientId": "3dd15ec3-beed-452d-a829-185003b3620f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG083A",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 083A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-05",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG238I",
+   "data": {
+    "clientId": "d3c7a932-3bda-4a94-8f9c-7ddf58ec47f4",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG238I",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 238I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-15",
+    "visitCount": 9,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE785B",
+   "data": {
+    "clientId": "1402b520-dde8-49d0-bf32-d28f0386c6d1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE785B",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 785B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-15",
+    "visitCount": 9,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD273Z",
+   "data": {
+    "clientId": "7fcd3818-b469-4d7e-a0cf-85f12f1caa45",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD273Z",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAD 273Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-09",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ103B",
+   "data": {
+    "clientId": "3b275a2f-dbd0-4a5a-823a-69e976f1fa9e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ103B",
+    "year": "",
+    "model": "I.D.DAZZ",
+    "plate": "RAJ 103B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-13",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-06",
+     "2026-09-08",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ333E",
+   "data": {
+    "clientId": "fcdfedec-981c-4097-9a2c-a6368234771e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ333E",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAJ 333E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-15",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-05",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG445H",
+   "data": {
+    "clientId": "c567bac4-abe9-4f42-bf14-00e3075903f9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG445H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 445H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-06",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD368V",
+   "data": {
+    "clientId": "7775b55b-2521-4b24-8180-abca09b1eb80",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD368V",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 368V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-15",
+    "visitCount": 12,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD157Z",
+   "data": {
+    "clientId": "711dca0a-1d5d-4ad0-b75e-78e67ed34461",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD157Z",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAD 157Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE140S",
+   "data": {
+    "clientId": "37da022b-5685-4acf-968c-ba0221a35e43",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE140S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 140S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD275Z",
+   "data": {
+    "clientId": "e738b361-89b5-45e6-8d94-96c357c41c07",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD275Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 275Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE916B",
+   "data": {
+    "clientId": "4aef8d97-cf44-4260-a3c4-c9622e08cb0f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE916B",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 916B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-15",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-08",
+     "2026-09-10",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD078U",
+   "data": {
+    "clientId": "29ddc447-2edb-48ca-9d29-40d360ef820f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD078U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 078U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-15",
+    "visitCount": 9,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-12",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG247I",
+   "data": {
+    "clientId": "e82fd94d-d178-4d37-9a1c-47433822df2f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG247I",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 247I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD082S",
+   "data": {
+    "clientId": "721b042e-d6fb-4572-9c04-f31fa2874185",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD082S",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAD 082S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-09",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-08",
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE257D",
+   "data": {
+    "clientId": "91bb40e7-0841-4347-8c88-8ba6baba4121",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE257D",
+    "year": "",
+    "model": "Karavelle",
+    "plate": "RAE 257D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG870G",
+   "data": {
+    "clientId": "8e80cbdb-3daa-4d99-a8d9-c472c53f89ed",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG870G",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 870G",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-14",
+    "visitCount": 8,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-08",
+     "2026-09-11",
+     "2026-09-13",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAA106Z",
+   "data": {
+    "clientId": "d0414e76-7919-498c-b58b-1b12554f9e43",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAA106Z",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAA 106Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG243I",
+   "data": {
+    "clientId": "52e51d0c-a0ce-4a18-9819-932ae595dc10",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG243I",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 243I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-15",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-09",
+     "2026-09-12",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE160A",
+   "data": {
+    "clientId": "e738b361-89b5-45e6-8d94-96c357c41c07",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE160A",
+    "year": "",
+    "model": "Tiguan",
+    "plate": "RAE 160A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-08",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-04",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE649K",
+   "data": {
+    "clientId": "a3c5f375-ca0a-4c3a-aece-c4c4e059b0c5",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE649K",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAE 649K",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-08",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK348I",
+   "data": {
+    "clientId": "94518708-e7bb-441b-8b0c-21928a67150e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK348I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAK 348I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-12",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-09",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE799B",
+   "data": {
+    "clientId": "e738b361-89b5-45e6-8d94-96c357c41c07",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE799B",
+    "year": "",
+    "model": "Tiguan",
+    "plate": "RAE 799B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE745C",
+   "data": {
+    "clientId": "e738b361-89b5-45e6-8d94-96c357c41c07",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE745C",
+    "year": "",
+    "model": "Tiguan",
+    "plate": "RAE 745C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-08",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-05",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE844U",
+   "data": {
+    "clientId": "c00bb5af-e63a-4f1f-b22e-c152373e0b12",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE844U",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 844U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-14",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-07",
+     "2026-09-11",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE739C",
+   "data": {
+    "clientId": "e738b361-89b5-45e6-8d94-96c357c41c07",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE739C",
+    "year": "",
+    "model": "Tiguan",
+    "plate": "RAE 739C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG953C",
+   "data": {
+    "clientId": "ca93c832-4f95-4163-83eb-7aaf521249e9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG953C",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAG 953C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG244I",
+   "data": {
+    "clientId": "59f61273-f1e5-4e97-95e6-55580af29769",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG244I",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 244I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-06",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE345U",
+   "data": {
+    "clientId": "88b62cd5-0fc6-40e9-aaa0-c32db3ab8785",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE345U",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 345U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-01",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-01"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE494C",
+   "data": {
+    "clientId": "a3eacd2b-2663-473d-8623-4effaa0bf9a6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE494C",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 494C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-07",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE078R",
+   "data": {
+    "clientId": "f0f253e6-88fc-4eed-9ed6-05ee0a0d40a6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE078R",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 078R",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-11",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-04",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK260H",
+   "data": {
+    "clientId": "867e96bf-a0af-46be-99b6-42d0ed352458",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK260H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAK 260H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-01",
+    "lastVisit": "2026-09-07",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-01",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD339Z",
+   "data": {
+    "clientId": "5d49b371-0ebc-4b5d-8c73-8a2d40c063ad",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD339Z",
+    "year": "",
+    "model": "Touareg",
+    "plate": "RAD 339Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ976I",
+   "data": {
+    "clientId": "b942f313-a3ee-49ab-9bb5-dea5aab67f77",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ976I",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAJ 976I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-14",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG403P",
+   "data": {
+    "clientId": "ac62a9b5-a0b0-445f-a5e6-e7884882372a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG403P",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 403P",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-15",
+    "visitCount": 7,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG340N",
+   "data": {
+    "clientId": "58ab5036-2015-45ee-9127-f1d8288aed92",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG340N",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 340N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-11",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE839U",
+   "data": {
+    "clientId": "ff5ce3ab-7e68-4879-8d12-91a97577ec97",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE839U",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 839U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-07",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE502C",
+   "data": {
+    "clientId": "731a7276-0612-4b6f-8922-72fb92ab8371",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE502C",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 502C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-13",
+    "visitCount": 9,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG443E",
+   "data": {
+    "clientId": "360b326f-77e2-437e-ad81-0626d1086e68",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG443E",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 443E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-05",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ989I",
+   "data": {
+    "clientId": "c00a4d02-04c4-4d91-97f9-fab55703f27b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ989I",
+    "year": "",
+    "model": "ID.4",
+    "plate": "RAJ 989I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-12",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-09",
+     "2026-09-11",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE078K",
+   "data": {
+    "clientId": "f0f253e6-88fc-4eed-9ed6-05ee0a0d40a6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE078K",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 078K",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG445E",
+   "data": {
+    "clientId": "e401818b-e873-4b37-8143-cb2a4a0d3391",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG445E",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 445E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG449H",
+   "data": {
+    "clientId": "1604951a-9b14-468d-9b64-f5a5eb4c9457",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG449H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 449H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG363D",
+   "data": {
+    "clientId": "f2fadc1d-d037-4237-87b4-6478deea91cf",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG363D",
+    "year": "",
+    "model": "Touareg",
+    "plate": "RAG 363D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-05",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD074U",
+   "data": {
+    "clientId": "408c363d-ff3e-4ed9-9bf7-5451d1d641bf",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD074U",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAD 074U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-05",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD064U",
+   "data": {
+    "clientId": "cd3c8e21-de57-44af-b2f3-c94d9776be35",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD064U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 064U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-03",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG231I",
+   "data": {
+    "clientId": "1a99afa0-0de6-47fb-984e-9484a8e4bff3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG231I",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 231I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-11",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG893C",
+   "data": {
+    "clientId": "57f1e791-9e88-4c62-a34d-953f637d2f06",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG893C",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 893C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-15",
+    "visitCount": 10,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-12",
+     "2026-09-13",
+     "2026-09-14",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE234F",
+   "data": {
+    "clientId": "8c6f5e54-a8cf-4577-a892-2449fe9f7fa7",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE234F",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 234F",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD334Z",
+   "data": {
+    "clientId": "92a7cf8d-de81-4b32-8cf9-9c607b7209a0",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD334Z",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAD 334Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-13",
+    "visitCount": 8,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-12",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD081S",
+   "data": {
+    "clientId": "396dd427-220a-463c-ba17-2f1234c4ca23",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD081S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 081S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-13",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-05",
+     "2026-09-11",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD111Z",
+   "data": {
+    "clientId": "aa288151-0110-4b0e-83bc-3768baa097e6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD111Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 111Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-15",
+    "visitCount": 9,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG256N",
+   "data": {
+    "clientId": "729a1ec5-3924-47a7-9181-bb48a2dca5a5",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG256N",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 256N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-11",
+    "visitCount": 7,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE486I",
+   "data": {
+    "clientId": "009a9ddc-972f-4ae9-b686-7f79276608d5",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE486I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 486I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE744C",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE744C",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 744C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE076R",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE076R",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 076R",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-11",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-05",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD239S",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD239S",
+    "year": "",
+    "model": "V",
+    "plate": "RAD 239S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE761S",
+   "data": {
+    "clientId": "82115a9f-b309-47f8-bacb-06aa09d08241",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE761S",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 761S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-10",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG441H",
+   "data": {
+    "clientId": "e82fd94d-d178-4d37-9a1c-47433822df2f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG441H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 441H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-11",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE630C",
+   "data": {
+    "clientId": "34a4e1c2-4611-46a1-8f89-94cf210f5e19",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE630C",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 630C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-07",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG771D",
+   "data": {
+    "clientId": "6d71da61-c23f-4891-b0a6-c377d885354c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG771D",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 771D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-15",
+    "visitCount": 9,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-06",
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-11",
+     "2026-09-13",
+     "2026-09-14",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD251S",
+   "data": {
+    "clientId": "45486843-b048-4ba9-a487-66a326a39a1f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD251S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 251S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-10",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-05",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK540J",
+   "data": {
+    "clientId": "528391cd-be62-44bc-a4e5-f08027f2d489",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK540J",
+    "year": "",
+    "model": "JETTA",
+    "plate": "RAK 540J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-08",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK788J",
+   "data": {
+    "clientId": "7a0eb936-279c-480b-82aa-af8e7df05e45",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK788J",
+    "year": "",
+    "model": "JETTA",
+    "plate": "RAK 788J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-08",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE478U",
+   "data": {
+    "clientId": "2dbe6f27-f13d-4c41-b68b-7389b24bb6a6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE478U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 478U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-15",
+    "visitCount": 10,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK602J",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK602J",
+    "year": "",
+    "model": "JETTA",
+    "plate": "RAK 602J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-08",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG346N",
+   "data": {
+    "clientId": "5784430b-7948-4431-938a-8012e478c4bd",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG346N",
+    "year": "",
+    "model": "Touareg",
+    "plate": "RAG 346N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-08",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-05",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK601J",
+   "data": {
+    "clientId": "a29db171-8234-4b71-8fe1-d420019bcba3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK601J",
+    "year": "",
+    "model": "JETTA",
+    "plate": "RAK 601J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-08",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-05",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK349I",
+   "data": {
+    "clientId": "d22b8251-74d9-4dba-b1f4-3e39373ce56f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK349I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAK 349I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-08",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD291Z",
+   "data": {
+    "clientId": "215ed744-463f-4e92-b661-621077ae929b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD291Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 291Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-10",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE226A",
+   "data": {
+    "clientId": "da354760-de60-450d-8c26-6c983dfb6a5b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE226A",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 226A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-14",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-12",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE934C",
+   "data": {
+    "clientId": "29a12c02-c9d1-4ce6-927e-5275dcc07282",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE934C",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 934C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-07",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG787A",
+   "data": {
+    "clientId": "e521f8f8-b169-458c-b1d4-3bad204ade85",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG787A",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 787A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-13",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-12",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD247S",
+   "data": {
+    "clientId": "a29db171-8234-4b71-8fe1-d420019bcba3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD247S",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAD 247S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-10",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ021J",
+   "data": {
+    "clientId": "474363ee-9b45-406b-a44b-d3fbccbd4732",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ021J",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAJ 021J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-15",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-09",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ009Y",
+   "data": {
+    "clientId": "dd10617a-7e0d-41a9-9afa-979cecc45c62",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ009Y",
+    "year": "",
+    "model": "ID.4",
+    "plate": "RAJ 009Y",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG882C",
+   "data": {
+    "clientId": "d67356a3-6d7d-4f9a-942a-94432d8dc6c4",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG882C",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAG 882C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE496J",
+   "data": {
+    "clientId": "1cc19a87-c6e9-4960-9716-8c59c39b53a9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE496J",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 496J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-07",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-02",
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD180Z",
+   "data": {
+    "clientId": "9fb7c1e7-af31-497d-a8b2-42c3debf200a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD180Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 180Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-02",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-02"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG384H",
+   "data": {
+    "clientId": "e738b361-89b5-45e6-8d94-96c357c41c07",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG384H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 384H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-03",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-03"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG990J",
+   "data": {
+    "clientId": "75e6fb06-4900-411a-9d6f-3954e3f15837",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG990J",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 990J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-03",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-03"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD120Z",
+   "data": {
+    "clientId": "9fb7c1e7-af31-497d-a8b2-42c3debf200a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD120Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 120Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-08",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG448E",
+   "data": {
+    "clientId": "e401818b-e873-4b37-8143-cb2a4a0d3391",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG448E",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 448E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-04",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-04"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE232A",
+   "data": {
+    "clientId": "c81f6b37-9946-4986-accf-9958391147a3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE232A",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 232A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-05",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE274C",
+   "data": {
+    "clientId": "c8f574ed-69f6-4812-a5ee-90739dcc4a89",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE274C",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 274C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-12",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE647S",
+   "data": {
+    "clientId": "947ce756-61b7-4189-a3c8-50a28c49f7dc",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE647S",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 647S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-11",
+    "visitCount": 7,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG139G",
+   "data": {
+    "clientId": "4d2ac5da-c234-427f-a0ef-3db72938944c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG139G",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 139G",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-03",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-03"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG351B",
+   "data": {
+    "clientId": "a8d97ad5-9abd-4fcd-af09-c29564a4207a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG351B",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 351B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-11",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-10",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE803B",
+   "data": {
+    "clientId": "387066eb-5451-4022-80b1-1b5200d7da5b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE803B",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 803B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-12",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-09",
+     "2026-09-11",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE679K",
+   "data": {
+    "clientId": "f5e3bc89-0c61-49a9-a21f-ba4a24018f3d",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE679K",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 679K",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-15",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-09",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF860U",
+   "data": {
+    "clientId": "009a9ddc-972f-4ae9-b686-7f79276608d5",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF860U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 860U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-03",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-03"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ106B",
+   "data": {
+    "clientId": "b24b9533-2bf4-4548-a9f6-9ab8aa5908b1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ106B",
+    "year": "",
+    "model": "ID-BUZZ",
+    "plate": "RAJ 106B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-09",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE501C",
+   "data": {
+    "clientId": "a5547938-13b8-4731-85db-601e8519f987",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE501C",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 501C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-08",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG353N",
+   "data": {
+    "clientId": "e738b361-89b5-45e6-8d94-96c357c41c07",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG353N",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 353N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-10",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF855U",
+   "data": {
+    "clientId": "ad87f555-2d9d-47f8-8a69-2bd588bd1d6e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF855U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 855U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-06",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG424V",
+   "data": {
+    "clientId": "eb7311c0-2a6c-4cb3-b117-a0ae8bcdf773",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG424V",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 424V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-03",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-03"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD106Z",
+   "data": {
+    "clientId": "37ce9536-4594-4366-a192-0c7a8a261b47",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD106Z",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAD 106Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-11",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ979I",
+   "data": {
+    "clientId": "0985e77d-6f06-49e8-83a0-1a53c8372347",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ979I",
+    "year": "",
+    "model": "ID BUZZ",
+    "plate": "RAJ 979I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-15",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD083S",
+   "data": {
+    "clientId": "a6bf1544-a316-4e5f-8303-39dfdf1d118e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD083S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 083S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-10",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-08",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF861U",
+   "data": {
+    "clientId": "2cde4ccb-bc10-442e-9b94-6e204c4ddb7f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF861U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 861U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-13",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE671K",
+   "data": {
+    "clientId": "0726e523-f437-4f80-896b-6e57f17f8162",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE671K",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 671K",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-03",
+    "lastVisit": "2026-09-14",
+    "visitCount": 7,
+    "visitDates": [
+     "2026-09-03",
+     "2026-09-04",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD293Z",
+   "data": {
+    "clientId": "2ea9e593-ae3b-40ba-8f27-87e0c325223f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD293Z",
+    "year": "",
+    "model": "T-CROSS",
+    "plate": "RAD 293Z",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAD274Z",
+   "data": {
+    "clientId": "3dd15ec3-beed-452d-a829-185003b3620f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD274Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 274Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-15",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ974I",
+   "data": {
+    "clientId": "3d0d5f1e-3cf7-400b-80d6-aaa6562537a8",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ974I",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAJ 974I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-13",
+    "visitCount": 7,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-11",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE222A",
+   "data": {
+    "clientId": "ca1da37f-4add-4125-aa21-477b093a151e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE222A",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 222A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-14",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-10",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF567X",
+   "data": {
+    "clientId": "568d1e16-058d-40b8-b0b9-26b1feaa5009",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF567X",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 567X",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-10",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-09",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG257N",
+   "data": {
+    "clientId": "bc476590-3264-44a1-9a7d-ff2fe072f32b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG257N",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 257N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-10",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF671D",
+   "data": {
+    "clientId": "d53c5f88-4746-441d-b25a-08bd6f33e113",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF671D",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 671D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-15",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG990I",
+   "data": {
+    "clientId": "75e6fb06-4900-411a-9d6f-3954e3f15837",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG990I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 990I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-14",
+    "visitCount": 8,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-11",
+     "2026-09-13",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE104S",
+   "data": {
+    "clientId": "37da022b-5685-4acf-968c-ba0221a35e43",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE104S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 104S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-08",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAP871U",
+   "data": {
+    "clientId": "470d0935-b300-476a-a6db-be7f8803ada6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAP871U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAP 871U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-04",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-04"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE765S",
+   "data": {
+    "clientId": "82115a9f-b309-47f8-bacb-06aa09d08241",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE765S",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 765S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-04",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-04"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE670D",
+   "data": {
+    "clientId": "a2f1e4fe-d8d1-44eb-8705-8757ce25bd84",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE670D",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 670D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-07",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG390N",
+   "data": {
+    "clientId": "e738b361-89b5-45e6-8d94-96c357c41c07",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG390N",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 390N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-04",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-04"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD424V",
+   "data": {
+    "clientId": "eb7311c0-2a6c-4cb3-b117-a0ae8bcdf773",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD424V",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 424V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-14",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-11",
+     "2026-09-13",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE953C",
+   "data": {
+    "clientId": "ca93c832-4f95-4163-83eb-7aaf521249e9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE953C",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 953C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-15",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE781S",
+   "data": {
+    "clientId": "4ac9608a-c8ca-4ae0-8372-d5cae3d8707c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE781S",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 781S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-15",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-08",
+     "2026-09-11",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK248H",
+   "data": {
+    "clientId": "3ce5301b-10b8-4202-8516-bc0cfbba95f2",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK248H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAK 248H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-15",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-08",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK251H",
+   "data": {
+    "clientId": "7775b55b-2521-4b24-8180-abca09b1eb80",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK251H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAK 251H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-05",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ983I",
+   "data": {
+    "clientId": "88b62cd5-0fc6-40e9-aaa0-c32db3ab8785",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ983I",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAJ 983I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-04",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-04"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG354B",
+   "data": {
+    "clientId": "3cf85dfb-e4ba-4e9b-a7a7-268afa5af496",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG354B",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 354B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-13",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK242K",
+   "data": {
+    "clientId": "4a05667a-8183-4f21-a752-64b499006b7f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK242K",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAK 242K",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-04",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-04"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD286Z",
+   "data": {
+    "clientId": "7abcd8e9-658c-4c61-b4f9-7fc0afb1b383",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD286Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 286Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-11",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD152L",
+   "data": {
+    "clientId": "faa7dec0-6485-4233-8873-8316fe71dea9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD152L",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAD 152L",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-04",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-04"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG246J",
+   "data": {
+    "clientId": "70df0f33-5953-4470-89ca-04f4933efa42",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG246J",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 246J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-04",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-04"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF669D",
+   "data": {
+    "clientId": "528391cd-be62-44bc-a4e5-f08027f2d489",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF669D",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAF 669D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-04",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-04"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK252H",
+   "data": {
+    "clientId": "b8758dc4-78fb-461a-831b-f908fe80104a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK252H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAK 252H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-15",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-12",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE124S",
+   "data": {
+    "clientId": "673c4a79-05e3-4bdb-aa6f-a4fc09a2acaf",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE124S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 124S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-13",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-09",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE762S",
+   "data": {
+    "clientId": "472ea367-4ee3-4503-9856-c57498cfdf4e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE762S",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 762S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-13",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE234A",
+   "data": {
+    "clientId": "8c6f5e54-a8cf-4577-a892-2449fe9f7fa7",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE234A",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 234A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-15",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE676K",
+   "data": {
+    "clientId": "18ac7ddb-9aba-4b59-b100-79b813bc816a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE676K",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 676K",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-10",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD238S",
+   "data": {
+    "clientId": "8c26fd90-9edc-4ac1-8144-2aa769209f1c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD238S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 238S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-06",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD287Z",
+   "data": {
+    "clientId": "d9877552-1758-4bb1-91df-ec06e2ea6b16",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD287Z",
+    "year": "",
+    "model": "T-CROSS",
+    "plate": "RAD 287Z",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAG441E",
+   "data": {
+    "clientId": "9bb8c9d6-7911-42ce-a089-f4f77adb583f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG441E",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 441E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-14",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-12",
+     "2026-09-13",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD328Z",
+   "data": {
+    "clientId": "4c011648-76f9-4852-9e52-add4cb1a2d77",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD328Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 328Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-13",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD103Z",
+   "data": {
+    "clientId": "ea4f3457-65ee-4f64-adef-0ab730d1275e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD103Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 103Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-13",
+    "visitCount": 8,
+    "visitDates": [
+     "2026-09-04",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE743C",
+   "data": {
+    "clientId": "8994db94-3fd1-4dda-93e6-dafad7045291",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE743C",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 743C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-13",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD385V",
+   "data": {
+    "clientId": "f61e9f45-af91-4efe-822e-e28404281b63",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD385V",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 385V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAA274Z",
+   "data": {
+    "clientId": "3dd15ec3-beed-452d-a829-185003b3620f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAA274Z",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAA 274Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD243Z",
+   "data": {
+    "clientId": "9fb7c1e7-af31-497d-a8b2-42c3debf200a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD243Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 243Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD109Z",
+   "data": {
+    "clientId": "d754cd47-3771-450b-8978-0959c05c1777",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD109Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 109Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-07",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK349J",
+   "data": {
+    "clientId": "eeb52c3f-5c8c-45d3-ba0f-d46b4b2ab569",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK349J",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAK 349J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG348N",
+   "data": {
+    "clientId": "ec99c2f5-5bba-4eaa-9b37-bf7aeca16fa0",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG348N",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAG 348N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-11",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG254N",
+   "data": {
+    "clientId": "a3eacd2b-2663-473d-8623-4effaa0bf9a6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG254N",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 254N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-14",
+    "visitCount": 8,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-12",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG661K",
+   "data": {
+    "clientId": "6aca009c-9f63-4077-84a2-9917ebd39d72",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG661K",
+    "year": "",
+    "model": "T-N",
+    "plate": "RAG 661K",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE224C",
+   "data": {
+    "clientId": "c8f574ed-69f6-4812-a5ee-90739dcc4a89",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE224C",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 224C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG482E",
+   "data": {
+    "clientId": "19b47479-dae4-4ac3-8d84-781728f95335",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG482E",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 482E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-15",
+    "visitCount": 8,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG232I",
+   "data": {
+    "clientId": "409bea4b-2980-4e4e-99af-d43cd0d2150e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG232I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 232I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-15",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-12",
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD158Z",
+   "data": {
+    "clientId": "5e6c6eee-db8b-475d-81df-246fd49a85c7",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD158Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 158Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-12",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE781B",
+   "data": {
+    "clientId": "519bbfea-aa28-48a5-be8a-e98d466b1110",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE781B",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 781B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-11",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF670D",
+   "data": {
+    "clientId": "a2f1e4fe-d8d1-44eb-8705-8757ce25bd84",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF670D",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAF 670D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-15",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG118G",
+   "data": {
+    "clientId": "7304cc68-2e9d-4214-bb7d-337b4cc8e54a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG118G",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 118G",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-11",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-08",
+     "2026-09-10",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG358N",
+   "data": {
+    "clientId": "89147811-070f-481a-af0c-2fe84bc64c1f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG358N",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 358N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-11",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE749C",
+   "data": {
+    "clientId": "528391cd-be62-44bc-a4e5-f08027f2d489",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE749C",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 749C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE165A",
+   "data": {
+    "clientId": "0181865c-4d3a-4629-85af-f560001ba9c5",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE165A",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 165A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE163A",
+   "data": {
+    "clientId": "3cb93b9f-e51a-40b8-88b8-616574380e99",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE163A",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 163A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-06",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG377N",
+   "data": {
+    "clientId": "1b1dfa4e-bb6a-4785-9a36-586082533702",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG377N",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 377N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-11",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE658B",
+   "data": {
+    "clientId": "b0a1806c-941e-4146-b727-e3fb86b9c453",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE658B",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAE 658B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD367V",
+   "data": {
+    "clientId": "bb4dd014-7977-456d-9bd7-ac170f8bb8c3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD367V",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 367V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-08",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD976X",
+   "data": {
+    "clientId": "b895537e-82c5-4b96-8721-807695a695b5",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD976X",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 976X",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD329Z",
+   "data": {
+    "clientId": "784db647-78fe-4892-a60f-2e888918fa54",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD329Z",
+    "year": "",
+    "model": "Touareg",
+    "plate": "RAD 329Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD981J",
+   "data": {
+    "clientId": "42eba83e-7735-45d1-a533-4c8a04e02a43",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD981J",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 981J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG362N",
+   "data": {
+    "clientId": "ebe33109-42d2-4666-b125-8ac8237adb9d",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG362N",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 362N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-11",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE227A",
+   "data": {
+    "clientId": "e1f172a9-cfda-4047-8a53-43c9772532cd",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE227A",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 227A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-05",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-05"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD209S",
+   "data": {
+    "clientId": "7cfb65e2-cbaf-46ee-8147-b7cbd7fe5394",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD209S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 209S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-12",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-05",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD277S",
+   "data": {
+    "clientId": "02840307-3e9b-4c31-a2e5-3e07bcbba45c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD277S",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAD 277S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG386N",
+   "data": {
+    "clientId": "c00bb5af-e63a-4f1f-b22e-c152373e0b12",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG386N",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 386N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE892C",
+   "data": {
+    "clientId": "16a97fe7-d522-4cec-ae23-04b759f91352",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE892C",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAE 892C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-12",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-06",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK788I",
+   "data": {
+    "clientId": "04db55e1-5e97-4f63-b2ce-780dbb599ad9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK788I",
+    "year": "",
+    "model": "JETTA",
+    "plate": "RAK 788I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE804B",
+   "data": {
+    "clientId": "f2787a6a-9eea-48b2-965a-1354c0a10063",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE804B",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 804B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-09",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-06",
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ974J",
+   "data": {
+    "clientId": "731a7276-0612-4b6f-8922-72fb92ab8371",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ974J",
+    "year": "",
+    "model": "ID.4",
+    "plate": "RAJ 974J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG367M",
+   "data": {
+    "clientId": "520a2ab4-b906-4316-9fb8-4dc4ac219df9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG367M",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 367M",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG367H",
+   "data": {
+    "clientId": "9bdcb591-c290-4bfe-bdf3-ffd0599a968d",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG367H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 367H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG273Z",
+   "data": {
+    "clientId": "1604951a-9b14-468d-9b64-f5a5eb4c9457",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG273Z",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 273Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG785B",
+   "data": {
+    "clientId": "1402b520-dde8-49d0-bf32-d28f0386c6d1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG785B",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 785B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE166A",
+   "data": {
+    "clientId": "a5547938-13b8-4731-85db-601e8519f987",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE166A",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 166A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD076U",
+   "data": {
+    "clientId": "b0931185-d2fb-42c9-8b0e-e2b57d9e1c80",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD076U",
+    "year": "",
+    "model": "CARAVELLE",
+    "plate": "RAD 076U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD208S",
+   "data": {
+    "clientId": "7cfb65e2-cbaf-46ee-8147-b7cbd7fe5394",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD208S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 208S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE738C",
+   "data": {
+    "clientId": "8e93536d-360b-4476-902f-7e8356ffc8ba",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE738C",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 738C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG361N",
+   "data": {
+    "clientId": "1ca338bb-3b4b-42f7-b79d-6f2873a65245",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG361N",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 361N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-11",
+    "visitCount": 8,
+    "visitDates": [
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE956D",
+   "data": {
+    "clientId": "ac283257-e113-4a5e-80ca-f6dfdd727e99",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE956D",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 956D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-10",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-06",
+     "2026-09-07",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF583X",
+   "data": {
+    "clientId": "b45ed154-233c-4d6a-baa1-ace1e58fec06",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF583X",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 583X",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-15",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-06",
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF570X",
+   "data": {
+    "clientId": "0cb9f0c1-da35-4f34-bf6d-31934d0f3722",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF570X",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 570X",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-11",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-06",
+     "2026-09-09",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG408D",
+   "data": {
+    "clientId": "21ee5a4d-953e-44a4-bf41-8aba63eda449",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG408D",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 408D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-06",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-06"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ929I",
+   "data": {
+    "clientId": "dc7aba73-d6ed-42b2-a582-96e9c2df72be",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ929I",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAJ 929I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-15",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-06",
+     "2026-09-09",
+     "2026-09-11",
+     "2026-09-14",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD211S",
+   "data": {
+    "clientId": "6b2a1d6d-5ad3-4785-98c1-5c5077c9e8b3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD211S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 211S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-07",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-06",
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG363N",
+   "data": {
+    "clientId": "6e1e47e9-cad4-4b2b-a0ea-ccb2bcb368d7",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG363N",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAG 363N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-06",
+    "lastVisit": "2026-09-14",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-06",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK345I",
+   "data": {
+    "clientId": "c00bb5af-e63a-4f1f-b22e-c152373e0b12",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK345I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAK 345I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-12",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD112Z",
+   "data": {
+    "clientId": "0181865c-4d3a-4629-85af-f560001ba9c5",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD112Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 112Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-13",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG236S",
+   "data": {
+    "clientId": "ef00beea-a6cf-49ef-ad40-4755a2d511c2",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG236S",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 236S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-07",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ771C",
+   "data": {
+    "clientId": "8994db94-3fd1-4dda-93e6-dafad7045291",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ771C",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAJ 771C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-11",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD389V",
+   "data": {
+    "clientId": "f2fadc1d-d037-4237-87b4-6478deea91cf",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD389V",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 389V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-15",
+    "visitCount": 6,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG337N",
+   "data": {
+    "clientId": "cbe04e2a-c6c2-4e2e-bdae-69db95e7e5ae",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG337N",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 337N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-11",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG240I",
+   "data": {
+    "clientId": "5c121983-8581-4e99-abbd-169566011c8c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG240I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 240I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-13",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG243J",
+   "data": {
+    "clientId": "52e51d0c-a0ce-4a18-9819-932ae595dc10",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG243J",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 243J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-07",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE836J",
+   "data": {
+    "clientId": "ff2ca395-e842-49e0-90b7-58917d4e72ad",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE836J",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 836J",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-07",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG872G",
+   "data": {
+    "clientId": "ad1e2c4b-0340-4210-ab6f-95ec9e0e2416",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG872G",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 872G",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-10",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD973X",
+   "data": {
+    "clientId": "d0e35cf7-5af3-4fb1-9c5a-10ffaef65f22",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD973X",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 973X",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-10",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF871U",
+   "data": {
+    "clientId": "5da66f19-e887-4615-9add-212a81d0b91a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF871U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 871U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-13",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-09",
+     "2026-09-10",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD879V",
+   "data": {
+    "clientId": "32dd750a-3208-4d69-9265-643765ce0840",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD879V",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 879V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-13",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-08",
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE570X",
+   "data": {
+    "clientId": "0cb9f0c1-da35-4f34-bf6d-31934d0f3722",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE570X",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 570X",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-07",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG103Z",
+   "data": {
+    "clientId": "ea4f3457-65ee-4f64-adef-0ab730d1275e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG103Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 103Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-07",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG119G",
+   "data": {
+    "clientId": "8a207ff9-65c7-4225-a842-77855c3ead66",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG119G",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAG 119G",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-11",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE671D",
+   "data": {
+    "clientId": "2cde4ccb-bc10-442e-9b94-6e204c4ddb7f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE671D",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 671D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-07",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE628C",
+   "data": {
+    "clientId": "5f87f0f7-e839-4df6-a7bb-637119eaef36",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE628C",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 628C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-07",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-07"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK347I",
+   "data": {
+    "clientId": "475a5976-42c5-4cae-8fc5-e9246e662ebf",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK347I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAK 347I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-12",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE801B",
+   "data": {
+    "clientId": "475a5976-42c5-4cae-8fc5-e9246e662ebf",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE801B",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 801B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-07",
+    "lastVisit": "2026-09-11",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-07",
+     "2026-09-10",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG359N",
+   "data": {
+    "clientId": "22be6313-52a2-4f5e-b1a2-aa84326844c5",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG359N",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 359N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-08",
+    "lastVisit": "2026-09-10",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-08",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAB351B",
+   "data": {
+    "clientId": "a8d97ad5-9abd-4fcd-af09-c29564a4207a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAB351B",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAB 351B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-08",
+    "lastVisit": "2026-09-15",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-08",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG365N",
+   "data": {
+    "clientId": "520a2ab4-b906-4316-9fb8-4dc4ac219df9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG365N",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 365N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-08",
+    "lastVisit": "2026-09-15",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-08",
+     "2026-09-11",
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG357B",
+   "data": {
+    "clientId": "02840307-3e9b-4c31-a2e5-3e07bcbba45c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG357B",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 357B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-08",
+    "lastVisit": "2026-09-11",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-08",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG260N",
+   "data": {
+    "clientId": "3cb93b9f-e51a-40b8-88b8-616574380e99",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG260N",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 260N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-08",
+    "lastVisit": "2026-09-13",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-12",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD069U",
+   "data": {
+    "clientId": "6bff6a85-90cf-48c5-8c39-cba3642e9fc3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD069U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 069U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-08",
+    "lastVisit": "2026-09-15",
+    "visitCount": 5,
+    "visitDates": [
+     "2026-09-08",
+     "2026-09-11",
+     "2026-09-13",
+     "2026-09-14",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE836U",
+   "data": {
+    "clientId": "ff2ca395-e842-49e0-90b7-58917d4e72ad",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE836U",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 836U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-08",
+    "lastVisit": "2026-09-10",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-08",
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAI929I",
+   "data": {
+    "clientId": "dc7aba73-d6ed-42b2-a582-96e9c2df72be",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAI929I",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAI 929I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-08",
+    "lastVisit": "2026-09-08",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-08"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD236S",
+   "data": {
+    "clientId": "ef00beea-a6cf-49ef-ad40-4755a2d511c2",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD236S",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAD 236S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-08",
+    "lastVisit": "2026-09-15",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-08",
+     "2026-09-09",
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF839Z",
+   "data": {
+    "clientId": "6dc3ce00-f77d-4e11-9b99-d89ac48a0c2c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF839Z",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAF 839Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-09",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ171C",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ171C",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAJ 171C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-09",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD365V",
+   "data": {
+    "clientId": "e401818b-e873-4b37-8143-cb2a4a0d3391",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD365V",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAD 365V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-09",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD981T",
+   "data": {
+    "clientId": "42eba83e-7735-45d1-a533-4c8a04e02a43",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD981T",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 981T",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-15",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-09",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE353C",
+   "data": {
+    "clientId": "ca93c832-4f95-4163-83eb-7aaf521249e9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE353C",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 353C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-09",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG232Z",
+   "data": {
+    "clientId": "409bea4b-2980-4e4e-99af-d43cd0d2150e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG232Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 232Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-09",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAI986I",
+   "data": {
+    "clientId": "9fd27f4c-2789-414a-97ad-cf8394df4608",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAI986I",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAI 986I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-09",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF856U",
+   "data": {
+    "clientId": "aa288151-0110-4b0e-83bc-3768baa097e6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF856U",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAF 856U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-12",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-09",
+     "2026-09-11",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAI103B",
+   "data": {
+    "clientId": "3b275a2f-dbd0-4a5a-823a-69e976f1fa9e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAI103B",
+    "year": "",
+    "model": "ID-BUZZ",
+    "plate": "RAI 103B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-09",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD071U",
+   "data": {
+    "clientId": "10ee0e7d-77fd-4414-9197-358ec983c11f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD071U",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAD 071U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-13",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-09",
+     "2026-09-12",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG078R",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG078R",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 078R",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-09",
+    "lastVisit": "2026-09-09",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-09"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD521W",
+   "data": {
+    "clientId": "6bf7a6e4-b25d-4220-a338-5d0fd87b63e9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD521W",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 521W",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-12",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-10",
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG349N",
+   "data": {
+    "clientId": "c457d9c4-b609-4392-b0fc-4069189d669b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG349N",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 349N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAI104S",
+   "data": {
+    "clientId": "16e37064-e8eb-4187-93d1-748628cb054e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAI104S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAI 104S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ924I",
+   "data": {
+    "clientId": "dc7aba73-d6ed-42b2-a582-96e9c2df72be",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ924I",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAJ 924I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG250I",
+   "data": {
+    "clientId": "4ee72d79-15c6-4a1f-aca0-7931939a22f7",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG250I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 250I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG442E",
+   "data": {
+    "clientId": "cf726693-b826-4ea0-905c-8241b254bef6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG442E",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 442E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD110Z",
+   "data": {
+    "clientId": "0e0fad93-f1ee-44f0-b275-f87117aaebc2",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD110Z",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAD 110Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG228F",
+   "data": {
+    "clientId": "9fb7c1e7-af31-497d-a8b2-42c3debf200a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG228F",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 228F",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAI583X",
+   "data": {
+    "clientId": "b45ed154-233c-4d6a-baa1-ace1e58fec06",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAI583X",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAI 583X",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ258C",
+   "data": {
+    "clientId": "095c7a05-1414-4431-a504-64e5f22178f3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ258C",
+    "year": "",
+    "model": "ID-BUZZ",
+    "plate": "RAJ 258C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ975I",
+   "data": {
+    "clientId": "97f14e4c-1ba6-463a-ac5f-f725e8329812",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ975I",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAJ 975I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE305C",
+   "data": {
+    "clientId": "1a99afa0-0de6-47fb-984e-9484a8e4bff3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE305C",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 305C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-11",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-10",
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD246S",
+   "data": {
+    "clientId": "8295e920-e2a5-49d5-a4c4-df08f81728b4",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD246S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 246S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE172A",
+   "data": {
+    "clientId": "10ee0e7d-77fd-4414-9197-358ec983c11f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE172A",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 172A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-10",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-10"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG362B",
+   "data": {
+    "clientId": "d1a9433e-0288-4e26-877e-f99fd7576e2c",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG362B",
+    "year": "",
+    "model": "VIRTUS",
+    "plate": "RAG 362B",
+    "make": "",
+    "mileage": ""
+   }
+  },
+  {
+   "id": "v_RAE631C",
+   "data": {
+    "clientId": "342ddf4d-7c97-4630-af7d-aac7825f0ab7",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE631C",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 631C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-10",
+    "lastVisit": "2026-09-13",
+    "visitCount": 3,
+    "visitDates": [
+     "2026-09-10",
+     "2026-09-11",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD216S",
+   "data": {
+    "clientId": "a9c76c1c-f314-4d26-a890-b28e3d4ded89",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD216S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 216S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF893E",
+   "data": {
+    "clientId": "b7b3d61a-ca29-478f-9d48-a7abb1a2696a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF893E",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAF 893E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF029C",
+   "data": {
+    "clientId": "3c90c304-7694-4d5d-a587-a68baae75a12",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF029C",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAF 029C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG228I",
+   "data": {
+    "clientId": "9fb7c1e7-af31-497d-a8b2-42c3debf200a",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG228I",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 228I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-15",
+    "visitCount": 4,
+    "visitDates": [
+     "2026-09-11",
+     "2026-09-12",
+     "2026-09-14",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF585X",
+   "data": {
+    "clientId": "9067dfeb-687e-40c7-8839-ac0daf2105d8",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF585X",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAF 585X",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG261N",
+   "data": {
+    "clientId": "3cb93b9f-e51a-40b8-88b8-616574380e99",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG261N",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 261N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD087S",
+   "data": {
+    "clientId": "9c077c7a-c5f7-47b2-82ce-f31dfe5981cd",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD087S",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAD 087S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF030C",
+   "data": {
+    "clientId": "b3d8af8a-bb80-401c-b19a-99bf5626ceb9",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF030C",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAF 030C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG679K",
+   "data": {
+    "clientId": "829c489c-0713-4af3-8480-b9c961be763d",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG679K",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 679K",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ930I",
+   "data": {
+    "clientId": "dc0a6939-1f26-4b3c-998f-df0721de8892",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ930I",
+    "year": "",
+    "model": "ID-4",
+    "plate": "RAJ 930I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE231A",
+   "data": {
+    "clientId": "97f14e4c-1ba6-463a-ac5f-f725e8329812",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE231A",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 231A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-15",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-11",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK341I",
+   "data": {
+    "clientId": "94518708-e7bb-441b-8b0c-21928a67150e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK341I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAK 341I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE157Z",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE157Z",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 157Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAF892C",
+   "data": {
+    "clientId": "2210c8a6-1098-4e66-8dcb-11ca39afc4ed",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAF892C",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAF 892C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-11"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK245H",
+   "data": {
+    "clientId": "be3d6930-f78e-4d05-b0a2-423d72e15909",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK245H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAK 245H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG238T",
+   "data": {
+    "clientId": "d3c7a932-3bda-4a94-8f9c-7ddf58ec47f4",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG238T",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 238T",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAS978I",
+   "data": {
+    "clientId": "731a7276-0612-4b6f-8922-72fb92ab8371",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAS978I",
+    "year": "",
+    "model": "IDV",
+    "plate": "RAS 978I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG342D",
+   "data": {
+    "clientId": "c457d9c4-b609-4392-b0fc-4069189d669b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG342D",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 342D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD154Z",
+   "data": {
+    "clientId": "d13bc2d4-e65d-4d6c-ac39-1d3399974c31",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD154Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 154Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE249I",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE249I",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 249I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE361C",
+   "data": {
+    "clientId": "9582e16e-fe07-4c45-ade5-13c652bc0410",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE361C",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 361C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAR246H",
+   "data": {
+    "clientId": "97f14e4c-1ba6-463a-ac5f-f725e8329812",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAR246H",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAR 246H",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE984B",
+   "data": {
+    "clientId": "e738b361-89b5-45e6-8d94-96c357c41c07",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE984B",
+    "year": "",
+    "model": "CARAVELLE",
+    "plate": "RAE 984B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD335S",
+   "data": {
+    "clientId": "3e2063b8-5adf-4178-8cbf-d27b2d803650",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD335S",
+    "year": "",
+    "model": "CARAVELLE",
+    "plate": "RAD 335S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE957D",
+   "data": {
+    "clientId": "03caa626-170d-4843-a7d1-bb78823ff8d2",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE957D",
+    "year": "",
+    "model": "CARAVELLE",
+    "plate": "RAE 957D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ240C",
+   "data": {
+    "clientId": "26d27d1a-5201-4cc4-8ecd-ee61dfd6b9bc",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ240C",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAJ 240C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-12",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-12"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG117G",
+   "data": {
+    "clientId": "c00bb5af-e63a-4f1f-b22e-c152373e0b12",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG117G",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAG 117G",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-12",
+    "lastVisit": "2026-09-13",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-12",
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD075U",
+   "data": {
+    "clientId": "c4640a1c-1a69-4efe-a40a-7c6cc1391601",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD075U",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAD 075U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-13",
+    "lastVisit": "2026-09-13",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD323Z",
+   "data": {
+    "clientId": "2cde4ccb-bc10-442e-9b94-6e204c4ddb7f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD323Z",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAD 323Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-13",
+    "lastVisit": "2026-09-14",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-13",
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE256D",
+   "data": {
+    "clientId": "5b5d8786-3279-4f31-b8cb-ed38f7b3bfb7",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE256D",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAE 256D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-13",
+    "lastVisit": "2026-09-15",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-13",
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD398V",
+   "data": {
+    "clientId": "f2fadc1d-d037-4237-87b4-6478deea91cf",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD398V",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 398V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-13",
+    "lastVisit": "2026-09-13",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG367V",
+   "data": {
+    "clientId": "bb4dd014-7977-456d-9bd7-ac170f8bb8c3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG367V",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 367V",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-13",
+    "lastVisit": "2026-09-13",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD348I",
+   "data": {
+    "clientId": "94518708-e7bb-441b-8b0c-21928a67150e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD348I",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 348I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-13",
+    "lastVisit": "2026-09-13",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD151R",
+   "data": {
+    "clientId": "0c323cc4-bb19-446c-a9c3-3b9b4f43a4f4",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD151R",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 151R",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-13",
+    "lastVisit": "2026-09-13",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD672K",
+   "data": {
+    "clientId": "5d49b371-0ebc-4b5d-8c73-8a2d40c063ad",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD672K",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 672K",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-13",
+    "lastVisit": "2026-09-13",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-13"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD067U",
+   "data": {
+    "clientId": "8994db94-3fd1-4dda-93e6-dafad7045291",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD067U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 067U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 2,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAY082S",
+   "data": {
+    "clientId": "2b09eb4a-13c5-4626-a13b-4132cc685a22",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAY082S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAY 082S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD503Z",
+   "data": {
+    "clientId": "ea4f3457-65ee-4f64-adef-0ab730d1275e",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD503Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 503Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD287S",
+   "data": {
+    "clientId": "aac5fd77-f4dd-4095-a569-66a079af50f6",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD287S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 287S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ671D",
+   "data": {
+    "clientId": "d53c5f88-4746-441d-b25a-08bd6f33e113",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ671D",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAJ 671D",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RZD111Z",
+   "data": {
+    "clientId": "25e79b50-1750-4360-a347-61a8d5e91c00",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RZD111Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RZD 111Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG331Z",
+   "data": {
+    "clientId": "cbe04e2a-c6c2-4e2e-bdae-69db95e7e5ae",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG331Z",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 331Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE805B",
+   "data": {
+    "clientId": "731a7276-0612-4b6f-8922-72fb92ab8371",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE805B",
+    "year": "",
+    "model": "TIGUAN",
+    "plate": "RAE 805B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAK348U",
+   "data": {
+    "clientId": "9f05eb45-0cdd-40a5-97c5-61f0c3629f4b",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAK348U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAK 348U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ013I",
+   "data": {
+    "clientId": "13b98722-25ba-4daa-9b90-60023dcbca78",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ013I",
+    "year": "",
+    "model": "ID BUZZ",
+    "plate": "RAJ 013I",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE483C",
+   "data": {
+    "clientId": "88b62cd5-0fc6-40e9-aaa0-c32db3ab8785",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE483C",
+    "year": "",
+    "model": "e-Golf",
+    "plate": "RAE 483C",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE298A",
+   "data": {
+    "clientId": "1d08d636-0228-48e5-8098-ef96fde13214",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE298A",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAE 298A",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-14",
+    "lastVisit": "2026-09-14",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-14"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG265N",
+   "data": {
+    "clientId": "729a1ec5-3924-47a7-9181-bb48a2dca5a5",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG265N",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 265N",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG855U",
+   "data": {
+    "clientId": "abab3482-702d-4467-a4d1-cd3419aedc54",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG855U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 855U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD327Z",
+   "data": {
+    "clientId": "2cde4ccb-bc10-442e-9b94-6e204c4ddb7f",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD327Z",
+    "year": "",
+    "model": "Teramont",
+    "plate": "RAD 327Z",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ771S",
+   "data": {
+    "clientId": "6ee6a0d5-2883-44a7-9c61-0dfa4eef2abb",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ771S",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAJ 771S",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAJ866U",
+   "data": {
+    "clientId": "05ab0bf5-614c-4f70-87b6-19a8a98f42d4",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAJ866U",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAJ 866U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG482F",
+   "data": {
+    "clientId": "19b47479-dae4-4ac3-8d84-781728f95335",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG482F",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAG 482F",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAE203B",
+   "data": {
+    "clientId": "6eb915b6-864c-473e-b13b-e8f7d8386d92",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAE203B",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAE 203B",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAD367U",
+   "data": {
+    "clientId": "bb4dd014-7977-456d-9bd7-ac170f8bb8c3",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAD367U",
+    "year": "",
+    "model": "T-Cross",
+    "plate": "RAD 367U",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG361E",
+   "data": {
+    "clientId": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG361E",
+    "year": "",
+    "model": "Virtus",
+    "plate": "RAG 361E",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  },
+  {
+   "id": "v_RAG401P",
+   "data": {
+    "clientId": "8994db94-3fd1-4dda-93e6-dafad7045291",
+    "color": "",
+    "fuelType": "Petrol",
+    "plateKey": "RAG401P",
+    "year": "",
+    "model": "AMAROK",
+    "plate": "RAG 401P",
+    "make": "",
+    "mileage": "",
+    "firstVisit": "2026-09-15",
+    "lastVisit": "2026-09-15",
+    "visitCount": 1,
+    "visitDates": [
+     "2026-09-15"
+    ]
+   }
+  }
+ ],
+ "clients": [
+  {
+   "id": "eeb52c3f-5c8c-45d3-ba0f-d46b4b2ab569",
+   "data": {
+    "createdAt": "2026-09-21T12:17:48.444629100+00:00",
+    "issue": "",
+    "phone": "0788413342",
+    "vehiclePlate": "RAG 408P",
+    "name": "Micomyiza Innocent",
+    "vehicleModel": "Teramont",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789993078,
+     "_nanoseconds": 311000000
+    },
+    "vehicleIds": [
+     "v_RAG408P",
+     "v_RAK349J"
+    ]
+   }
+  },
+  {
+   "id": "662e5f97-4b93-47b9-98b4-325804fade51",
+   "data": {
+    "createdAt": "2026-09-21T12:18:49.719302500+00:00",
+    "issue": "",
+    "phone": "788463279788463279",
+    "vehiclePlate": "RAK 244H",
+    "name": "Nizigiyimana Patrick",
+    "vehicleModel": "Teramont",
+    "location": "Rental",
+    "source": "garage-desk",
+    "vehicleIds": [
+     "v_RAK244H"
+    ],
+    "syncedAt": {
+     "_seconds": 1789993145,
+     "_nanoseconds": 394000000
+    }
+   }
+  },
+  {
+   "id": "f20c7bd5-1aaf-4779-b106-718cf92b1c94",
+   "data": {
+    "createdAt": "2026-09-21T12:20:37.440928+00:00",
+    "issue": "",
+    "phone": "0788622238",
+    "vehiclePlate": "RAG 869G",
+    "name": "Glady;Marie Jeanne Uw",
+    "vehicleModel": "Teramont",
+    "location": "Rental",
+    "source": "garage-desk",
+    "vehicleIds": [
+     "v_RAG869G"
+    ],
+    "syncedAt": {
+     "_seconds": 1789993253,
+     "_nanoseconds": 231000000
+    }
+   }
+  },
+  {
+   "id": "e87b7c8e-f8f2-4f4d-840e-588a510e2b27",
+   "data": {
+    "createdAt": "2026-09-21T12:22:28.241418100+00:00",
+    "issue": "",
+    "phone": "0786988428",
+    "vehiclePlate": "RAG 363V",
+    "name": "Irambona Josue",
+    "vehicleModel": "Touareg",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789993361,
+     "_nanoseconds": 575000000
+    },
+    "vehicleIds": [
+     "v_RAG363V"
+    ]
+   }
+  },
+  {
+   "id": "076b6b73-e686-413c-aba7-e560e3c9f806",
+   "data": {
+    "createdAt": "2026-09-21T12:23:33.652897200+00:00",
+    "issue": "",
+    "phone": "0780522909",
+    "vehiclePlate": "RAG 367N",
+    "name": "Nsanzimana Emmanuel",
+    "vehicleModel": "Teramont",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789993423,
+     "_nanoseconds": 554000000
+    },
+    "vehicleIds": [
+     "v_RAG367N"
+    ]
+   }
+  },
+  {
+   "id": "4a05667a-8183-4f21-a752-64b499006b7f",
+   "data": {
+    "createdAt": "2026-09-21T12:25:04.641836700+00:00",
+    "issue": "",
+    "phone": "0785829525",
+    "vehiclePlate": "RAK 242H",
+    "name": "Ntwari Elisha",
+    "vehicleModel": "Teramont",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789993520,
+     "_nanoseconds": 854000000
+    },
+    "vehicleIds": [
+     "v_RAK242H",
+     "v_RAK242K"
+    ]
+   }
+  },
+  {
+   "id": "c344d408-81d6-4bc3-b48b-64826f1cf570",
+   "data": {
+    "createdAt": "2026-09-21T12:26:01.756680100+00:00",
+    "issue": "",
+    "phone": "0782989729",
+    "vehiclePlate": "RAG 353B",
+    "name": "Tuyishime Lionel Ganza",
+    "vehicleModel": "Touareg",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789993571,
+     "_nanoseconds": 652000000
+    },
+    "vehicleIds": [
+     "v_RAG353B"
+    ]
+   }
+  },
+  {
+   "id": "6aca009c-9f63-4077-84a2-9917ebd39d72",
+   "data": {
+    "createdAt": "2026-09-21T12:28:23.954607700+00:00",
+    "issue": "",
+    "phone": "0783069602",
+    "vehiclePlate": "RAE 661K",
+    "name": "Jaques Dukuze",
+    "vehicleModel": "Teramont",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789993719,
+     "_nanoseconds": 437000000
+    },
+    "vehicleIds": [
+     "v_RAE661K",
+     "v_RAG661K"
+    ]
+   }
+  },
+  {
+   "id": "63850802-0f74-44c4-8c79-7d96b566c310",
+   "data": {
+    "createdAt": "2026-09-21T12:30:14.449056300+00:00",
+    "issue": "",
+    "phone": "0787187941",
+    "vehiclePlate": "RAD 268Z",
+    "name": "Yvan Manzi",
+    "vehicleModel": "Teramont",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789993826,
+     "_nanoseconds": 411000000
+    },
+    "vehicleIds": [
+     "v_RAD268Z"
+    ]
+   }
+  },
+  {
+   "id": "cd3c8e21-de57-44af-b2f3-c94d9776be35",
+   "data": {
+    "createdAt": "2026-09-16T10:16:17.339+00:00",
+    "issue": "",
+    "phone": "0793224071",
+    "vehiclePlate": "RAD 111Z",
+    "name": "Fabiola  NDAYISABA",
+    "vehicleModel": "T-CROSS",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554391,
+     "_nanoseconds": 431000000
+    },
+    "vehicleIds": [
+     "v_RAD062U",
+     "v_RAD064U"
+    ]
+   }
+  },
+  {
+   "id": "0be12c6a-5e70-4622-a4ec-2dbc6765afb1",
+   "data": {
+    "createdAt": "2026-09-16T10:06:27.018537800+00:00",
+    "issue": "",
+    "phone": "0791516181",
+    "vehiclePlate": "RAE 164P",
+    "name": "Jabes NIYOMAHORO",
+    "vehicleModel": "T-CROSS",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554382,
+     "_nanoseconds": 129000000
+    },
+    "vehicleIds": [
+     "v_RAE164P",
+     "v_RAE162A",
+     "v_RAE744C",
+     "v_RAE076R",
+     "v_RAD239S",
+     "v_RAK602J",
+     "v_RAJ171C",
+     "v_RAG078R",
+     "v_RAE157Z",
+     "v_RAE249I",
+     "v_RAG361E"
+    ]
+   }
+  },
+  {
+   "id": "68d2c73e-9b70-4ca0-a9b8-30a33d71cbcb",
+   "data": {
+    "createdAt": "2026-09-16T10:21:46.502200900+00:00",
+    "issue": "",
+    "phone": "0786109851",
+    "vehiclePlate": "RAG 384N",
+    "name": "Blaise NSHIMIRIMANA",
+    "vehicleModel": "Virtus",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554395,
+     "_nanoseconds": 837000000
+    },
+    "vehicleIds": [
+     "v_RAG384N"
+    ]
+   }
+  },
+  {
+   "id": "b7b3d61a-ca29-478f-9d48-a7abb1a2696a",
+   "data": {
+    "createdAt": "2026-09-17T16:30:50.572705800+00:00",
+    "issue": "",
+    "phone": "0782441894",
+    "vehiclePlate": "RAF 893C",
+    "name": "EMMANUEL",
+    "vehicleModel": "VIRTUS",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789992951,
+     "_nanoseconds": 935000000
+    },
+    "vehicleIds": [
+     "v_RAF893C",
+     "v_RAF893E"
+    ]
+   }
+  },
+  {
+   "id": "88b62cd5-0fc6-40e9-aaa0-c32db3ab8785",
+   "data": {
+    "createdAt": "2026-09-16T10:23:38.415427200+00:00",
+    "issue": "",
+    "phone": "0784138909",
+    "vehiclePlate": "RAE 845U",
+    "name": "SHEMA HAMUZA",
+    "vehicleModel": "E-Golf",
+    "location": "Nyandungu",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554396,
+     "_nanoseconds": 222000000
+    },
+    "vehicleIds": [
+     "v_RAE845U",
+     "v_RAE345U",
+     "v_RAJ983I",
+     "v_RAE483C"
+    ]
+   }
+  },
+  {
+   "id": "a8d97ad5-9abd-4fcd-af09-c29564a4207a",
+   "data": {
+    "createdAt": "2026-09-17T16:05:08.800044700+00:00",
+    "issue": "",
+    "phone": "0782522693",
+    "vehiclePlate": "RAG 351B",
+    "name": "Adeline",
+    "vehicleModel": "virtus",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789661124,
+     "_nanoseconds": 256000000
+    },
+    "vehicleIds": [
+     "v_RAE351U",
+     "v_RAG351B",
+     "v_RAB351B"
+    ]
+   }
+  },
+  {
+   "id": "05ab0bf5-614c-4f70-87b6-19a8a98f42d4",
+   "data": {
+    "createdAt": "2026-09-17T16:22:52.707054700+00:00",
+    "issue": "",
+    "phone": "0781620944",
+    "vehiclePlate": "RAF 866U",
+    "name": "SHYIRAKERA ",
+    "vehicleModel": "V",
+    "location": "RDB",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789662181,
+     "_nanoseconds": 513000000
+    },
+    "vehicleIds": [
+     "v_RAF866U",
+     "v_RAJ866U"
+    ]
+   }
+  },
+  {
+   "id": "b942f313-a3ee-49ab-9bb5-dea5aab67f77",
+   "data": {
+    "createdAt": "2026-09-16T10:00:06.317420400+00:00",
+    "issue": "",
+    "phone": "0788487475",
+    "vehiclePlate": "RAJ 976I",
+    "name": "Jeanne MUREKATETE",
+    "vehicleModel": "ID-BUZZ",
+    "location": "BK",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554378,
+     "_nanoseconds": 57000000
+    },
+    "vehicleIds": [
+     "v_RAJ976I"
+    ]
+   }
+  },
+  {
+   "id": "ac62a9b5-a0b0-445f-a5e6-e7884882372a",
+   "data": {
+    "createdAt": "2026-09-16T10:08:02.956518500+00:00",
+    "issue": "",
+    "phone": "0788580425",
+    "vehiclePlate": "RAG 403P",
+    "name": "NDORIMANA Jean Pierre",
+    "vehicleModel": "T-CROSS",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554383,
+     "_nanoseconds": 31000000
+    },
+    "vehicleIds": [
+     "v_RAG403P"
+    ]
+   }
+  },
+  {
+   "id": "408c363d-ff3e-4ed9-9bf7-5451d1d641bf",
+   "data": {
+    "createdAt": "2026-09-02T00:00:00.000Z",
+    "firstVisit": "2026-09-02",
+    "lastVisit": "2026-09-05",
+    "issue": "",
+    "phone": "0783934240",
+    "vehiclePlate": "RAD 074U",
+    "name": "IYAKAREMYE Nelson",
+    "vehicleModel": "Teramont",
+    "location": "Rental",
+    "source": "excel-import",
+    "vehicleIds": [
+     "v_RAD074U"
+    ]
+   }
+  },
+  {
+   "id": "75e6fb06-4900-411a-9d6f-3954e3f15837",
+   "data": {
+    "createdAt": "2026-09-17T08:52:14.354679400+00:00",
+    "issue": "",
+    "phone": "788902721",
+    "vehiclePlate": "RAG990I",
+    "name": "Niyonsenga",
+    "vehicleModel": "T-CROSS",
+    "location": "RIDE",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789635144,
+     "_nanoseconds": 138000000
+    },
+    "vehicleIds": [
+     "v_RAG990J",
+     "v_RAG990I"
+    ]
+   }
+  },
+  {
+   "id": "c8f574ed-69f6-4812-a5ee-90739dcc4a89",
+   "data": {
+    "createdAt": "2026-09-16T10:20:22.650479500+00:00",
+    "issue": "",
+    "phone": "0788500820",
+    "vehiclePlate": "RAE 274C",
+    "name": "RUDAKORERWA Emmanuel",
+    "vehicleModel": "T-CROSS",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554395,
+     "_nanoseconds": 95000000
+    },
+    "vehicleIds": [
+     "v_RAE274C",
+     "v_RAE224C"
+    ]
+   }
+  },
+  {
+   "id": "2ea9e593-ae3b-40ba-8f27-87e0c325223f",
+   "data": {
+    "createdAt": "2026-09-17T16:26:17.283215100+00:00",
+    "issue": "",
+    "phone": "0784418642",
+    "vehiclePlate": "RAD 293Z",
+    "name": "MURWANASHYAKA  JMV",
+    "vehicleModel": "T-CROSS",
+    "location": "Recovery",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789992939,
+     "_nanoseconds": 938000000
+    },
+    "vehicleIds": [
+     "v_RAD293Z"
+    ]
+   }
+  },
+  {
+   "id": "d53c5f88-4746-441d-b25a-08bd6f33e113",
+   "data": {
+    "createdAt": "2026-09-17T16:20:02.210151+00:00",
+    "issue": "",
+    "phone": "0787187941",
+    "vehiclePlate": "RAF 671D",
+    "name": "MANZI Yvon ",
+    "vehicleModel": "T-CROSS",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789662015,
+     "_nanoseconds": 451000000
+    },
+    "vehicleIds": [
+     "v_RAF671D",
+     "v_RAJ671D"
+    ]
+   }
+  },
+  {
+   "id": "3cf85dfb-e4ba-4e9b-a7a7-268afa5af496",
+   "data": {
+    "createdAt": "2026-09-04T00:00:00.000Z",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-13",
+    "issue": "",
+    "phone": "0783695289",
+    "vehiclePlate": "RAG 354B",
+    "name": "SANGANA Olivier GITERA",
+    "vehicleModel": "T-Cross",
+    "location": "Ride",
+    "source": "excel-import",
+    "vehicleIds": [
+     "v_RAG354B"
+    ]
+   }
+  },
+  {
+   "id": "7abcd8e9-658c-4c61-b4f9-7fc0afb1b383",
+   "data": {
+    "createdAt": "2026-09-04T00:00:00.000Z",
+    "firstVisit": "2026-09-04",
+    "lastVisit": "2026-09-11",
+    "issue": "",
+    "phone": "0788559599",
+    "vehiclePlate": "RAD 286Z",
+    "name": "Gustave NIYONKURU",
+    "vehicleModel": "T-Cross",
+    "location": "Ride",
+    "source": "excel-import",
+    "vehicleIds": [
+     "v_RAD286Z"
+    ]
+   }
+  },
+  {
+   "id": "472ea367-4ee3-4503-9856-c57498cfdf4e",
+   "data": {
+    "createdAt": "2026-09-16T09:53:03.350033800+00:00",
+    "issue": "",
+    "phone": "0788502099",
+    "vehiclePlate": "RAE 762S",
+    "name": "NKURUNZIZA Vincent",
+    "vehicleModel": "E-Golf",
+    "location": "office",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554374,
+     "_nanoseconds": 596000000
+    },
+    "vehicleIds": [
+     "v_RAE762S"
+    ]
+   }
+  },
+  {
+   "id": "d9877552-1758-4bb1-91df-ec06e2ea6b16",
+   "data": {
+    "createdAt": "2026-09-16T10:14:03.137457100+00:00",
+    "issue": "",
+    "phone": "0788319401",
+    "vehiclePlate": "RAD 287Z",
+    "name": "MUHIRE Eric",
+    "vehicleModel": "T-CROSS",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554389,
+     "_nanoseconds": 218000000
+    },
+    "vehicleIds": [
+     "v_RAD287Z"
+    ]
+   }
+  },
+  {
+   "id": "ea4f3457-65ee-4f64-adef-0ab730d1275e",
+   "data": {
+    "createdAt": "2026-09-16T10:10:50.276853900+00:00",
+    "issue": "",
+    "phone": "0788875810",
+    "vehiclePlate": "RAD 103Z",
+    "name": "Dieudonne NDAGIJIMANA",
+    "vehicleModel": "T-CROSS",
+    "location": "RDB",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554385,
+     "_nanoseconds": 226000000
+    },
+    "vehicleIds": [
+     "v_RAD103Z",
+     "v_RAG103Z",
+     "v_RAD503Z"
+    ]
+   }
+  },
+  {
+   "id": "8994db94-3fd1-4dda-93e6-dafad7045291",
+   "data": {
+    "createdAt": "2026-09-16T09:56:18.612366100+00:00",
+    "issue": "",
+    "phone": "0780622238",
+    "vehiclePlate": "RAD 067U",
+    "name": "NGOMBWA Glady",
+    "vehicleModel": "T-CROSS",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554376,
+     "_nanoseconds": 162000000
+    },
+    "vehicleIds": [
+     "v_RAE743C",
+     "v_RAJ771C",
+     "v_RAD067U",
+     "v_RAG401P"
+    ]
+   }
+  },
+  {
+   "id": "d754cd47-3771-450b-8978-0959c05c1777",
+   "data": {
+    "createdAt": "2026-09-16T10:18:45.029672200+00:00",
+    "issue": "",
+    "phone": "0784309476",
+    "vehiclePlate": "RAE 231A",
+    "name": "UWERA Divina",
+    "vehicleModel": "T-CROSS",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554393,
+     "_nanoseconds": 813000000
+    },
+    "vehicleIds": [
+     "v_RAD109Z"
+    ]
+   }
+  },
+  {
+   "id": "19b47479-dae4-4ac3-8d84-781728f95335",
+   "data": {
+    "createdAt": "2026-09-17T16:13:49.530599100+00:00",
+    "issue": "",
+    "phone": "0788405797",
+    "vehiclePlate": "RAG 482E",
+    "name": "NDAGIJIMANA JEN",
+    "vehicleModel": "T-CROSS",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789661640,
+     "_nanoseconds": 356000000
+    },
+    "vehicleIds": [
+     "v_RAG482E",
+     "v_RAG482F"
+    ]
+   }
+  },
+  {
+   "id": "ebe33109-42d2-4666-b125-8ac8237adb9d",
+   "data": {
+    "createdAt": "2026-09-05T00:00:00.000Z",
+    "firstVisit": "2026-09-05",
+    "lastVisit": "2026-09-11",
+    "issue": "",
+    "phone": "0788359974",
+    "vehiclePlate": "RAG 362N",
+    "name": "RUKUNDO Michel",
+    "vehicleModel": "Virtus",
+    "location": "Ride",
+    "source": "excel-import",
+    "vehicleIds": [
+     "v_RAG362N"
+    ]
+   }
+  },
+  {
+   "id": "1ca338bb-3b4b-42f7-b79d-6f2873a65245",
+   "data": {
+    "createdAt": "2026-09-16T10:09:40.888283100+00:00",
+    "issue": "",
+    "phone": "0788788380",
+    "vehiclePlate": "RAG 361N",
+    "name": "RWANDANGA Jean Damascene",
+    "vehicleModel": "Virtus",
+    "location": "RDB",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554383,
+     "_nanoseconds": 759000000
+    },
+    "vehicleIds": [
+     "v_RAG361N"
+    ]
+   }
+  },
+  {
+   "id": "ac283257-e113-4a5e-80ca-f6dfdd727e99",
+   "data": {
+    "createdAt": "2026-09-16T10:29:07.056020100+00:00",
+    "issue": "",
+    "phone": "0788498187",
+    "vehiclePlate": "RAE 956D",
+    "name": "IRADUKUNDA Glady",
+    "vehicleModel": "T-CROSS",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554578,
+     "_nanoseconds": 522000000
+    },
+    "vehicleIds": [
+     "v_RAE956D"
+    ]
+   }
+  },
+  {
+   "id": "dc7aba73-d6ed-42b2-a582-96e9c2df72be",
+   "data": {
+    "createdAt": "2026-09-17T16:21:49.352539900+00:00",
+    "issue": "",
+    "phone": "0788542167",
+    "vehiclePlate": "RAK 601J",
+    "name": "MUHIRWA Phillipe",
+    "vehicleModel": "ID4",
+    "location": "BK",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789662120,
+     "_nanoseconds": 322000000
+    },
+    "vehicleIds": [
+     "v_RAJ929I",
+     "v_RAI929I",
+     "v_RAJ924I"
+    ]
+   }
+  },
+  {
+   "id": "6b2a1d6d-5ad3-4785-98c1-5c5077c9e8b3",
+   "data": {
+    "createdAt": "2026-09-16T10:32:18.663742300+00:00",
+    "issue": "",
+    "phone": "0788906476",
+    "vehiclePlate": "RAK 601J",
+    "name": "MUHIRWA ",
+    "vehicleModel": "TETTA",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554773,
+     "_nanoseconds": 237000000
+    },
+    "vehicleIds": [
+     "v_RAD211S"
+    ]
+   }
+  },
+  {
+   "id": "5da66f19-e887-4615-9add-212a81d0b91a",
+   "data": {
+    "createdAt": "2026-09-16T10:34:03.783344600+00:00",
+    "issue": "",
+    "phone": "0784898610",
+    "vehiclePlate": "RAF 871U",
+    "name": "UWINEZA Lui",
+    "vehicleModel": "T-CROSS",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554861,
+     "_nanoseconds": 759000000
+    },
+    "vehicleIds": [
+     "v_RAF871U"
+    ]
+   }
+  },
+  {
+   "id": "32dd750a-3208-4d69-9265-643765ce0840",
+   "data": {
+    "createdAt": "2026-09-17T16:12:32.933388100+00:00",
+    "issue": "",
+    "phone": "0781173906",
+    "vehiclePlate": "RAD 879V",
+    "name": "Mandera",
+    "vehicleModel": "T-CROSS",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789661565,
+     "_nanoseconds": 267000000
+    },
+    "vehicleIds": [
+     "v_RAD879V"
+    ]
+   }
+  },
+  {
+   "id": "6bff6a85-90cf-48c5-8c39-cba3642e9fc3",
+   "data": {
+    "createdAt": "2026-09-17T16:15:35.129662200+00:00",
+    "issue": "",
+    "phone": "0788745423",
+    "vehiclePlate": "RAD 069U",
+    "name": "Emmanuel MUTUYIMANA",
+    "vehicleModel": "T-CROSS",
+    "location": "Ride",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789661745,
+     "_nanoseconds": 618000000
+    },
+    "vehicleIds": [
+     "v_RAD069U"
+    ]
+   }
+  },
+  {
+   "id": "d1a9433e-0288-4e26-877e-f99fd7576e2c",
+   "data": {
+    "createdAt": "2026-09-17T16:27:51.996171100+00:00",
+    "issue": "",
+    "phone": "0788407244",
+    "vehiclePlate": "RAG 362B",
+    "name": "NIZEYIMANA ",
+    "vehicleModel": "VIRTUS",
+    "location": "RDB",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789992941,
+     "_nanoseconds": 595000000
+    },
+    "vehicleIds": [
+     "v_RAG362B"
+    ]
+   }
+  },
+  {
+   "id": "a9c76c1c-f314-4d26-a890-b28e3d4ded89",
+   "data": {
+    "createdAt": "2026-09-11T00:00:00.000Z",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "issue": "",
+    "phone": "0788355536",
+    "vehiclePlate": "RAD 216S",
+    "name": "Eric",
+    "vehicleModel": "T-Cross",
+    "location": "Ride",
+    "source": "excel-import",
+    "vehicleIds": [
+     "v_RAD216S"
+    ]
+   }
+  },
+  {
+   "id": "9067dfeb-687e-40c7-8839-ac0daf2105d8",
+   "data": {
+    "createdAt": "2026-09-11T00:00:00.000Z",
+    "firstVisit": "2026-09-11",
+    "lastVisit": "2026-09-11",
+    "issue": "",
+    "phone": "0788313730",
+    "vehiclePlate": "RAF 585X",
+    "name": "Modeste",
+    "vehicleModel": "T-Cross",
+    "location": "RDB",
+    "source": "excel-import",
+    "vehicleIds": [
+     "v_RAF585X"
+    ]
+   }
+  },
+  {
+   "id": "6ee6a0d5-2883-44a7-9c61-0dfa4eef2abb",
+   "data": {
+    "createdAt": "2026-09-16T10:12:25.366141600+00:00",
+    "issue": "",
+    "phone": "0783672956",
+    "vehiclePlate": "RAJ 771C",
+    "name": "TWAGIRAYEZU Thierry",
+    "vehicleModel": "T-CROSS",
+    "location": "Rental",
+    "source": "garage-desk",
+    "syncedAt": {
+     "_seconds": 1789554386,
+     "_nanoseconds": 564000000
+    },
+    "vehicleIds": [
+     "v_RAJ771S"
+    ]
+   }
+  }
+ ]
+}

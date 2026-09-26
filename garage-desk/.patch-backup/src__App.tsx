@@ -23,7 +23,7 @@ import {
   type StockItem,
   type StockGroup,
 } from "./db";
-import { flushSyncQueue, pullFromRemote } from "./sync";
+import { flushSyncQueue } from "./sync";
 import { exportReport } from "./db";
 
 function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
@@ -76,7 +76,6 @@ function ReceptionScreen() {
   const [online, setOnline] = useState<boolean | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<Visit | null>(null);
-  const [updating, setUpdating] = useState(false);
 
   const refresh = async () => {
     const [v, c] = await Promise.all([listVisits(), listClients()]);
@@ -197,23 +196,6 @@ function ReceptionScreen() {
             alert("Saved: " + path);
           }}
         >Export Monthly</button>
-        <button
-          className="input-field"
-          style={{ marginLeft: 8, cursor: "pointer" }}
-          disabled={updating}
-          onClick={async () => {
-            setUpdating(true);
-            try {
-              const { clients, visits } = await pullFromRemote();
-              await refresh();
-              alert("Updated: " + clients + " clients, " + visits + " visits merged from the database.");
-            } catch (err) {
-              alert("Update failed: " + (err instanceof Error ? err.message : String(err)));
-            } finally {
-              setUpdating(false);
-            }
-          }}
-        >{updating ? "Updating..." : "Update"}</button>
         {online !== null && (
           <span className={`status-badge ${online ? "status-online" : "status-offline"}`}>
             {online ? "Online" : "Offline - saved locally"}

@@ -19,12 +19,8 @@ import {
   queueMarkSynced,
   checkInternet,
   logCrash,
-  upsertRemoteClients,
-  upsertRemoteVisits,
   type QueueRow,
   type SyncTable,
-  type Client,
-  type Visit,
 } from "./db";
 
 const REMOTE_COLLECTION: Record<SyncTable, string> = {
@@ -326,80 +322,4 @@ export function startSyncLoop(intervalMs = 4000): () => void {
     });
   }, intervalMs);
   return () => clearInterval(id);
-}
-
-/** Firestore may hold ISO strings, "YYYY-MM-DD" strings or Timestamps; Rust wants a plain string. */
-function toIsoString(v: unknown): string {
-  if (typeof v === "string" && v) return v.length === 10 ? v + "T00:00:00.000Z" : v;
-  if (v && typeof (v as { toDate?: unknown }).toDate === "function") {
-    return (v as { toDate: () => Date }).toDate().toISOString();
-  }
-  return new Date().toISOString();
-}
-
-/**
- * Pulls clients and vehicle visit history from Firestore and merges them into
- * the local SQLite db. Rows go straight into clients/visits (synced = 1)
- * without touching sync_queue, so nothing is pushed back and there is no
- * push/pull loop. Visit ids are deterministic (remote_<vehicleDocId>_<date>),
- * so running it again updates the same rows instead of duplicating them.
- */
-export async function pullFromRemote(): Promise<{ clients: number; visits: number }> {
-  const online = await checkInternet();
-  if (!online) throw new Error("Offline - cannot update from database.");
-
-  await ensureStaffProfile();
-  const db = getFirebaseDb();
-
-  const clientSnap = await getDocs(collection(db, "garages", GARAGE_ID, "clients"));
-  const clientById = new Map<string, any>();
-  const clientRows: Client[] = [];
-  clientSnap.forEach((d) => {
-    const c = d.data();
-    clientById.set(d.id, c);
-    clientRows.push({
-      id: d.id,
-      name: c.name ?? "",
-      phone: c.phone ?? "",
-      vehicle_plate: c.vehiclePlate ?? "",
-      vehicle_model: c.vehicleModel ?? "",
-      location: c.location ?? "",
-      issue: c.issue ?? "",
-      created_at: toIsoString(c.createdAt),
-      synced: true,
-    });
-  });
-
-  const vehicleSnap = await getDocs(collection(db, "garages", GARAGE_ID, "vehicles"));
-  const visitRows: Visit[] = [];
-  vehicleSnap.forEach((d) => {
-    const v = d.data();
-    const dates: string[] = Array.isArray(v.visitDates)
-      ? v.visitDates.map((x: unknown) => (typeof x === "string" ? x : toIsoString(x).slice(0, 10)))
-      : [];
-    if (!dates.length) return;
-    const client = v.clientId ? clientById.get(v.clientId) : null;
-    for (const date of dates) {
-      visitRows.push({
-        id: "remote_" + d.id + "_" + date,
-        client_id: v.clientId ?? "",
-        name: client?.name ?? "",
-        phone: client?.phone ?? "",
-        vehicle_plate: v.plate ?? "",
-        vehicle_model: v.model ?? "",
-        location: v.location ?? client?.location ?? "",
-        issue: "",
-        visit_date: date,
-        created_at: v.firstVisit ? toIsoString(v.firstVisit) : new Date().toISOString(),
-        synced: true,
-      });
-    }
-  });
-
-  const CHUNK = 400;
-  let nc = 0, nv = 0;
-  for (let i = 0; i < clientRows.length; i += CHUNK) nc += await upsertRemoteClients(clientRows.slice(i, i + CHUNK));
-  for (let i = 0; i < visitRows.length; i += CHUNK) nv += await upsertRemoteVisits(visitRows.slice(i, i + CHUNK));
-
-  return { clients: nc, visits: nv };
 }
