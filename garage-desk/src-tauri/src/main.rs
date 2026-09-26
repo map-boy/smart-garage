@@ -743,6 +743,29 @@ async fn check_internet() -> bool {
     }
 }
 
+/// One CSV field of text.
+///
+/// Quotes are doubled per RFC 4180, so a plate or an issue note containing a
+/// comma stays in its own column instead of shifting every column after it.
+/// A leading =, +, - or @ is defused with an apostrophe, because Excel reads
+/// those as the start of a formula - an issue that begins "-" is a sentence,
+/// not a subtraction.
+fn csv_text(value: &str) -> String {
+    let guarded = matches!(value.chars().next(), Some('=') | Some('+') | Some('-') | Some('@'));
+    let body = value.replace('"', "\"\"");
+    if guarded { format!("\"'{}\"", body) } else { format!("\"{}\"", body) }
+}
+
+/// One CSV field of number.
+///
+/// Never quoted and never defused, so the spreadsheet still sums the column -
+/// a movement out of the store is negative, and quoting those turns the total
+/// into zero. Whole numbers lose the trailing ".0" so a count of three reads
+/// as "3" rather than "3.0".
+fn csv_num(value: f64) -> String {
+    if value.fract() == 0.0 { format!("{}", value as i64) } else { format!("{}", value) }
+}
+
 #[tauri::command]
 fn export_report(kind: String, date: String, db: State<Db>) -> Result<String, String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
@@ -750,11 +773,23 @@ fn export_report(kind: String, date: String, db: State<Db>) -> Result<String, St
     let mut vstmt = conn.prepare("SELECT name, phone, vehicle_plate, vehicle_model, location, issue, visit_date FROM visits WHERE substr(visit_date,1,?1)=?2 ORDER BY visit_date").map_err(|e| e.to_string())?;
     let visits: Vec<(String,String,String,String,String,String,String)> = vstmt.query_map(rusqlite::params![like_len, date], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?))).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
     let mut mstmt = conn.prepare("SELECT part_name, delta, qty_after, reason, created_at FROM stock_movements WHERE substr(created_at,1,?1)=?2 ORDER BY created_at").map_err(|e| e.to_string())?;
-    let moves: Vec<(String,i64,i64,String,String)> = mstmt.query_map(rusqlite::params![like_len, date], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?))).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
+    // delta and qty_after are read as f64, not i64. The columns were declared
+    // INTEGER, but a decimal quantity does not convert losslessly, so SQLite
+    // stores 2.5 as REAL - and rusqlite refuses a REAL to i64 read. Paired
+    // with filter_map(ok) that silently dropped every fractional movement from
+    // the report, with nothing on screen to say a row was missing.
+    let moves: Vec<(String,f64,f64,String,String)> = mstmt.query_map(rusqlite::params![like_len, date], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?))).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
     let mut csv = String::from("RECEPTION VISITS\nName,Phone,Plate,Model,Location,Issue,Visit Date\n");
-    for v in &visits { csv.push_str(&format!("{},{},{},{},{},{},{}\n", v.0,v.1,v.2,v.3,v.4,v.5,v.6)); }
+    for v in &visits {
+        csv.push_str(&format!("{},{},{},{},{},{},{}\n",
+            csv_text(&v.0), csv_text(&v.1), csv_text(&v.2), csv_text(&v.3),
+            csv_text(&v.4), csv_text(&v.5), csv_text(&v.6)));
+    }
     csv.push_str("\nSTOCK MOVEMENTS\nPart,Delta,Qty After,Reason,Date\n");
-    for m in &moves { csv.push_str(&format!("{},{},{},{},{}\n", m.0,m.1,m.2,m.3,m.4)); }
+    for m in &moves {
+        csv.push_str(&format!("{},{},{},{},{}\n",
+            csv_text(&m.0), csv_num(m.1), csv_num(m.2), csv_text(&m.3), csv_text(&m.4)));
+    }
     let desktop = match std::env::var("USERPROFILE") { Ok(up) => std::path::PathBuf::from(up).join("Desktop"), Err(_) => std::path::PathBuf::from(".") };
     let fname = format!("{}_report_{}.csv", kind, date.replace("-", ""));
     let out_path = desktop.join(fname);
