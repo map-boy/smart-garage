@@ -32,3 +32,21 @@ garage/_attic/
 service-account.json
 
 garage-management-6f1eb-firebase-adminsdk-*.json
+
+*.bak
+backup-*.json
+diag.js
+discover.js
+final_sep.js
+import*.js
+patch1.js
+patch_sep.js
+recon.js
+scan_sep.js
+verify.js
+garage-desk/.patch-backup/
+garage-desk/build_desk.cjs
+garage-desk/dump_desk.cjs
+garage-desk/patch_desk.cjs
+garage-desk/recon_*.cjs
+garage-desk/repair_desk.cjs
