@@ -86,6 +86,7 @@ function ReceptionScreen() {
   const [editDraft, setEditDraft] = useState<Visit | null>(null);
   const [updating, setUpdating] = useState(false);
   const [dupsOnly, setDupsOnly] = useState(false);
+  const [reportDay, setReportDay] = useState(() => { const n = new Date(); return n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getDate()).padStart(2, "0"); });
   const [reportMonth, setReportMonth] = useState(() => { const n = new Date(); return n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0"); });
 
   const refresh = async () => {
@@ -193,11 +194,12 @@ function ReceptionScreen() {
       if (seenKeys.has(k)) dupIds.add(v.id); else seenKeys.add(k);
     }
   }
+  const dayDupIds = new Set(visits.filter((v) => v.visit_date === reportDay && dupIds.has(v.id)).map((v) => v.id));
   const removeDuplicates = async () => {
-    if (!dupIds.size) { window.alert("No same-day duplicates found."); return; }
-    if (!window.confirm(`Delete ${dupIds.size} duplicate visit(s)? The first entry of each person per day is kept. This cannot be undone.`)) return;
+    if (!dayDupIds.size) { window.alert("No duplicates found on " + reportDay + "."); return; }
+    if (!window.confirm(`Delete ${dayDupIds.size} duplicate visit(s) of ${reportDay}? The first entry of each person is kept. This cannot be undone.`)) return;
     try {
-      for (const id of Array.from(dupIds)) await deleteVisit(id);
+      for (const id of Array.from(dayDupIds)) await deleteVisit(id);
       setDupsOnly(false);
       await refresh();
       flushSyncQueue();
@@ -216,9 +218,10 @@ function ReceptionScreen() {
           onClick={async () => {
             const d = new Date();
             const day = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-            try { const path = await exportReport("daily", day); await revealInFolder(path); } catch (err) { alert("Export failed: " + String(err)); }
+            try { const path = await exportReport("daily", reportDay || day); await revealInFolder(path); } catch (err) { alert("Export failed: " + String(err)); }
           }}
         >Export Daily</button>
+        <input type="date" className="input-field" style={{ marginLeft: 8 }} value={reportDay} onChange={(e) => { setReportDay(e.target.value); setDupsOnly(false); }} title="Day for Export Daily and for the Duplicates check" />
         <button
           className="input-field"
           style={{ marginLeft: 8, cursor: "pointer" }}
@@ -249,12 +252,12 @@ function ReceptionScreen() {
         >{updating ? "Updating..." : "Update"}</button>
         <button
           className="input-field"
-          style={{ marginLeft: 8, cursor: "pointer", background: dupIds.size ? "#fff3cd" : undefined }}
-          onClick={() => (dupIds.size ? setDupsOnly((x) => !x) : window.alert("No same-day duplicates found."))}
-        >{dupsOnly ? "Show all" : `Duplicates (${dupIds.size})`}</button>
-        {dupIds.size > 0 && (
+          style={{ marginLeft: 8, cursor: "pointer", background: dayDupIds.size ? "#fff3cd" : undefined }}
+          onClick={() => (dayDupIds.size ? setDupsOnly((x) => !x) : window.alert("No duplicates found on " + reportDay + "."))}
+        >{dupsOnly ? "Show all" : `Duplicates ${reportDay} (${dayDupIds.size})`}</button>
+        {dayDupIds.size > 0 && (
           <button className="input-field" style={{ marginLeft: 8, cursor: "pointer", color: "#c00" }} onClick={removeDuplicates}>
-            Delete duplicates ({dupIds.size})
+            Delete duplicates ({dayDupIds.size})
           </button>
         )}
         {online !== null && (
@@ -293,7 +296,7 @@ function ReceptionScreen() {
 
       {dates.map((date) => {
         const allRows = grouped[date];
-        const rows = dupsOnly ? allRows.filter((v) => dupIds.has(v.id)) : allRows;
+        const rows = dupsOnly ? (date === reportDay ? allRows.filter((v) => dayDupIds.has(v.id)) : []) : allRows;
         if (!rows.length) return null;
         const isShut = !!collapsedDates[date];
         return (
