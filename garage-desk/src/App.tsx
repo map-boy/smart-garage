@@ -65,6 +65,18 @@ const toolCard = { display: "flex", flexDirection: "column", gap: 6, padding: "1
 const toolTitle = { fontSize: 12, fontWeight: 700, letterSpacing: 0.5, color: "#1f4e78" } as const;
 const toolLabel = { fontSize: 12, color: "#667" } as const;
 
+const nameKey = (n: string) => (n || "").toUpperCase().split(/\s+/).filter(Boolean).sort().join(" ");
+const plateKey = (p: string) => (p || "").replace(/[^a-z0-9]/gi, "").toUpperCase();
+const phoneKey = (p: string) => (p || "").replace(/\D/g, "");
+const plateNear = (a: string, b: string) => {
+  if (a.length !== b.length || a === b) return false;
+  let d = 0;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i] && ++d > 1) return false;
+  return d === 1;
+};
+const tagColor: Record<string, string> = { KEEP: "#e6f7ec", EXTRA: "#fff3cd", CAR: "#e8f1fb", TYPO: "#ffe0cc" };
+const tagText: Record<string, string> = { KEEP: "KEEP", EXTRA: "EXTRA COPY", CAR: "OTHER CAR", TYPO: "CHECK PLATE" };
+
 function dupKey(v: { vehicle_plate: string; phone: string; name: string }): string {
   const p = (v.vehicle_plate || "").replace(/[^a-z0-9]/gi, "").toUpperCase();
   if (p) return "P:" + p;
@@ -203,9 +215,43 @@ function ReceptionScreen() {
   const inScope = (d: string) => dupAll || d === dupDay;
   const scopeLabel = dupAll ? "all days" : dupDay;
   const dayDupIds = new Set(visits.filter((v) => inScope(v.visit_date) && dupIds.has(v.id)).map((v) => v.id));
-  const keyCount: Record<string, number> = {};
-  for (const v of visits) { const k = v.visit_date + "|" + dupKey(v); keyCount[k] = (keyCount[k] ?? 0) + 1; }
-  const dupGroupIds = new Set(visits.filter((v) => inScope(v.visit_date) && keyCount[v.visit_date + "|" + dupKey(v)] > 1).map((v) => v.id));
+  const tagOf: Record<string, string> = {};
+  const clusterOf: Record<string, string> = {};
+  {
+    const byDay: Record<string, Visit[]> = {};
+    for (const v of visits) if (inScope(v.visit_date)) (byDay[v.visit_date] ??= []).push(v);
+    for (const day of Object.keys(byDay)) {
+      const list = [...byDay[day]].sort((x, y) => (x.created_at < y.created_at ? -1 : 1));
+      const parent = list.map((_, i) => i);
+      const find = (i: number): number => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+      const first: Record<string, number> = {};
+      list.forEach((v, i) => {
+        for (const k of ["N:" + nameKey(v.name), "T:" + phoneKey(v.phone), "P:" + plateKey(v.vehicle_plate)]) {
+          if (k.length <= 2) continue;
+          if (first[k] === undefined) first[k] = i; else parent[find(i)] = find(first[k]);
+        }
+      });
+      const groups: Record<number, Visit[]> = {};
+      list.forEach((v, i) => { (groups[find(i)] ??= []).push(v); });
+      for (const g of Object.values(groups)) {
+        if (g.length < 2) continue;
+        const plates = Array.from(new Set(g.map((v) => plateKey(v.vehicle_plate))));
+        const seen = new Set<string>();
+        for (const v of g) {
+          const p = plateKey(v.vehicle_plate);
+          const repeated = g.filter((x) => plateKey(x.vehicle_plate) === p).length > 1;
+          let tag: string;
+          if (repeated) tag = seen.has(p) ? "EXTRA" : "KEEP";
+          else tag = plates.some((q) => plateNear(p, q)) ? "TYPO" : "CAR";
+          seen.add(p);
+          tagOf[v.id] = tag;
+          clusterOf[v.id] = day + "|" + nameKey(g[0].name);
+        }
+      }
+    }
+  }
+  const dupGroupIds = new Set(Object.keys(tagOf));
+  const groupCount = new Set(Object.values(clusterOf)).size;
   const removeDuplicates = async () => {
     if (!dayDupIds.size) { window.alert("No duplicates found for " + scopeLabel + "."); return; }
     if (!window.confirm(`Delete ${dayDupIds.size} duplicate visit(s) of ${scopeLabel}? The first entry of each person is kept. This cannot be undone.`)) return;
@@ -259,10 +305,10 @@ function ReceptionScreen() {
               style={{ cursor: "pointer" }}
               onClick={() => {
                 if (dupsOnly) setDupsOnly(false);
-                else if (dayDupIds.size) setDupsOnly(true);
-                else window.alert("No duplicates found for " + scopeLabel + ".");
+                else if (dupGroupIds.size) setDupsOnly(true);
+                else window.alert("No same-person visits found for " + scopeLabel + ".");
               }}
-            >{dupsOnly ? "Show all visits" : `Show duplicates (${dayDupIds.size})`}</button>
+            >{dupsOnly ? "Show all visits" : `Show same people (${groupCount})`}</button>
             <label style={toolLabel}>Day to check</label>
             <input type="date" className="input-field" disabled={dupAll} value={dupDay} onChange={(e) => setDupDay(e.target.value)} />
             <label style={{ ...toolLabel, display: "flex", gap: 6, alignItems: "center" }}>
@@ -270,7 +316,7 @@ function ReceptionScreen() {
             </label>
             {dayDupIds.size > 0 && (
               <button className="input-field" style={{ cursor: "pointer", color: "#c00" }} onClick={removeDuplicates}>
-                Delete {dayDupIds.size} duplicate(s), keep 1
+                Delete {dayDupIds.size} extra copy(ies), keep 1
               </button>
             )}
           </div>
@@ -334,14 +380,20 @@ function ReceptionScreen() {
 
       {dupsOnly && (
         <div style={{ margin: "12px 0", padding: "8px 12px", borderRadius: 8, background: "#fffbea", border: "1px solid #f1d98a", fontSize: 13 }}>
-          Duplicates for <b>{scopeLabel}</b>: <b>{dayDupIds.size}</b> extra copy(ies). Yellow = extra copy (will be deleted). Green = the copy that stays.
+          Same-person visits for <b>{scopeLabel}</b>: <b>{groupCount}</b> person(s) grouped, <b>{dayDupIds.size}</b> extra copy(ies) to delete.
+          <div style={{ marginTop: 6, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ background: tagColor.KEEP, padding: "2px 8px", borderRadius: 6 }}>KEEP = copy that stays</span>
+            <span style={{ background: tagColor.EXTRA, padding: "2px 8px", borderRadius: 6 }}>EXTRA COPY = same car again, removed by the red button</span>
+            <span style={{ background: tagColor.CAR, padding: "2px 8px", borderRadius: 6 }}>OTHER CAR = same person, different car, kept</span>
+            <span style={{ background: tagColor.TYPO, padding: "2px 8px", borderRadius: 6 }}>CHECK PLATE = 1 character different, delete it yourself if it is a typo</span>
+          </div>
           {dayDupIds.size === 0 && " Nothing to delete for this selection."}
         </div>
       )}
 
       {dates.map((date) => {
         const allRows = grouped[date];
-        const rows = dupsOnly ? allRows.filter((v) => dupGroupIds.has(v.id)) : allRows;
+        const rows = dupsOnly ? allRows.filter((v) => dupGroupIds.has(v.id)).sort((x, y) => (clusterOf[x.id] < clusterOf[y.id] ? -1 : clusterOf[x.id] > clusterOf[y.id] ? 1 : x.created_at < y.created_at ? -1 : 1)) : allRows;
         if (!rows.length) return null;
         const isShut = !dupsOnly && !!collapsedDates[date];
         return (
@@ -377,8 +429,8 @@ function ReceptionScreen() {
                       );
                     }
                     return (
-                      <tr key={v.id} style={dupIds.has(v.id) ? { background: "#fff3cd" } : (dupsOnly && dupGroupIds.has(v.id)) ? { background: "#e6f7ec" } : undefined}>
-                        <td>{v.name}</td><td>{v.phone}</td><td>{v.vehicle_plate}</td>
+                      <tr key={v.id} style={dupsOnly && tagOf[v.id] ? { background: tagColor[tagOf[v.id]] } : dupIds.has(v.id) ? { background: "#fff3cd" } : undefined}>
+                        <td>{v.name}{dupsOnly && tagOf[v.id] && <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 700, padding: "1px 6px", borderRadius: 6, background: "#fff", border: "1px solid #bbb" }}>{tagText[tagOf[v.id]]}</span>}</td><td>{v.phone}</td><td>{v.vehicle_plate}</td>
                         <td>{v.vehicle_model}</td><td>{v.location}</td><td>{v.visit_date}</td>
                         <td className={v.synced ? "pill-yes" : "pill-pending"}>{v.synced ? "Yes" : "Pending"}</td>
                         <td>
