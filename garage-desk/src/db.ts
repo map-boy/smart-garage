@@ -271,3 +271,6 @@ export function upsertRemoteVisits(rows: Visit[]): Promise<number> {
   return invoke("upsert_remote_visits", { rows });
 }
 
+export function revealInFolder(path: string): Promise<void> {
+  return invoke("reveal_in_folder", { path });
+}

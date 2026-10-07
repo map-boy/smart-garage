@@ -743,60 +743,214 @@ async fn check_internet() -> bool {
     }
 }
 
-/// One CSV field of text.
-///
-/// Quotes are doubled per RFC 4180, so a plate or an issue note containing a
-/// comma stays in its own column instead of shifting every column after it.
-/// A leading =, +, - or @ is defused with an apostrophe, because Excel reads
-/// those as the start of a formula - an issue that begins "-" is a sentence,
-/// not a subtraction.
-fn csv_text(value: &str) -> String {
-    let guarded = matches!(value.chars().next(), Some('=') | Some('+') | Some('-') | Some('@'));
-    let body = value.replace('"', "\"\"");
-    if guarded { format!("\"'{}\"", body) } else { format!("\"{}\"", body) }
+type VisitRow = (String, String, String, String, String, String); // name, phone, plate, model, location, visit_date
+
+fn xe(e: rust_xlsxwriter::XlsxError) -> String { e.to_string() }
+
+fn sv(a: &[&str]) -> Vec<String> { a.iter().map(|s| s.to_string()).collect() }
+
+/// Who counts as the same person on one day: the plate when there is one,
+/// otherwise the phone digits, otherwise the name. Spaces and case are ignored.
+fn visitor_key(plate: &str, phone: &str, name: &str) -> String {
+    let p: String = plate.chars().filter(|c| c.is_alphanumeric()).collect::<String>().to_uppercase();
+    if !p.is_empty() { return format!("P:{}", p); }
+    let ph: String = phone.chars().filter(|c| c.is_ascii_digit()).collect();
+    if !ph.is_empty() { return format!("T:{}", ph); }
+    format!("N:{}", name.trim().to_uppercase())
 }
 
-/// One CSV field of number.
-///
-/// Never quoted and never defused, so the spreadsheet still sums the column -
-/// a movement out of the store is negative, and quoting those turns the total
-/// into zero. Whole numbers lose the trailing ".0" so a count of three reads
-/// as "3" rather than "3.0".
-fn csv_num(value: f64) -> String {
-    if value.fract() == 0.0 { format!("{}", value as i64) } else { format!("{}", value) }
+fn put_row(ws: &mut rust_xlsxwriter::Worksheet, row: u32, col0: u16, cells: &[String], fmt: &rust_xlsxwriter::Format) -> Result<(), String> {
+    for (i, c) in cells.iter().enumerate() {
+        ws.write_string_with_format(row, col0 + i as u16, c.as_str(), fmt).map_err(xe)?;
+    }
+    Ok(())
+}
+
+fn reports_dir() -> std::path::PathBuf {
+    let base = match std::env::var("USERPROFILE") {
+        Ok(up) => std::path::PathBuf::from(up),
+        Err(_) => std::path::PathBuf::from("."),
+    };
+    let root = if base.join("Desktop").is_dir() { base.join("Desktop") }
+        else if base.join("Documents").is_dir() { base.join("Documents") }
+        else { base.clone() };
+    let dir = root.join("GARAGE REPORTS");
+    std::fs::create_dir_all(&dir).ok();
+    dir
+}
+
+/// Opens Explorer with the exported file selected. raw_arg keeps the quotes
+/// around the path, so a folder name with a space still selects the file.
+#[tauri::command]
+fn reveal_in_folder(path: String) -> Result<(), String> {
+    use std::os::windows::process::CommandExt;
+    std::process::Command::new("explorer")
+        .raw_arg(format!("/select,\"{}\"", path))
+        .spawn()
+        .map(|_| ())
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 fn export_report(kind: String, date: String, db: State<Db>) -> Result<String, String> {
-    let conn = db.0.lock().map_err(|e| e.to_string())?;
-    let like_len: i64 = if kind == "monthly" { 7 } else { 10 };
-    let mut vstmt = conn.prepare("SELECT name, phone, vehicle_plate, vehicle_model, location, issue, visit_date FROM visits WHERE substr(visit_date,1,?1)=?2 ORDER BY visit_date").map_err(|e| e.to_string())?;
-    let visits: Vec<(String,String,String,String,String,String,String)> = vstmt.query_map(rusqlite::params![like_len, date], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?))).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
-    let mut mstmt = conn.prepare("SELECT part_name, delta, qty_after, reason, created_at FROM stock_movements WHERE substr(created_at,1,?1)=?2 ORDER BY created_at").map_err(|e| e.to_string())?;
-    // delta and qty_after are read as f64, not i64. The columns were declared
-    // INTEGER, but a decimal quantity does not convert losslessly, so SQLite
-    // stores 2.5 as REAL - and rusqlite refuses a REAL to i64 read. Paired
-    // with filter_map(ok) that silently dropped every fractional movement from
-    // the report, with nothing on screen to say a row was missing.
-    let moves: Vec<(String,f64,f64,String,String)> = mstmt.query_map(rusqlite::params![like_len, date], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?))).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
-    let mut csv = String::from("RECEPTION VISITS\nName,Phone,Plate,Model,Location,Issue,Visit Date\n");
-    for v in &visits {
-        csv.push_str(&format!("{},{},{},{},{},{},{}\n",
-            csv_text(&v.0), csv_text(&v.1), csv_text(&v.2), csv_text(&v.3),
-            csv_text(&v.4), csv_text(&v.5), csv_text(&v.6)));
-    }
-    csv.push_str("\nSTOCK MOVEMENTS\nPart,Delta,Qty After,Reason,Date\n");
-    for m in &moves {
-        csv.push_str(&format!("{},{},{},{},{}\n",
-            csv_text(&m.0), csv_num(m.1), csv_num(m.2), csv_text(&m.3), csv_text(&m.4)));
-    }
-    let desktop = match std::env::var("USERPROFILE") { Ok(up) => std::path::PathBuf::from(up).join("Desktop"), Err(_) => std::path::PathBuf::from(".") };
-    let fname = format!("{}_report_{}.csv", kind, date.replace("-", ""));
-    let out_path = desktop.join(fname);
-    std::fs::write(&out_path, csv).map_err(|e| e.to_string())?;
-    Ok(out_path.to_string_lossy().to_string())
-}
+    use rust_xlsxwriter::{Color, Format, Workbook};
+    use std::collections::{BTreeMap, HashSet};
 
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    let monthly = kind == "monthly";
+    let month: String = date.chars().take(7).collect();
+    if month.len() != 7 { return Err("Bad report date".into()); }
+    let day_sel: String = date.chars().take(10).collect();
+    let period: String = if monthly { month.clone() } else { day_sel.clone() };
+    let like_len: i64 = if monthly { 7 } else { 10 };
+
+    // the whole month is read so the daily file can show a month-to-date total
+    let mut vstmt = conn.prepare(
+        "SELECT name, phone, vehicle_plate, vehicle_model, location, visit_date FROM visits WHERE substr(visit_date,1,7)=?1 ORDER BY visit_date, created_at"
+    ).map_err(|e| e.to_string())?;
+    let raw: Vec<VisitRow> = vstmt.query_map(params![month], |r| {
+        let g = |i: usize| -> rusqlite::Result<String> { Ok(r.get::<_, Option<String>>(i)?.unwrap_or_default()) };
+        Ok((g(0)?, g(1)?, g(2)?, g(3)?, g(4)?, g(5)?))
+    }).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
+
+    // one row per person per day
+    let mut seen: HashSet<(String, String)> = HashSet::new();
+    let mut month_people: HashSet<String> = HashSet::new();
+    let mut day_raw: BTreeMap<String, u32> = BTreeMap::new();
+    let mut day_uniq: BTreeMap<String, u32> = BTreeMap::new();
+    let mut people: Vec<VisitRow> = Vec::new();
+    for v in &raw {
+        let day: String = v.5.chars().take(10).collect();
+        *day_raw.entry(day.clone()).or_insert(0) += 1;
+        let key = visitor_key(&v.2, &v.1, &v.0);
+        month_people.insert(key.clone());
+        if seen.insert((day.clone(), key)) {
+            *day_uniq.entry(day).or_insert(0) += 1;
+            people.push(v.clone());
+        }
+    }
+    let shown: Vec<&VisitRow> = people.iter()
+        .filter(|v| monthly || v.5.chars().take(10).collect::<String>() == day_sel)
+        .collect();
+
+    let mut mstmt = conn.prepare(
+        "SELECT part_name, delta, qty_after, reason, created_at FROM stock_movements WHERE substr(created_at,1,?1)=?2 ORDER BY created_at"
+    ).map_err(|e| e.to_string())?;
+    // f64 on purpose: fractional quantities are stored as REAL and an i64 read would drop them
+    let moves: Vec<(String, f64, f64, String, String)> = mstmt.query_map(params![like_len, period], |r| {
+        Ok((
+            r.get::<_, Option<String>>(0)?.unwrap_or_default(),
+            r.get::<_, f64>(1)?,
+            r.get::<_, f64>(2)?,
+            r.get::<_, Option<String>>(3)?.unwrap_or_default(),
+            r.get::<_, Option<String>>(4)?.unwrap_or_default(),
+        ))
+    }).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
+
+    let title = Format::new().set_bold().set_font_size(14.0);
+    let head  = Format::new().set_bold().set_font_color(Color::White).set_background_color(Color::RGB(0x1F4E78));
+    let bold  = Format::new().set_bold();
+    let plain = Format::new();
+    let label = if monthly { format!("MONTH {}", month) } else { format!("DAY {}", day_sel) };
+
+    let mut wb = Workbook::new();
+
+    // ---- sheet 1: visitors, no duplicates within a day ----
+    {
+        let ws = wb.add_worksheet();
+        ws.set_name("VISITORS").map_err(xe)?;
+        ws.write_string_with_format(0, 0, format!("C & V SMART GARAGE - VISITORS - {}", label), &title).map_err(xe)?;
+        put_row(ws, 2, 0, &sv(&["NO", "NAME", "PHONE", "PLATE", "MODEL", "LOCATION", "VISIT DATE"]), &head)?;
+        let mut r: u32 = 3;
+        for (i, v) in shown.iter().enumerate() {
+            ws.write_number(r, 0, (i + 1) as f64).map_err(xe)?;
+            put_row(ws, r, 1, &vec![v.0.to_uppercase(), v.1.clone(), v.2.to_uppercase(), v.3.to_uppercase(), v.4.to_uppercase(), v.5.clone()], &plain)?;
+            r += 1;
+        }
+        r += 1;
+        ws.write_string_with_format(r, 1, "TOTAL PEOPLE", &bold).map_err(xe)?;
+        ws.write_number_with_format(r, 2, shown.len() as f64, &bold).map_err(xe)?;
+        for (c, w) in [6.0, 30.0, 16.0, 14.0, 18.0, 22.0, 14.0].iter().enumerate() {
+            ws.set_column_width(c as u16, *w).map_err(xe)?;
+        }
+        ws.set_freeze_panes(3, 0).map_err(xe)?;
+    }
+
+    // ---- sheet 2: totals ----
+    {
+        let ws = wb.add_worksheet();
+        if monthly {
+            ws.set_name("DAILY TOTALS").map_err(xe)?;
+            ws.write_string_with_format(0, 0, format!("DAILY AND MONTHLY TOTALS - {}", month), &title).map_err(xe)?;
+            put_row(ws, 2, 0, &sv(&["DATE", "PEOPLE WHO VISITED", "DUPLICATES REMOVED"]), &head)?;
+            let mut r: u32 = 3;
+            let mut month_total: u32 = 0;
+            let mut dups_total: u32 = 0;
+            for (d, n) in &day_uniq {
+                let dups = day_raw.get(d).copied().unwrap_or(*n).saturating_sub(*n);
+                month_total += *n;
+                dups_total += dups;
+                ws.write_string(r, 0, d.as_str()).map_err(xe)?;
+                ws.write_number(r, 1, *n as f64).map_err(xe)?;
+                ws.write_number(r, 2, dups as f64).map_err(xe)?;
+                r += 1;
+            }
+            r += 1;
+            ws.write_string_with_format(r, 0, "MONTH TOTAL", &bold).map_err(xe)?;
+            ws.write_number_with_format(r, 1, month_total as f64, &bold).map_err(xe)?;
+            ws.write_number_with_format(r, 2, dups_total as f64, &bold).map_err(xe)?;
+            r += 1;
+            ws.write_string_with_format(r, 0, "DIFFERENT PEOPLE IN THE MONTH", &bold).map_err(xe)?;
+            ws.write_number_with_format(r, 1, month_people.len() as f64, &bold).map_err(xe)?;
+            ws.set_column_width(0, 34.0).map_err(xe)?;
+            ws.set_column_width(1, 22.0).map_err(xe)?;
+            ws.set_column_width(2, 22.0).map_err(xe)?;
+        } else {
+            let day_total = day_uniq.get(&day_sel).copied().unwrap_or(0);
+            let day_rawn = day_raw.get(&day_sel).copied().unwrap_or(0);
+            let mtd: u32 = day_uniq.iter().filter(|(d, _)| d.as_str() <= day_sel.as_str()).map(|(_, n)| *n).sum();
+            ws.set_name("SUMMARY").map_err(xe)?;
+            ws.write_string_with_format(0, 0, format!("SUMMARY - {}", label), &title).map_err(xe)?;
+            ws.write_string_with_format(2, 0, "DATE", &bold).map_err(xe)?;
+            ws.write_string(2, 1, day_sel.as_str()).map_err(xe)?;
+            ws.write_string_with_format(3, 0, "PEOPLE WHO VISITED THIS DAY", &bold).map_err(xe)?;
+            ws.write_number_with_format(3, 1, day_total as f64, &bold).map_err(xe)?;
+            ws.write_string_with_format(4, 0, "DUPLICATES REMOVED THIS DAY", &bold).map_err(xe)?;
+            ws.write_number(4, 1, day_rawn.saturating_sub(day_total) as f64).map_err(xe)?;
+            ws.write_string_with_format(5, 0, format!("MONTH-TO-DATE PEOPLE ({})", month), &bold).map_err(xe)?;
+            ws.write_number_with_format(5, 1, mtd as f64, &bold).map_err(xe)?;
+            ws.set_column_width(0, 40.0).map_err(xe)?;
+            ws.set_column_width(1, 16.0).map_err(xe)?;
+        }
+    }
+
+    // ---- sheet 3: stock movements ----
+    {
+        let ws = wb.add_worksheet();
+        ws.set_name("STOCK MOVEMENTS").map_err(xe)?;
+        ws.write_string_with_format(0, 0, format!("STOCK MOVEMENTS - {}", label), &title).map_err(xe)?;
+        put_row(ws, 2, 0, &sv(&["PART", "CHANGE", "QTY AFTER", "REASON", "DATE"]), &head)?;
+        let mut r: u32 = 3;
+        for m in &moves {
+            ws.write_string(r, 0, m.0.to_uppercase()).map_err(xe)?;
+            ws.write_number(r, 1, m.1).map_err(xe)?;
+            ws.write_number(r, 2, m.2).map_err(xe)?;
+            ws.write_string(r, 3, m.3.to_uppercase()).map_err(xe)?;
+            ws.write_string(r, 4, m.4.as_str()).map_err(xe)?;
+            r += 1;
+        }
+        for (c, w) in [30.0, 12.0, 12.0, 20.0, 30.0].iter().enumerate() {
+            ws.set_column_width(c as u16, *w).map_err(xe)?;
+        }
+        ws.set_freeze_panes(3, 0).map_err(xe)?;
+    }
+
+    let stem = if monthly { format!("MONTHLY_REPORT_{}", month.replace('-', "")) }
+               else { format!("DAILY_REPORT_{}", day_sel.replace('-', "")) };
+    let out = reports_dir().join(format!("{}.xlsx", stem.to_uppercase()));
+    wb.save(&out).map_err(xe)?;
+    Ok(out.to_string_lossy().to_string())
+}
 #[tauri::command]
 fn upsert_remote_clients(db: State<Db>, rows: Vec<Client>) -> Result<usize, String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
@@ -847,7 +1001,7 @@ fn main() {
             app.manage(Db(Mutex::new(conn)));
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![
+        .invoke_handler(tauri::generate_handler![reveal_in_folder, 
             verify_login,
             upsert_remote_clients,
             upsert_remote_visits,

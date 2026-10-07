@@ -24,7 +24,7 @@ import {
   type StockGroup,
 } from "./db";
 import { flushSyncQueue, pullFromRemote } from "./sync";
-import { exportReport } from "./db";
+import { exportReport, revealInFolder } from "./db";
 
 function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
   const [password, setPassword] = useState("");
@@ -61,6 +61,14 @@ function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
+function dupKey(v: { vehicle_plate: string; phone: string; name: string }): string {
+  const p = (v.vehicle_plate || "").replace(/[^a-z0-9]/gi, "").toUpperCase();
+  if (p) return "P:" + p;
+  const t = (v.phone || "").replace(/\D/g, "");
+  if (t) return "T:" + t;
+  return "N:" + (v.name || "").trim().toUpperCase();
+}
+
 function ReceptionScreen() {
   const [visits, setVisits] = useState<Visit[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
@@ -77,6 +85,8 @@ function ReceptionScreen() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<Visit | null>(null);
   const [updating, setUpdating] = useState(false);
+  const [dupsOnly, setDupsOnly] = useState(false);
+  const [reportMonth, setReportMonth] = useState(() => { const n = new Date(); return n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0"); });
 
   const refresh = async () => {
     const [v, c] = await Promise.all([listVisits(), listClients()]);
@@ -173,6 +183,29 @@ function ReceptionScreen() {
   }
   const dates = Object.keys(grouped).sort((a, b) => (a < b ? 1 : -1));
 
+  // same day + same person: the oldest entry stays, the rest are duplicates
+  const dupIds = new Set<string>();
+  for (const d of dates) {
+    const seenKeys = new Set<string>();
+    const oldestFirst = [...grouped[d]].sort((x, y) => (x.created_at < y.created_at ? -1 : 1));
+    for (const v of oldestFirst) {
+      const k = dupKey(v);
+      if (seenKeys.has(k)) dupIds.add(v.id); else seenKeys.add(k);
+    }
+  }
+  const removeDuplicates = async () => {
+    if (!dupIds.size) { window.alert("No same-day duplicates found."); return; }
+    if (!window.confirm(`Delete ${dupIds.size} duplicate visit(s)? The first entry of each person per day is kept. This cannot be undone.`)) return;
+    try {
+      for (const id of Array.from(dupIds)) await deleteVisit(id);
+      setDupsOnly(false);
+      await refresh();
+      flushSyncQueue();
+    } catch (err) {
+      logCrash("reception", err instanceof Error ? err.message : String(err));
+    }
+  };
+
   return (
     <div className="page">
       <div className="page-header">
@@ -182,9 +215,8 @@ function ReceptionScreen() {
           style={{ marginLeft: 12, cursor: "pointer" }}
           onClick={async () => {
             const d = new Date();
-            const day = d.toISOString().slice(0, 10);
-            const path = await exportReport("daily", day);
-            alert("Saved: " + path);
+            const day = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+            try { const path = await exportReport("daily", day); await revealInFolder(path); } catch (err) { alert("Export failed: " + String(err)); }
           }}
         >Export Daily</button>
         <button
@@ -192,11 +224,11 @@ function ReceptionScreen() {
           style={{ marginLeft: 8, cursor: "pointer" }}
           onClick={async () => {
             const d = new Date();
-            const month = d.toISOString().slice(0, 7);
-            const path = await exportReport("monthly", month);
-            alert("Saved: " + path);
+            const month = reportMonth || (d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"));
+            try { const path = await exportReport("monthly", month); await revealInFolder(path); } catch (err) { alert("Export failed: " + String(err)); }
           }}
         >Export Monthly</button>
+        <input type="month" className="input-field" style={{ marginLeft: 8 }} value={reportMonth} onChange={(e) => setReportMonth(e.target.value)} title="Month for the monthly report" />
         <button
           className="input-field"
           style={{ marginLeft: 8, cursor: "pointer" }}
@@ -204,6 +236,7 @@ function ReceptionScreen() {
           onClick={async () => {
             setUpdating(true);
             try {
+              await flushSyncQueue().catch(() => undefined);
               const { clients, visits } = await pullFromRemote();
               await refresh();
               alert("Updated: " + clients + " clients, " + visits + " visits merged from the database.");
@@ -214,6 +247,16 @@ function ReceptionScreen() {
             }
           }}
         >{updating ? "Updating..." : "Update"}</button>
+        <button
+          className="input-field"
+          style={{ marginLeft: 8, cursor: "pointer", background: dupIds.size ? "#fff3cd" : undefined }}
+          onClick={() => (dupIds.size ? setDupsOnly((x) => !x) : window.alert("No same-day duplicates found."))}
+        >{dupsOnly ? "Show all" : `Duplicates (${dupIds.size})`}</button>
+        {dupIds.size > 0 && (
+          <button className="input-field" style={{ marginLeft: 8, cursor: "pointer", color: "#c00" }} onClick={removeDuplicates}>
+            Delete duplicates ({dupIds.size})
+          </button>
+        )}
         {online !== null && (
           <span className={`status-badge ${online ? "status-online" : "status-offline"}`}>
             {online ? "Online" : "Offline - saved locally"}
@@ -249,7 +292,9 @@ function ReceptionScreen() {
       </div>
 
       {dates.map((date) => {
-        const rows = grouped[date];
+        const allRows = grouped[date];
+        const rows = dupsOnly ? allRows.filter((v) => dupIds.has(v.id)) : allRows;
+        if (!rows.length) return null;
         const isShut = !!collapsedDates[date];
         return (
           <div key={date} className="group-block">
@@ -284,7 +329,7 @@ function ReceptionScreen() {
                       );
                     }
                     return (
-                      <tr key={v.id}>
+                      <tr key={v.id} style={dupIds.has(v.id) ? { background: "#fff3cd" } : undefined}>
                         <td>{v.name}</td><td>{v.phone}</td><td>{v.vehicle_plate}</td>
                         <td>{v.vehicle_model}</td><td>{v.location}</td><td>{v.visit_date}</td>
                         <td className={v.synced ? "pill-yes" : "pill-pending"}>{v.synced ? "Yes" : "Pending"}</td>
