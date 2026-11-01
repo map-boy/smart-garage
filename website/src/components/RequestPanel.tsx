@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { CheckCircle2, Loader2, Phone, Send } from 'lucide-react';
+import { CheckCircle2, Phone, Send } from 'lucide-react';
 import type { SiteContent } from '../types';
 import { canReceiveEnquiries, submitEnquiry, telHref } from '../enquiries';
 
@@ -122,8 +122,8 @@ export function RequestPanel({ c }: { c: SiteContent }) {
         </p>
       )}
 
-      <button className="btn block" disabled={busy || !connected}>
-        {busy ? <Loader2 size={16} className="spin" /> : <Send size={16} />}
+      <button className={"btn block" + (busy ? " busy" : "")} disabled={busy || !connected} aria-busy={busy}>
+        {!busy && <Send size={16} />}
         {busy ? 'Sending...' : 'Send my question'}
       </button>
       <p className="hint">We never share your details. Most questions are answered the same day.</p>

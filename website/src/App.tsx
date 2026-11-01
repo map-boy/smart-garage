@@ -10,6 +10,9 @@ import { RequestPanel } from "./components/RequestPanel";
 import { Sections } from "./components/Sections";
 import { telHref, waHref } from "./enquiries";
 import { applySeo } from "./seo";
+import { hasFirebaseConfig } from "./firebase";
+import { Gallery } from "./components/Gallery";
+import { CardSkeleton, Skel, SmartImg } from "./components/Skeleton";
 
 const ICONS: Record<string, typeof Wrench> = { Sparkles, Armchair, Brush, Wrench, Zap, Disc };
 
@@ -18,8 +21,14 @@ export function App() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [openService, setOpenService] = useState<string | null>(null);
+  const [ready, setReady] = useState(!hasFirebaseConfig);
 
-  useEffect(() => subscribeContent(setC), []);
+  useEffect(() => {
+    let n = 0;
+    const t = window.setTimeout(() => setReady(true), 1200);
+    const off = subscribeContent((x) => { setC(x); if (++n > 1) setReady(true); });
+    return () => { window.clearTimeout(t); off(); };
+  }, []);
   useEffect(() => { applySeo(c); }, [c]);
 
   useEffect(() => {
@@ -59,6 +68,7 @@ export function App() {
         <ul>
           <li><a href="#home">Home</a></li>
           <li><a href="#services">Services</a></li>
+          <li><a href="#gallery">Gallery</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#faq">Questions</a></li>
           <li><a href="#contact">Contact</a></li>
@@ -72,7 +82,7 @@ export function App() {
       </div></nav>
 
       <main id="main">
-        <header id="home" className="hero">
+        <header id="home" className={"hero" + (ready ? "" : " pending")}>
           {(c.hero.backgroundUrls?.length ? c.hero.backgroundUrls : [c.hero.backgroundUrl]).map((url, i) => (
             <div key={url + i} className={"hero-bg" + (i === heroIndex ? " active" : "")}
               style={{ backgroundImage: `url(${url})` }} />
@@ -94,7 +104,7 @@ export function App() {
         </header>
 
         <div className="wrap"><div className="hl">
-          {c.highlights.map(h => (<div key={h.title}><h3>{h.title}</h3><p>{h.body}</p></div>))}
+          {!ready ? [0, 1, 2].map(i => <div key={i}><Skel w="55%" h={16} /><Skel h={12} mt={12} /><Skel w="80%" h={12} mt={8} /></div>) : c.highlights.map(h => (<div key={h.title}><h3>{h.title}</h3><p>{h.body}</p></div>))}
         </div></div>
 
         <section id="services" className="services"><div className="wrap">
@@ -102,12 +112,13 @@ export function App() {
           <h2>{c.services.titleLead}<span className="a">{c.services.titleAccent}</span> Car Detailing &amp; Repair</h2>
           <p className="lead">{c.services.intro}</p>
           <div className="grid">
-            {c.services.items.map(s => {
+            {!ready && Array.from({ length: 6 }, (_, i) => <CardSkeleton key={i} />)}
+            {ready && c.services.items.map(s => {
               const Icon = ICONS[s.icon] ?? Wrench;
               const open = openService === s.title;
               return (
                 <article className="card" key={s.title}>
-                  <img src={s.imageUrl} alt={s.title} loading="lazy" />
+                  <SmartImg src={s.imageUrl} alt={s.title} />
                   <div className="ic"><Icon size={18} /></div>
                   <div className="b">
                     <h3>{s.title}</h3>
@@ -150,9 +161,10 @@ export function App() {
               </a>
             </p>
           </div>
-          <img src={c.about.imageUrl} alt="" style={{ width: "100%", borderRadius: 4 }} />
+          <SmartImg src={c.about.imageUrl} alt="" className="about-img" />
         </div></section>
 
+        <Gallery />
         <Sections sections={c.sections} />
 
         <section id="ask" className="asksec"><div className="wrap asklayout">

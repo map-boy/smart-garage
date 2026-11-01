@@ -1,4 +1,5 @@
 import type { SiteSection } from "../types";
+import { SmartImg } from "./Skeleton";
 
 /**
  * Renders the free-form sections stored on site/content.
@@ -26,7 +27,7 @@ export function Sections({ sections }: { sections?: SiteSection[] }) {
           if (!s.imageUrl && !s.title) return null;
           return (
             <section className="sec-banner" key={s.id}>
-              {s.imageUrl && <img src={s.imageUrl} alt="" loading="lazy" />}
+              {s.imageUrl && <SmartImg src={s.imageUrl} alt="" className="banner-img" />}
               <div className="wrap">
                 {s.eyebrow && <p className="eyebrow">{s.eyebrow}</p>}
                 {s.title && <h2>{s.title}</h2>}
@@ -49,7 +50,7 @@ export function Sections({ sections }: { sections?: SiteSection[] }) {
               <div className="grid">
                 {cards.map((c, i) => (
                   <article className="card" key={c.title || i}>
-                    {c.imageUrl && <img src={c.imageUrl} alt={c.title} loading="lazy" />}
+                    {c.imageUrl && <SmartImg src={c.imageUrl} alt={c.title || ""} />}
                     <div className="b">
                       {c.title && <h3>{c.title}</h3>}
                       {c.body && <p>{c.body}</p>}

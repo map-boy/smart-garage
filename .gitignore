@@ -50,3 +50,7 @@ garage-desk/dump_desk.cjs
 garage-desk/patch_desk.cjs
 garage-desk/recon_*.cjs
 garage-desk/repair_desk.cjs
+
+# website: raw camera originals (resized copies live in public/gallery) and scan output
+website/public/CV&SMART GARAGE/
+website/recon/
