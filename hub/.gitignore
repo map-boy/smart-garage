@@ -1,0 +1,12 @@
+node_modules
+dist
+.vercel
+.firebase
+.env
+.env.*
+!.env.example
+*.local
+*.log
+admin-login.txt
+recon/
+backups/
