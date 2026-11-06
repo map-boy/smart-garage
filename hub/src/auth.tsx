@@ -3,7 +3,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from './firebase';
 
-export type Profile = { uid: string; name: string; role: 'technician' | 'boss' | 'secretary' | 'worker'; orgId: string; username: string; active?: boolean };
+export type Profile = { uid: string; name: string; role: 'technician' | 'boss' | 'secretary' | 'worker' | 'receptionist'; orgId: string; username: string; active?: boolean };
 type Ctx = { user: User | null; profile: Profile | null; loading: boolean };
 const C = createContext<Ctx>({ user: null, profile: null, loading: true });
 export const useAuth = () => useContext(C);

@@ -37,8 +37,8 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 export const functions = getFunctions(app);
 
 // Admin-only: resets another hub user's password via a Cloud Function. Returns the new password once.
-export async function resetPassword(targetUid: string): Promise<string> {
-  const call = httpsCallable<{ targetUid: string }, { password: string }>(functions, 'resetHubPassword');
-  const res = await call({ targetUid });
+export async function resetPassword(targetUid: string, newPassword?: string): Promise<string> {
+  const call = httpsCallable<{ targetUid: string; newPassword?: string }, { password: string }>(functions, 'resetHubPassword');
+  const res = await call({ targetUid, newPassword });
   return res.data.password;
 }

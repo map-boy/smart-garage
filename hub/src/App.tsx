@@ -13,7 +13,7 @@ import Technician from './pages/Technician';
 type Role = Profile['role'];
 const NAV: { to: string; label: string; icon: string; roles: Role[]; page: ComponentType }[] = [
   { to: '/dashboard', label: 'Dashboard', icon: '📊', roles: ['technician', 'boss'], page: Boss },
-  { to: '/reception', label: 'Reception', icon: '📋', roles: ['technician', 'secretary'], page: Reception },
+  { to: '/reception', label: 'Reception', icon: '📋', roles: ['technician', 'secretary', 'receptionist'], page: Reception },
   { to: '/jobs', label: 'My jobs', icon: '🔧', roles: ['technician', 'worker'], page: Worker },
   { to: '/team', label: 'Team', icon: '👥', roles: ['technician'], page: Technician }
 ];

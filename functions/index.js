@@ -22,7 +22,11 @@ exports.resetHubPassword = onCall({ region: 'us-central1' }, async (request) => 
   const target = targetSnap.data();
   if (!target || target.orgId !== caller.orgId) throw new HttpsError('not-found', 'No such account in your organisation.');
 
-  const newPassword = crypto.randomBytes(9).toString('base64url');
+  const requested = request.data && request.data.newPassword;
+  if (requested != null && (typeof requested !== 'string' || requested.length < 6)) {
+    throw new HttpsError('invalid-argument', 'New password needs at least 6 characters.');
+  }
+  const newPassword = requested || crypto.randomBytes(9).toString('base64url');
   await getAuth().updateUser(targetUid, { password: newPassword });
   return { password: newPassword };
 });

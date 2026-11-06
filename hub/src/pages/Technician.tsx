@@ -4,7 +4,7 @@ import { db, createAccount, resetPassword } from '../firebase';
 import { useAuth, Profile } from '../auth';
 import { useCol } from '../hooks';
 
-const ROLES: Profile['role'][] = ['worker', 'secretary', 'boss', 'technician'];
+const ROLES: Profile['role'][] = ['worker', 'secretary', 'receptionist', 'boss', 'technician'];
 
 export default function Technician() {
   const { profile } = useAuth();
@@ -19,13 +19,17 @@ export default function Technician() {
   const isBoss = role === 'boss';
   const [reveal, setReveal] = useState<{ username: string; password: string } | null>(null);
   const [resetBusy, setResetBusy] = useState('');
+  const [resetTarget, setResetTarget] = useState('');
+  const [resetDraft, setResetDraft] = useState('');
 
-  async function resetFor(u: any) {
+  async function resetFor(u: any, draft: string) {
     setMsg('');
+    if (draft && draft.length < 6) { setMsg('New password needs at least 6 characters, or leave it blank for a random one.'); return; }
     setResetBusy(u.id);
     try {
-      const pw = await resetPassword(u.id);
+      const pw = await resetPassword(u.id, draft || undefined);
       setReveal({ username: u.username, password: pw });
+      setResetTarget(''); setResetDraft('');
     } catch (err: any) {
       setMsg((err && err.message) || 'Could not reset the password.');
     } finally {
@@ -90,9 +94,15 @@ export default function Technician() {
                   <button className="small" onClick={() => updateDoc(doc(db, 'hubUsers', u.id), { active: u.active === false }).catch(console.error)}>
                     {u.active === false ? 'Enable' : 'Disable'}
                   </button>
-                  <button className="small" disabled={resetBusy === u.id} onClick={() => resetFor(u)}>
-                    {resetBusy === u.id ? '...' : 'Reset password'}
-                  </button>
+                  {resetTarget === u.id ? (
+                    <>
+                      <input className="pwdraft" placeholder="New password (blank = random)" value={resetDraft} onChange={(e) => setResetDraft(e.target.value)} autoFocus />
+                      <button className="small" disabled={resetBusy === u.id} onClick={() => resetFor(u, resetDraft)}>{resetBusy === u.id ? '...' : 'Confirm'}</button>
+                      <button className="small" onClick={() => { setResetTarget(''); setResetDraft(''); }}>Cancel</button>
+                    </>
+                  ) : (
+                    <button className="small" onClick={() => { setResetTarget(u.id); setResetDraft(''); setReveal(null); }}>Reset password</button>
+                  )}
                 </span>
               )}
             </div>

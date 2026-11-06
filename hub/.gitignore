@@ -10,3 +10,6 @@ dist
 admin-login.txt
 recon/
 backups/
+
+.vercel
+.env*

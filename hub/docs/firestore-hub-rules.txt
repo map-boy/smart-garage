@@ -12,11 +12,11 @@
     }
     match /hubOrgs/{orgId}/visitors/{id} {
       allow read: if hubInOrg(orgId);
-      allow write: if hubInOrg(orgId) && (hubRole('secretary') || hubRole('technician'));
+      allow write: if hubInOrg(orgId) && (hubRole('secretary') || hubRole('technician') || hubRole('receptionist'));
     }
     match /hubOrgs/{orgId}/visits/{id} {
       allow read: if hubInOrg(orgId);
-      allow create: if hubInOrg(orgId) && (hubRole('secretary') || hubRole('technician'));
+      allow create: if hubInOrg(orgId) && (hubRole('secretary') || hubRole('technician') || hubRole('receptionist'));
       allow update: if hubInOrg(orgId) && (
         hubRole('secretary') || hubRole('technician') || hubRole('boss') ||
         (hubRole('worker') && resource.data.assignedTo == request.auth.uid &&

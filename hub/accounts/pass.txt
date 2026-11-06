@@ -1,0 +1,3 @@
+name = receptionist
+username = reception
+pass = reception@123

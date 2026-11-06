@@ -106,3 +106,5 @@ textarea{margin:10px 0;resize:vertical}
   .stats{grid-template-columns:1fr 1fr}
   h1{font-size:23px}
 }
+.rowbtns{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pwdraft{width:auto;min-width:160px;padding:7px 10px;font-size:13px;border-radius:999px}

@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react';
-import { collection, doc, increment, query, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { collection, doc, increment, limit, orderBy, query, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../auth';
 import { useCol, dayStr, STATUS, Row } from '../hooks';
@@ -39,6 +39,8 @@ export default function Reception() {
   const workers = useCol(() => query(collection(db, 'hubUsers'), where('orgId', '==', o), where('role', '==', 'worker')), [o]);
   const today = useCol(() => query(collection(db, `hubOrgs/${o}/visits`), where('day', '==', d)), [o, d]);
   const history = useCol(() => (picked ? query(collection(db, `hubOrgs/${o}/visits`), where('visitorId', '==', picked.id)) : null), [o, picked ? picked.id : '']);
+  const canSeeAll = profile!.role === 'secretary' || profile!.role === 'technician';
+  const allVisits = useCol(() => (canSeeAll ? query(collection(db, `hubOrgs/${o}/visits`), orderBy('createdAt', 'desc'), limit(200)) : null), [o, canSeeAll]);
 
   const hist = useMemo(() => [...history].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)), [history]);
   const todayList = useMemo(() => [...today].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)), [today]);
@@ -159,12 +161,26 @@ export default function Reception() {
                 {v._pending && <span className="pend">⏳ not synced yet</span>}
               </div>
               <span className={'pill ' + v.status}>{STATUS[v.status] || v.status}</span>
-              {v.status !== 'done' && <button className="go" title="Mark done" onClick={() => setStatus(v.id, 'done')}>✓</button>}
+              {v.status !== 'done' && profile!.role !== 'receptionist' && <button className="go" title="Mark done" onClick={() => setStatus(v.id, 'done')}>✓</button>}
             </div>
           ))}
         </div>
       </div>
-      {toast && <div className="toast">{toast}</div>}
+            {canSeeAll && (
+        <div className="card">
+          <h2>All visits &middot; last {allVisits.length}</h2>
+          {allVisits.length === 0 && <p className="sub">Nothing recorded yet.</p>}
+          {allVisits.map((v) => (
+            <div className="item" key={v.id}>
+              <div className="t">
+                <b>{v.name}</b>
+                <span>{v.day}{v.reason ? ' - ' + v.reason : ''}{v.assignedName ? ' - ' + v.assignedName : ''}</span>
+              </div>
+              <span className={'pill ' + v.status}>{STATUS[v.status] || v.status}</span>
+            </div>
+          ))}
+        </div>
+      )}      {toast && <div className="toast">{toast}</div>}
     </div>
   );
 }

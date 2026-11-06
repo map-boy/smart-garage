@@ -1,7 +1,7 @@
 # C & V Smart Garage (hub app)
 
 Last updated: 2026-11-06
-<!-- code-hash: f49135b5532a -->
+<!-- code-hash: 9696f9b016d1 -->
 
 ## What this is
 
@@ -86,6 +86,8 @@ Every change to the app must update this README: add a line to the Changelog, fi
 - Back up before changing rules; the live rules were saved to `backups/` before the hub block was added.
 
 ## Changelog
+
+- 2026-11-06: Added a receptionist role (add-only: new visits, no editing or marking done). Secretary/technician get an all-visits log on Reception. Admin can type a chosen password when resetting, not only random.
 
 - 2026-11-06: Admin can reset a staff/boss password from Team (Cloud Function, admin-only); shows the new password once.
 

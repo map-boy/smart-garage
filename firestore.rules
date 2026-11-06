@@ -22,6 +22,33 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // ===== C & V Smart Garage hub (PWA): hub* collections only =====
+    function hubSigned() { return request.auth != null; }
+    function hubMe() { return get(/databases/$(database)/documents/hubUsers/$(request.auth.uid)).data; }
+    function hubInOrg(o) { return hubSigned() && hubMe().orgId == o; }
+    function hubRole(r) { return hubSigned() && hubMe().role == r; }
+
+    match /hubUsers/{uid} {
+      allow get: if hubSigned() && request.auth.uid == uid;
+      allow list: if hubSigned() && resource.data.orgId == hubMe().orgId;
+      allow create, update: if hubRole('technician') && request.resource.data.orgId == hubMe().orgId;
+      allow delete: if hubRole('technician') && resource.data.orgId == hubMe().orgId;
+    }
+    match /hubOrgs/{orgId}/visitors/{id} {
+      allow read: if hubInOrg(orgId);
+      allow write: if hubInOrg(orgId) && (hubRole('secretary') || hubRole('technician') || hubRole('receptionist'));
+    }
+    match /hubOrgs/{orgId}/visits/{id} {
+      allow read: if hubInOrg(orgId);
+      allow create: if hubInOrg(orgId) && (hubRole('secretary') || hubRole('technician') || hubRole('receptionist'));
+      allow update: if hubInOrg(orgId) && (
+        hubRole('secretary') || hubRole('technician') || hubRole('boss') ||
+        (hubRole('worker') && resource.data.assignedTo == request.auth.uid &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','note','updatedAt']))
+      );
+      allow delete: if hubInOrg(orgId) && (hubRole('boss') || hubRole('technician'));
+    }
+    // ===== end hub block =====
 
     function isSignedIn() {
       return request.auth != null;
